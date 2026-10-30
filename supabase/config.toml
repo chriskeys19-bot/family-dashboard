@@ -1,0 +1,19 @@
+# Hosted deploys should also pass --no-verify-jwt. These functions check a
+# dashboard JWT or the assistant token themselves. auth-gate is public so the
+# password exchange can happen before any session exists.
+project_id = "family-dashboard"
+
+[functions.auth-gate]
+verify_jwt = false
+
+[functions.fdc-lookup]
+verify_jwt = false
+
+[functions.event-requests]
+verify_jwt = false
+
+[functions.photo-meal]
+verify_jwt = false
+
+[functions.journal-export]
+verify_jwt = false
