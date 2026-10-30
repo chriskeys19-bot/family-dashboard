@@ -1,17 +1,30 @@
 import { expect, test } from '@playwright/test';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const FIXED = new Date('2026-10-30T17:00:00Z');
-const TINY_JPEG = Buffer.from(
-  '/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSEhIVFRUVFRUVFRUVFRUVFRUWFxUVFRUYHSggGBolHRUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGxAQGy0lHyUtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAQAAwAMBIgACEQEDEQH/xAAbAAACAgMBAAAAAAAAAAAAAAADBAIFBgEABwj/xAA3EAACAQMCAwUGAwcAAAAAAAABAgADERIhMQVBUWFxgZGhscHR8AY0QlKxwRRi4fAkMzRzgiMzQ1NicoKSov/EABoBAQADAQEBAAAAAAAAAAAAAAABAgMEBQb/xAAsEQACAgEDAgQHAAAAAAAAAAAAAQIRAyESMUEEIlFhcYGRobHR8CNS4fH/2gAMAwEAAhEDEQA/APqlW2t7a1tY7i4uI4oYYy8zMxCqB3J4rT0/TrPTrK3tLWCKzt4QqIigKqgYAAq0UUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB//9k=',
-  'base64',
-);
+const MEAL_PHOTO = new URL('./fixtures/meal.jpg', import.meta.url).pathname;
+const DEMO_CONFIG = `
+export const CONFIG = { SUPABASE_URL: '', SUPABASE_ANON_KEY: '', DEMO_PASSWORD: 'family' };
+export function isDemoMode() { return true; }
+`;
+
+test.beforeEach(async ({ page }) => {
+  await page.route('**/js/config.js', (route) => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: DEMO_CONFIG,
+  }));
+});
 
 async function shot(page, name) {
   const dir = join('artifacts', 'screenshots', test.info().project.name);
   mkdirSync(dir, { recursive: true });
-  await page.screenshot({ path: join(dir, `${name}.png`), fullPage: true });
+  try {
+    await page.screenshot({ path: join(dir, `${name}.png`), fullPage: true });
+  } catch {
+    await page.screenshot({ path: join(dir, `${name}.png`), fullPage: false });
+  }
 }
 
 async function openBoard(page, profile, time = FIXED) {
@@ -58,29 +71,29 @@ test('roles, ranges, categories, overlaps, and the banner', async ({ page }) => 
   await expect(page.getByTestId('scope-note')).toHaveText('Only Yuvan');
   await expect(page.getByTestId('person-tabs')).toHaveCount(0);
   await expect(page.getByTestId('range-label')).toHaveText('Oct 30 – Nov 1');
-  await expect(page.getByText('Indus Conquest vs Strikers White')).toBeVisible();
-  await expect(page.getByText('Cheetahs Beta vs Livermore Monks')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Indus Conquest vs Strikers White', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cheetahs Beta vs Livermore Monks', exact: true })).toHaveCount(0);
   await expect(page.getByTestId('event-practice-blazers-2026-10-30')).toHaveAttribute('data-overlap', 'true');
   await expect(page.getByTestId('event-gym-toy-soldier-2026-10-30')).toHaveAttribute('data-overlap', 'true');
   await shot(page, '03-kid-3day');
 
   await page.getByTestId('switch-profile').click();
   await page.getByTestId('profile-varun').click();
-  await expect(page.getByText('Cheetahs Beta vs Livermore Monks')).toBeVisible();
-  await expect(page.getByText('Indus Conquest vs Strikers White')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Cheetahs Beta vs Livermore Monks', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Indus Conquest vs Strikers White', exact: true })).toHaveCount(0);
 
   await page.getByTestId('switch-profile').click();
   await page.getByTestId('profile-ben').click();
   await expect(page.getByTestId('person-tabs')).toBeVisible();
-  await expect(page.getByText('Indus Conquest vs Strikers White')).toBeVisible();
-  await expect(page.getByText('Cheetahs Beta vs Livermore Monks')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Indus Conquest vs Strikers White', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cheetahs Beta vs Livermore Monks', exact: true })).toBeVisible();
   await page.getByTestId('tab-yuvan').click();
-  await expect(page.getByText('Cheetahs Beta vs Livermore Monks')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Cheetahs Beta vs Livermore Monks', exact: true })).toHaveCount(0);
   await page.getByTestId('tab-all').click();
 
   await page.getByTestId('range-1w').click();
   await expect(page.getByTestId('range-label')).toHaveText('Oct 30 – Nov 5');
-  await expect(page.getByText('RSM class')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'RSM class', exact: true })).toBeVisible();
   await expect(page.getByText('Cheetahs practice').first()).toBeVisible();
   await expect(page.getByText('Cheetahs Beta vs Strikers Blue 2')).toHaveCount(0);
   await shot(page, '04-parent-week');
@@ -96,7 +109,7 @@ test('roles, ranges, categories, overlaps, and the banner', async ({ page }) => 
     'category-academics',
   ]);
   await expect(page.locator('[data-multiday="true"]')).toHaveCount(4);
-  await expect(page.getByText('AMLCA U15 Top 8, MSCA Blazers')).toHaveCount(1);
+  await expect(page.getByRole('heading', { name: 'AMLCA U15 Top 8, MSCA Blazers', exact: true })).toHaveCount(1);
   await expect(page.getByText('Game day (details TBD)')).toHaveCount(0);
   await shot(page, '05-parent-month');
 
@@ -250,7 +263,7 @@ test('nutrition lookup disambiguates, remembers, and can fall back to a note', a
 test('snap meal stubs an estimate, lets the kid edit, and parents see the thumbnail', async ({ page }) => {
   const calls = [];
   page.on('request', (req) => {
-    if (req.url().includes('generativelanguage') || req.url().includes('/storage/') || req.url().includes('photo-meal')) {
+    if (req.url().includes('generativelanguage') || req.url().includes('/storage/') || req.url().includes('/functions/v1/photo-meal')) {
       calls.push(req.url());
     }
   });
@@ -259,9 +272,7 @@ test('snap meal stubs an estimate, lets the kid edit, and parents see the thumbn
   const input = page.getByTestId('snap-input');
   await expect(input).toHaveAttribute('accept', 'image/*');
   await expect(input).toHaveAttribute('capture', 'environment');
-  const file = test.info().outputPath('meal.jpg');
-  writeFileSync(file, TINY_JPEG);
-  await input.setInputFiles(file);
+  await input.setInputFiles(MEAL_PHOTO);
   await expect(page.getByTestId('photo-review')).toBeVisible();
   await expect(page.getByTestId('estimate-banner')).toContainText(/estimate/i);
   await expect(page.getByTestId('photo-confidence')).toContainText('medium');
@@ -338,7 +349,7 @@ test('needs and notes stay with that kid and their parents', async ({ page }) =>
 
   await page.getByTestId('note-body').fill('Tired after practice');
   await page.getByTestId('mood-🙂').click();
-  await page.getByTestId('save-note').click();
+  await page.getByTestId('save-kid-note').click();
   await expect(page.getByText('Tired after practice')).toBeVisible();
   await shot(page, '15-needs-and-notes');
 

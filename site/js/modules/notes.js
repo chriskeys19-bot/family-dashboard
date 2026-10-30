@@ -90,7 +90,7 @@ function noteForm(ctx) {
     field('What’s on your mind?', body),
     el('div', { class: 'field' }, el('span', { class: 'field-label' }, 'Mood'), moods),
     error,
-    el('button', { type: 'submit', class: 'btn primary block', 'data-testid': 'save-note' }, 'Save note'),
+    el('button', { type: 'submit', class: 'btn primary block', 'data-testid': 'save-kid-note' }, 'Save note'),
   );
   return form;
 }
