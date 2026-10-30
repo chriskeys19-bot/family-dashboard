@@ -142,20 +142,21 @@ input[type="color"] { padding: 6px; min-width: 48px; }
 .mode-banner { text-align: center; padding: 8px 20px 18px; }
 
 .family-banner {
-  margin: 4px 16px 8px;
-  min-height: 180px;
-  height: min(42vh, 280px);
+  margin: 4px auto 12px;
+  width: min(100% - 32px, 420px, calc(70vh * 3 / 4));
+  aspect-ratio: 3 / 4;
+  height: auto;
+  max-height: 70vh;
   border-radius: 22px;
   overflow: hidden;
   position: relative;
 }
-/* Portrait frame, about 768×1024. The boys stand in the lower half;
-   center 70% keeps their faces in the mobile crop. */
+/* Upright 1200×1600 portrait. The frame matches 3:4 so the whole photo stays visible. */
 .family-banner img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 70%;
+  object-position: center top;
   display: block;
 }
 .family-banner[data-banner="placeholder"],

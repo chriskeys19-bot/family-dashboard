@@ -152,7 +152,9 @@ test('the public site folder has no family photos', () => {
   });
   assert.deepEqual(banned, []);
   const css = readFileSync('site/css/app.css', 'utf8');
-  assert.match(css, /object-position:\s*center 70%/);
+  assert.match(css, /aspect-ratio:\s*3\s*\/\s*4/);
+  assert.match(css, /max-height:\s*70vh/);
+  assert.match(css, /object-position:\s*center top/);
 });
 
 function dayToISO(dayNumber) {

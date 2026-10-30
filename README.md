@@ -30,7 +30,7 @@ Daily boost changes with the Pacific date. Each list is at least 120 entries. A 
 
 The Mount Rushmore portrait is **not in this repo** and is **not in the Pages build**. The deploy workflow fails if a JPEG, PNG, or WebP shows up under `site/`.
 
-After a real sign-in, the home view asks Supabase Storage for a one-hour signed URL for the private object `family-banner.jpg` in the bucket `family-media`. The image is cropped with `object-position: center 70%` so the boys, who stand in the lower half of the portrait, stay in frame on a phone.
+After a real sign-in, the home view asks Supabase Storage for a one-hour signed URL for the private object `family-banner.jpg` in the bucket `family-media`. The banner is a vertical 3:4 frame (max 420px wide, max 70vh tall) so the upright portrait is shown whole.
 
 Upload steps are in [Supabase setup](#supabase-setup) below. Until that file exists, the live site falls back to the same gradient placeholder.
 
