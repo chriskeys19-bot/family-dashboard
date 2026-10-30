@@ -32,7 +32,8 @@ jobs:
       - name: Refuse family photos in the site
         run: |
           set -euo pipefail
-          found=$(find site -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.heic' -o -iname '*banner*' -o -iname '*rushmore*' \) || true)
+          # Raster images only. site/js/banner.js is the signed-URL loader, not a photo.
+          found=$(find site -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.heic' -o -iname '*.gif' -o -iname '*rushmore*' -o -iname 'family-banner.*' \) || true)
           if [ -n "$found" ]; then
             echo "Family photos must not be committed or deployed. Load them from private Storage."
             echo "$found"
