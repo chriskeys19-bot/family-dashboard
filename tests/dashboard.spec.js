@@ -45,6 +45,7 @@ test('password gate rejects a miss, then opens profiles', async ({ page }) => {
   expect(fontSize).toBeGreaterThanOrEqual(16);
   const viewport = await page.locator('meta[name="viewport"]').getAttribute('content');
   expect(viewport).toContain('viewport-fit=cover');
+  await expect(page.getByText('Parents use the family password. Yuvan and Varun use their own.')).toBeVisible();
   await expect(page.getByTestId('demo-hint')).toContainText('family');
   await password.fill('nope');
   await page.getByRole('button', { name: 'Continue' }).click();
@@ -56,6 +57,91 @@ test('password gate rejects a miss, then opens profiles', async ({ page }) => {
   const card = page.getByTestId('profile-yuvan');
   const box = await card.boundingBox();
   expect(box.height).toBeGreaterThanOrEqual(44);
+});
+
+const LIVE_CONFIG = `
+export const CONFIG = { SUPABASE_URL: 'https://example.supabase.co', SUPABASE_ANON_KEY: 'anon-test', DEMO_PASSWORD: 'family' };
+export function isDemoMode() { return false; }
+`;
+
+const LIVE_PEOPLE = [
+  { id: 'ben', name: 'Ben', role: 'parent', sort_order: 1 },
+  { id: 'sangeetha', name: 'Sangeetha', role: 'parent', sort_order: 2 },
+  { id: 'yuvan', name: 'Yuvan', role: 'kid', sort_order: 3 },
+  { id: 'varun', name: 'Varun', role: 'kid', sort_order: 4 },
+];
+
+test('a kid password opens that kid’s page and sign out returns to the gate', async ({ page }) => {
+  await page.route('**/js/config.js', (route) => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: LIVE_CONFIG,
+  }));
+  await page.route('**/functions/v1/auth-gate', async (route) => {
+    const body = route.request().postDataJSON();
+    const passwords = {
+      'yuvan-secret': { token: 'kid-token', role: 'kid', person_id: 'yuvan' },
+      'family-secret': { token: 'parent-token', role: 'parent', person_id: null },
+    };
+    const payload = passwords[body.password];
+    if (!payload) {
+      await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'wrong_password' }) });
+      return;
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(payload) });
+  });
+  await page.route('**/rest/v1/**', async (route) => {
+    const url = route.request().url();
+    const body = url.includes('/rest/v1/people') ? JSON.stringify(LIVE_PEOPLE) : '[]';
+    await route.fulfill({ status: 200, contentType: 'application/json', body });
+  });
+  await page.route('**/storage/v1/**', (route) => route.fulfill({
+    status: 404,
+    contentType: 'application/json',
+    body: '{}',
+  }));
+
+  await page.clock.install({ time: FIXED });
+  await page.goto('/');
+  await expect(page.getByText('Parents use the family password. Yuvan and Varun use their own.')).toBeVisible();
+  await expect(page.getByTestId('demo-hint')).toHaveCount(0);
+  await page.getByLabel('Password').fill('yuvan-secret');
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await expect(page.getByTestId('dashboard')).toBeVisible();
+  await expect(page.getByTestId('profile-picker')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Yuvan' })).toBeVisible();
+  await expect(page.getByTestId('sign-out')).toHaveText('Sign out / switch');
+  await expect(page.getByTestId('switch-profile')).toHaveCount(0);
+  await expect(page.getByTestId('lock')).toHaveCount(0);
+  await expect(page.getByTestId('person-tabs')).toHaveCount(0);
+  await expect(page.getByTestId('scope-note')).toHaveText('Only Yuvan');
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('homeboard.session')));
+  expect(saved.role).toBe('kid');
+  expect(saved.person_id).toBe('yuvan');
+  expect(saved.access_token).toBe('kid-token');
+
+  await page.reload();
+  await expect(page.getByTestId('dashboard')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Yuvan' })).toBeVisible();
+  await expect(page.getByTestId('profile-picker')).toHaveCount(0);
+  await expect(page.getByTestId('sign-out')).toBeVisible();
+
+  await page.getByTestId('sign-out').click();
+  await expect(page.getByLabel('Password')).toBeVisible();
+  await expect(page.getByTestId('dashboard')).toHaveCount(0);
+  expect(await page.evaluate(() => localStorage.getItem('homeboard.session'))).toBeNull();
+
+  await page.reload();
+  await expect(page.getByLabel('Password')).toBeVisible();
+  await page.getByLabel('Password').fill('family-secret');
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await expect(page.getByTestId('profile-picker')).toBeVisible();
+  await expect(page.getByTestId('profile-yuvan')).toBeVisible();
+  await expect(page.getByTestId('profile-ben')).toBeVisible();
+  await expect(page.getByTestId('dashboard')).toHaveCount(0);
+  const parent = await page.evaluate(() => JSON.parse(localStorage.getItem('homeboard.session')));
+  expect(parent.role).toBe('parent');
+  expect(parent.person_id).toBeNull();
 });
 
 test('roles, ranges, categories, overlaps, and the banner', async ({ page }) => {
@@ -495,7 +581,7 @@ test('a kid can edit their own needs and notes, and a failed save stays visible'
   const needError = needCard.getByRole('alert');
   await expect(needError).toBeVisible();
   await expect(needError).toContainText(/Couldn.t save that/);
-  await expect(needError).toContainText('re-enter the password');
+  await expect(needError).toContainText('sign out, re-enter your password');
   await expect(needCard.getByLabel('What do you need?')).toHaveValue('Should stay gloves');
   await shot(page, '18-save-error');
 

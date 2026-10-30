@@ -9,6 +9,7 @@ import {
   lock,
   readProfile,
   readSession,
+  sessionIdentity,
   subscribe,
   unlock,
   writeProfile,
@@ -32,6 +33,7 @@ let bundle = null;
 let profileId = null;
 let rangeId = '3d';
 let tab = 'all';
+let refreshToken = 0;
 
 function appRoot() {
   return document.getElementById('app');
@@ -100,10 +102,11 @@ function renderGate(message = '') {
       submit.textContent = 'Checking…';
       try {
         await unlock(input.value);
-        bundle = await loadBundle();
         profileId = null;
+        writeProfile(null);
         tab = 'all';
-        renderPicker();
+        bundle = null;
+        await enterBoard();
       } catch (err) {
         error.hidden = false;
         error.textContent = gateMessage(err.code);
@@ -120,7 +123,7 @@ function renderGate(message = '') {
   const screen = el('main', { class: 'gate' },
     el('p', { class: 'eyebrow' }, 'Family'),
     el('h1', { class: 'display' }, 'Home Board'),
-    el('p', { class: 'lede' }, 'Ben, Sangeetha, Yuvan, and Varun. One shared password, then pick who is looking.'),
+    el('p', { class: 'lede' }, 'Parents use the family password. Yuvan and Varun use their own.'),
     form,
   );
   if (isDemo()) {
@@ -138,7 +141,57 @@ function fieldBlock(input) {
     input);
 }
 
+function kidIdentity() {
+  const identity = sessionIdentity();
+  if (identity.role !== 'kid') return null;
+  return identity;
+}
+
+function signOut() {
+  resetFamilyBanner();
+  lock();
+  bundle = null;
+  profileId = null;
+  renderGate();
+}
+
+async function enterBoard() {
+  const token = ++refreshToken;
+  let data;
+  try {
+    data = await loadBundle();
+  } catch (error) {
+    if (token !== refreshToken) return;
+    renderGate(error.message || 'Could not load the board.');
+    return;
+  }
+  if (token !== refreshToken) return;
+  bundle = data;
+  const kid = kidIdentity();
+  if (kid) {
+    const person = kid.personId
+      ? bundle.people?.find((item) => item.id === kid.personId)
+      : null;
+    if (!person) {
+      renderGate('Couldn’t open that page.');
+      return;
+    }
+    profileId = person.id;
+    writeProfile(person.id);
+    tab = 'all';
+    renderDashboard();
+    return;
+  }
+  if (!profile()) profileId = readProfile();
+  if (!profile()) renderPicker();
+  else renderDashboard();
+}
+
 function renderPicker() {
+  if (kidIdentity()) {
+    enterBoard();
+    return;
+  }
   const list = el('div', { class: 'profile-list', 'data-testid': 'profile-picker' });
   for (const person of bundle.people) {
     list.append(el('button', {
@@ -166,13 +219,7 @@ function renderPicker() {
       type: 'button',
       class: 'btn ghost block',
       'data-testid': 'lock',
-      onclick: () => {
-        resetFamilyBanner();
-        lock();
-        bundle = null;
-        profileId = null;
-        renderGate();
-      },
+      onclick: () => signOut(),
     }, 'Lock')));
 }
 
@@ -180,25 +227,26 @@ function renderDashboard() {
   const ctx = buildCtx();
   const current = ctx.profile;
   const kids = ctx.people.filter((person) => person.role === 'kid');
+  const topActions = el('div', { class: 'top-actions' });
+  if (kidIdentity()) {
+    topActions.append(el('button', {
+      type: 'button',
+      class: 'btn ghost',
+      'data-testid': 'sign-out',
+      onclick: () => signOut(),
+    }, 'Sign out / switch'));
+  } else {
+    topActions.append(
+      el('button', { type: 'button', class: 'btn ghost', 'data-testid': 'switch-profile', onclick: () => renderPicker() }, 'Switch'),
+      el('button', { type: 'button', class: 'btn ghost', 'data-testid': 'lock', onclick: () => signOut() }, 'Lock'),
+    );
+  }
   const header = el('header', { class: 'topbar' },
     el('div', { class: 'topbar-row' },
       el('div', {},
         el('p', { class: 'eyebrow' }, 'Home Board'),
         el('h1', { class: 'who' }, current.name)),
-      el('div', { class: 'top-actions' },
-        el('button', { type: 'button', class: 'btn ghost', 'data-testid': 'switch-profile', onclick: () => renderPicker() }, 'Switch'),
-        el('button', {
-          type: 'button',
-          class: 'btn ghost',
-          'data-testid': 'lock',
-          onclick: () => {
-            resetFamilyBanner();
-            lock();
-            bundle = null;
-            profileId = null;
-            renderGate();
-          },
-        }, 'Lock'))),
+      topActions),
     el('p', { class: 'today' }, formatLongDate(ctx.now)));
 
   const ranges = el('div', { class: 'segment', role: 'group', 'aria-label': 'Time range' });
@@ -225,7 +273,7 @@ function renderDashboard() {
   screen.append(header, renderFamilyBanner(), ranges, el('p', { class: 'range-label', 'data-testid': 'range-label' }, formatRangeLabel(ctx.range)));
   screen.append(el('p', { class: 'scope-note', 'data-testid': 'scope-note' }, scope));
 
-  if (current.role === 'parent') {
+  if (current.role === 'parent' && !kidIdentity()) {
     const tabs = el('div', { class: 'segment tabs', role: 'group', 'aria-label': 'Who', 'data-testid': 'person-tabs' });
     const options = [{ id: 'all', label: 'Family' }, ...kids.map((kid) => ({ id: kid.id, label: kid.name }))];
     for (const option of options) {
@@ -275,18 +323,8 @@ function renderDashboard() {
   mount(screen);
 }
 
-let refreshToken = 0;
-
 async function refresh() {
-  const token = ++refreshToken;
-  const data = await loadBundle();
-  if (token !== refreshToken) return;
-  bundle = data;
-  if (!profile()) {
-    renderPicker();
-    return;
-  }
-  renderDashboard();
+  await enterBoard();
 }
 
 export function boot() {
@@ -304,12 +342,5 @@ export function boot() {
     renderGate();
     return;
   }
-  loadBundle().then((data) => {
-    bundle = data;
-    profileId = readProfile();
-    if (!profile()) renderPicker();
-    else renderDashboard();
-  }).catch((error) => {
-    renderGate(error.message || 'Could not load the board.');
-  });
+  enterBoard();
 }

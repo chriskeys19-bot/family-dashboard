@@ -92,6 +92,29 @@ export function getAccessToken() {
   return session?.access_token || null;
 }
 
+export function sessionIdentity() {
+  if (session?.role === 'kid') {
+    return { role: 'kid', personId: session.person_id || null };
+  }
+  return { role: 'parent', personId: null };
+}
+
+function sessionExpiry(payload, token) {
+  const fromPayload = Number(payload?.expires_at);
+  if (fromPayload > 0) return fromPayload * 1000;
+  try {
+    const body = String(token || '').split('.')[1];
+    if (body) {
+      const padded = body.replace(/-/g, '+').replace(/_/g, '/');
+      const json = JSON.parse(atob(padded));
+      if (json.exp) return Number(json.exp) * 1000;
+    }
+  } catch {
+    // Opaque test tokens have no exp claim.
+  }
+  return Date.now() + SESSION_MS;
+}
+
 export async function unlock(password) {
   if (isDemoMode()) {
     if (password !== CONFIG.DEMO_PASSWORD) {
@@ -126,10 +149,18 @@ export async function unlock(password) {
     error.code = payload.error || 'auth_failed';
     throw error;
   }
+  const token = payload.token || payload.access_token;
+  if (!token) {
+    const error = new Error('auth_failed');
+    error.code = 'auth_failed';
+    throw error;
+  }
   session = {
     demo: false,
-    access_token: payload.access_token,
-    exp: (payload.expires_at || 0) * 1000,
+    access_token: token,
+    role: payload.role || null,
+    person_id: payload.person_id ?? null,
+    exp: sessionExpiry(payload, token),
   };
   localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   return session;
@@ -544,7 +575,7 @@ export async function addNote(row) {
 }
 
 export function saveFailureMessage() {
-  return 'Couldn’t save that. Your session may have expired — re-enter the password and try again.';
+  return 'Couldn’t save that. Your session may have expired — sign out, re-enter your password and try again.';
 }
 
 export function gateMessage(code) {

@@ -4,6 +4,7 @@ playwright-report/
 blob-report/
 artifacts/
 .supabase/
+supabase/.temp/
 .env
 .env.*
 family-banner.jpg

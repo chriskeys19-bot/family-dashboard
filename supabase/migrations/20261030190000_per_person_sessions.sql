@@ -1,0 +1,3 @@
+-- Per-person sessions were applied live from the box.
+-- auth-gate returns {token, role, person_id} and RLS restricts kid tokens.
+-- Placeholder only: do not re-apply and do not change functions from this file.
