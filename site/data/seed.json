@@ -1,0 +1,1244 @@
+{
+  "timezone": "America/Los_Angeles",
+  "window": {
+    "start": "2026-10-30",
+    "end": "2026-12-31"
+  },
+  "houston_skip": [
+    "2026-11-21",
+    "2026-11-22",
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-26",
+    "2026-11-27",
+    "2026-11-28",
+    "2026-11-29"
+  ],
+  "people": [
+    {
+      "id": "ben",
+      "name": "Ben",
+      "role": "parent",
+      "sort_order": 1
+    },
+    {
+      "id": "sangeetha",
+      "name": "Sangeetha",
+      "role": "parent",
+      "sort_order": 2
+    },
+    {
+      "id": "yuvan",
+      "name": "Yuvan",
+      "role": "kid",
+      "sort_order": 3
+    },
+    {
+      "id": "varun",
+      "name": "Varun",
+      "role": "kid",
+      "sort_order": 4
+    }
+  ],
+  "categories": [
+    {
+      "id": "cricket-games",
+      "label": "Cricket Games",
+      "color": "#1f6b45",
+      "icon": "cricket",
+      "sort_order": 1,
+      "visible_to_kids": true
+    },
+    {
+      "id": "cricket-practice",
+      "label": "Cricket Practice",
+      "color": "#2a6f8f",
+      "icon": "practice",
+      "sort_order": 2,
+      "visible_to_kids": true
+    },
+    {
+      "id": "gym",
+      "label": "Gym",
+      "color": "#c4622d",
+      "icon": "gym",
+      "sort_order": 3,
+      "visible_to_kids": true
+    },
+    {
+      "id": "social",
+      "label": "Social",
+      "color": "#7a4e8a",
+      "icon": "social",
+      "sort_order": 4,
+      "visible_to_kids": true
+    },
+    {
+      "id": "tournament",
+      "label": "Tournament",
+      "color": "#9b2335",
+      "icon": "trophy",
+      "sort_order": 5,
+      "visible_to_kids": true
+    },
+    {
+      "id": "academics",
+      "label": "Academics",
+      "color": "#3d5a80",
+      "icon": "book",
+      "sort_order": 6,
+      "visible_to_kids": true
+    }
+  ],
+  "events": [
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-10-30",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-10-30T18:00:00-07:00",
+      "ends_at": "2026-10-30T21:15:00-07:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "End time TBD; shown until 7:30 PM for layout. Overlaps Friday Blazers practice.",
+      "id": "gym-toy-soldier-2026-10-30",
+      "title": "Toy Soldier gym (CrossFit)",
+      "starts_at": "2026-10-30T18:15:00-07:00",
+      "ends_at": "2026-10-30T19:30:00-07:00",
+      "location": "110 N 33rd St, San Jose",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "gym",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Sat.",
+      "id": "practice-cric-kingdom-2026-10-31",
+      "title": "Cric Kingdom",
+      "starts_at": "2026-10-31T17:15:00-07:00",
+      "ends_at": "2026-10-31T19:30:00-07:00",
+      "location": "US Cricket Store, 121 Ranch Dr, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-01-varun-cheetahs-beta-vs-livermore-monks",
+      "title": "Cheetahs Beta vs Livermore Monks",
+      "starts_at": "2026-11-01T07:45:00-08:00",
+      "ends_at": "2026-11-01T13:00:00-08:00",
+      "location": "Anthony Ochoa Middle School, 2121 Depot Rd, Hayward",
+      "people": [
+        "varun"
+      ],
+      "category_id": "cricket-games",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-01-yuvan-indus-conquest-vs-strikers-white",
+      "title": "Indus Conquest vs Strikers White",
+      "starts_at": "2026-11-01T07:45:00-08:00",
+      "ends_at": "2026-11-01T13:00:00-08:00",
+      "location": "Fremont Central Park, 1110-1166 Stevenson Blvd, Fremont",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "cricket-games",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-01-varun-uc-cubs-vs-santa-clara-pandas",
+      "title": "UC Cubs vs Santa Clara Pandas",
+      "starts_at": "2026-11-01T11:45:00-08:00",
+      "ends_at": "2026-11-01T17:15:00-08:00",
+      "location": "Wilson High School, 1840 Benton St, Santa Clara",
+      "people": [
+        "varun"
+      ],
+      "category_id": "cricket-games",
+      "status": "not_picked"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-01-yuvan-varun-cheetahs-alpha-vs-cougars-black",
+      "title": "Cheetahs Alpha vs Cougars Black",
+      "starts_at": "2026-11-01T11:45:00-08:00",
+      "ends_at": "2026-11-01T17:15:00-08:00",
+      "location": "Birch Grove, 37490 Birch St, Newark",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-games",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Wed.",
+      "id": "practice-cheetahs-2026-11-04",
+      "title": "Cheetahs practice",
+      "starts_at": "2026-11-04T20:30:00-08:00",
+      "ends_at": "2026-11-04T22:00:00-08:00",
+      "location": "US Cricket Store, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Yuvan only. Recurring Thu.",
+      "id": "academics-rsm-2026-11-05",
+      "title": "RSM class",
+      "starts_at": "2026-11-05T15:30:00-08:00",
+      "ends_at": "2026-11-05T18:15:00-08:00",
+      "location": "RSM Milpitas",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "academics",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-11-05",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-11-05T18:00:00-08:00",
+      "ends_at": "2026-11-05T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-11-06",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-11-06T18:00:00-08:00",
+      "ends_at": "2026-11-06T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "End time TBD; shown until 7:30 PM for layout. Overlaps Friday Blazers practice.",
+      "id": "gym-toy-soldier-2026-11-06",
+      "title": "Toy Soldier gym (CrossFit)",
+      "starts_at": "2026-11-06T18:15:00-08:00",
+      "ends_at": "2026-11-06T19:30:00-08:00",
+      "location": "110 N 33rd St, San Jose",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "gym",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-07-varun-cheetahs-beta-vs-strikers-blue-2",
+      "title": "Cheetahs Beta vs Strikers Blue 2",
+      "starts_at": "2026-11-07T11:45:00-08:00",
+      "ends_at": "2026-11-07T17:15:00-08:00",
+      "location": "Taarika Foundation Ground, 1185 Fisher Ave, Morgan Hill",
+      "people": [
+        "varun"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Sat.",
+      "id": "practice-cric-kingdom-2026-11-07",
+      "title": "Cric Kingdom",
+      "starts_at": "2026-11-07T17:15:00-08:00",
+      "ends_at": "2026-11-07T19:30:00-08:00",
+      "location": "US Cricket Store, 121 Ranch Dr, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-08-varun-uc-cubs-vs-sv-lions",
+      "title": "UC Cubs vs SV Lions",
+      "starts_at": "2026-11-08T07:45:00-08:00",
+      "ends_at": "2026-11-08T13:00:00-08:00",
+      "location": "Seabreeze Park, 32600 Carmel Way, Union City",
+      "people": [
+        "varun"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-08-yuvan-cheetahs-alpha-vs-tracy-centurions",
+      "title": "Cheetahs Alpha vs Tracy Centurions",
+      "starts_at": "2026-11-08T07:45:00-08:00",
+      "ends_at": "2026-11-08T13:00:00-08:00",
+      "location": "Birch Grove, 37490 Birch St, Newark",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Wed.",
+      "id": "practice-cheetahs-2026-11-11",
+      "title": "Cheetahs practice",
+      "starts_at": "2026-11-11T20:30:00-08:00",
+      "ends_at": "2026-11-11T22:00:00-08:00",
+      "location": "US Cricket Store, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Yuvan only. Recurring Thu.",
+      "id": "academics-rsm-2026-11-12",
+      "title": "RSM class",
+      "starts_at": "2026-11-12T15:30:00-08:00",
+      "ends_at": "2026-11-12T18:15:00-08:00",
+      "location": "RSM Milpitas",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "academics",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-11-12",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-11-12T18:00:00-08:00",
+      "ends_at": "2026-11-12T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-11-13",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-11-13T18:00:00-08:00",
+      "ends_at": "2026-11-13T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "End time TBD; shown until 7:30 PM for layout. Overlaps Friday Blazers practice.",
+      "id": "gym-toy-soldier-2026-11-13",
+      "title": "Toy Soldier gym (CrossFit)",
+      "starts_at": "2026-11-13T18:15:00-08:00",
+      "ends_at": "2026-11-13T19:30:00-08:00",
+      "location": "110 N 33rd St, San Jose",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "gym",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-14-yuvan-indus-conquest-vs-bt-warriors",
+      "title": "Indus Conquest vs BT Warriors",
+      "starts_at": "2026-11-14T07:45:00-08:00",
+      "ends_at": "2026-11-14T13:00:00-08:00",
+      "location": "Fremont Central Park, 1110-1166 Stevenson Blvd, Fremont",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-14-varun-cheetahs-beta-vs-strong-arm",
+      "title": "Cheetahs Beta vs Strong Arm",
+      "starts_at": "2026-11-14T11:45:00-08:00",
+      "ends_at": "2026-11-14T17:15:00-08:00",
+      "location": "Anthony Ochoa Middle School, 2121 Depot Rd, Hayward",
+      "people": [
+        "varun"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-14-yuvan-cheetahs-alpha-vs-indus-dukes",
+      "title": "Cheetahs Alpha vs Indus Dukes",
+      "starts_at": "2026-11-14T11:45:00-08:00",
+      "ends_at": "2026-11-14T17:15:00-08:00",
+      "location": "Fremont Central Park, 1110-1166 Stevenson Blvd, Fremont",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Sat.",
+      "id": "practice-cric-kingdom-2026-11-14",
+      "title": "Cric Kingdom",
+      "starts_at": "2026-11-14T17:15:00-08:00",
+      "ends_at": "2026-11-14T19:30:00-08:00",
+      "location": "US Cricket Store, 121 Ranch Dr, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Wed.",
+      "id": "practice-cheetahs-2026-11-18",
+      "title": "Cheetahs practice",
+      "starts_at": "2026-11-18T20:30:00-08:00",
+      "ends_at": "2026-11-18T22:00:00-08:00",
+      "location": "US Cricket Store, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Yuvan only. Recurring Thu.",
+      "id": "academics-rsm-2026-11-19",
+      "title": "RSM class",
+      "starts_at": "2026-11-19T15:30:00-08:00",
+      "ends_at": "2026-11-19T18:15:00-08:00",
+      "location": "RSM Milpitas",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "academics",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-11-19",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-11-19T18:00:00-08:00",
+      "ends_at": "2026-11-19T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-11-20",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-11-20T18:00:00-08:00",
+      "ends_at": "2026-11-20T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "End time TBD; shown until 7:30 PM for layout. Overlaps Friday Blazers practice.",
+      "id": "gym-toy-soldier-2026-11-20",
+      "title": "Toy Soldier gym (CrossFit)",
+      "starts_at": "2026-11-20T18:15:00-08:00",
+      "ends_at": "2026-11-20T19:30:00-08:00",
+      "location": "110 N 33rd St, San Jose",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "gym",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": true,
+      "source": "seed",
+      "notes": "Daily 6:00 AM–3:00 PM PT.",
+      "id": "tourn-2026-11-21-varun-amlca-u13-top-8-msca-avengers",
+      "title": "AMLCA U13 Top 8, MSCA Avengers",
+      "starts_at": "2026-11-21T06:00:00-08:00",
+      "ends_at": "2026-11-24T15:00:00-08:00",
+      "location": "Houston, TX",
+      "people": [
+        "varun"
+      ],
+      "category_id": "tournament",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": true,
+      "source": "seed",
+      "notes": "Daily 6:00 AM–3:00 PM PT.",
+      "id": "tourn-2026-11-21-yuvan-amlca-u15-top-8-msca-blazers",
+      "title": "AMLCA U15 Top 8, MSCA Blazers",
+      "starts_at": "2026-11-21T06:00:00-08:00",
+      "ends_at": "2026-11-24T15:00:00-08:00",
+      "location": "Houston, TX",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "tournament",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Game window includes 1 hour warm-up.",
+      "id": "game-2026-11-22-yuvan-indus-conquest-vs-cheetahs-gamma",
+      "title": "Indus Conquest vs Cheetahs Gamma",
+      "starts_at": "2026-11-22T07:45:00-08:00",
+      "ends_at": "2026-11-22T13:00:00-08:00",
+      "location": "Anthony Ochoa Middle School, 2121 Depot Rd, Hayward",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Wed.",
+      "id": "practice-cheetahs-2026-11-25",
+      "title": "Cheetahs practice",
+      "starts_at": "2026-11-25T20:30:00-08:00",
+      "ends_at": "2026-11-25T22:00:00-08:00",
+      "location": "US Cricket Store, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": true,
+      "source": "seed",
+      "notes": "Daily 6:00 AM–3:00 PM PT.",
+      "id": "tourn-2026-11-26-varun-nyct-u15-hycc-suns",
+      "title": "NYCT U15, HYCC Suns",
+      "starts_at": "2026-11-26T06:00:00-08:00",
+      "ends_at": "2026-11-29T15:00:00-08:00",
+      "location": "Houston, TX",
+      "people": [
+        "varun"
+      ],
+      "category_id": "tournament",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": true,
+      "source": "seed",
+      "notes": "Daily 6:00 AM–3:00 PM PT.",
+      "id": "tourn-2026-11-26-yuvan-nyct-u17-macs",
+      "title": "NYCT U17, MACS",
+      "starts_at": "2026-11-26T06:00:00-08:00",
+      "ends_at": "2026-11-29T15:00:00-08:00",
+      "location": "Houston, TX",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "tournament",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Wed.",
+      "id": "practice-cheetahs-2026-12-02",
+      "title": "Cheetahs practice",
+      "starts_at": "2026-12-02T20:30:00-08:00",
+      "ends_at": "2026-12-02T22:00:00-08:00",
+      "location": "US Cricket Store, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Yuvan only. Recurring Thu.",
+      "id": "academics-rsm-2026-12-03",
+      "title": "RSM class",
+      "starts_at": "2026-12-03T15:30:00-08:00",
+      "ends_at": "2026-12-03T18:15:00-08:00",
+      "location": "RSM Milpitas",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "academics",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-12-03",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-12-03T18:00:00-08:00",
+      "ends_at": "2026-12-03T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-12-04",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-12-04T18:00:00-08:00",
+      "ends_at": "2026-12-04T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "End time TBD; shown until 7:30 PM for layout. Overlaps Friday Blazers practice.",
+      "id": "gym-toy-soldier-2026-12-04",
+      "title": "Toy Soldier gym (CrossFit)",
+      "starts_at": "2026-12-04T18:15:00-08:00",
+      "ends_at": "2026-12-04T19:30:00-08:00",
+      "location": "110 N 33rd St, San Jose",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "gym",
+      "status": "confirmed"
+    },
+    {
+      "all_day": true,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Details TBD.",
+      "id": "game-2026-12-05-yuvan-tbd",
+      "title": "Game day (details TBD)",
+      "starts_at": "2026-12-05T00:00:00-08:00",
+      "ends_at": "2026-12-06T00:00:00-08:00",
+      "location": "",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Sat.",
+      "id": "practice-cric-kingdom-2026-12-05",
+      "title": "Cric Kingdom",
+      "starts_at": "2026-12-05T17:15:00-08:00",
+      "ends_at": "2026-12-05T19:30:00-08:00",
+      "location": "US Cricket Store, 121 Ranch Dr, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": true,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Details TBD.",
+      "id": "game-2026-12-06-varun-tbd",
+      "title": "Game day (details TBD)",
+      "starts_at": "2026-12-06T00:00:00-08:00",
+      "ends_at": "2026-12-07T00:00:00-08:00",
+      "location": "",
+      "people": [
+        "varun"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Wed.",
+      "id": "practice-cheetahs-2026-12-09",
+      "title": "Cheetahs practice",
+      "starts_at": "2026-12-09T20:30:00-08:00",
+      "ends_at": "2026-12-09T22:00:00-08:00",
+      "location": "US Cricket Store, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Yuvan only. Recurring Thu.",
+      "id": "academics-rsm-2026-12-10",
+      "title": "RSM class",
+      "starts_at": "2026-12-10T15:30:00-08:00",
+      "ends_at": "2026-12-10T18:15:00-08:00",
+      "location": "RSM Milpitas",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "academics",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-12-10",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-12-10T18:00:00-08:00",
+      "ends_at": "2026-12-10T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-12-11",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-12-11T18:00:00-08:00",
+      "ends_at": "2026-12-11T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "End time TBD; shown until 7:30 PM for layout. Overlaps Friday Blazers practice.",
+      "id": "gym-toy-soldier-2026-12-11",
+      "title": "Toy Soldier gym (CrossFit)",
+      "starts_at": "2026-12-11T18:15:00-08:00",
+      "ends_at": "2026-12-11T19:30:00-08:00",
+      "location": "110 N 33rd St, San Jose",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "gym",
+      "status": "confirmed"
+    },
+    {
+      "all_day": true,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Details TBD.",
+      "id": "game-2026-12-12-yuvan-tbd",
+      "title": "Game day (details TBD)",
+      "starts_at": "2026-12-12T00:00:00-08:00",
+      "ends_at": "2026-12-13T00:00:00-08:00",
+      "location": "",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Sat.",
+      "id": "practice-cric-kingdom-2026-12-12",
+      "title": "Cric Kingdom",
+      "starts_at": "2026-12-12T17:15:00-08:00",
+      "ends_at": "2026-12-12T19:30:00-08:00",
+      "location": "US Cricket Store, 121 Ranch Dr, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": true,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Details TBD.",
+      "id": "game-2026-12-13-varun-tbd",
+      "title": "Game day (details TBD)",
+      "starts_at": "2026-12-13T00:00:00-08:00",
+      "ends_at": "2026-12-14T00:00:00-08:00",
+      "location": "",
+      "people": [
+        "varun"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Wed.",
+      "id": "practice-cheetahs-2026-12-16",
+      "title": "Cheetahs practice",
+      "starts_at": "2026-12-16T20:30:00-08:00",
+      "ends_at": "2026-12-16T22:00:00-08:00",
+      "location": "US Cricket Store, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Yuvan only. Recurring Thu.",
+      "id": "academics-rsm-2026-12-17",
+      "title": "RSM class",
+      "starts_at": "2026-12-17T15:30:00-08:00",
+      "ends_at": "2026-12-17T18:15:00-08:00",
+      "location": "RSM Milpitas",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "academics",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-12-17",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-12-17T18:00:00-08:00",
+      "ends_at": "2026-12-17T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-12-18",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-12-18T18:00:00-08:00",
+      "ends_at": "2026-12-18T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "End time TBD; shown until 7:30 PM for layout. Overlaps Friday Blazers practice.",
+      "id": "gym-toy-soldier-2026-12-18",
+      "title": "Toy Soldier gym (CrossFit)",
+      "starts_at": "2026-12-18T18:15:00-08:00",
+      "ends_at": "2026-12-18T19:30:00-08:00",
+      "location": "110 N 33rd St, San Jose",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "gym",
+      "status": "confirmed"
+    },
+    {
+      "all_day": true,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Details TBD.",
+      "id": "game-2026-12-19-varun-tbd",
+      "title": "Game day (details TBD)",
+      "starts_at": "2026-12-19T00:00:00-08:00",
+      "ends_at": "2026-12-20T00:00:00-08:00",
+      "location": "",
+      "people": [
+        "varun"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Sat.",
+      "id": "practice-cric-kingdom-2026-12-19",
+      "title": "Cric Kingdom",
+      "starts_at": "2026-12-19T17:15:00-08:00",
+      "ends_at": "2026-12-19T19:30:00-08:00",
+      "location": "US Cricket Store, 121 Ranch Dr, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": true,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Details TBD.",
+      "id": "game-2026-12-20-yuvan-tbd",
+      "title": "Game day (details TBD)",
+      "starts_at": "2026-12-20T00:00:00-08:00",
+      "ends_at": "2026-12-21T00:00:00-08:00",
+      "location": "",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "cricket-games",
+      "status": "potential"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Wed.",
+      "id": "practice-cheetahs-2026-12-23",
+      "title": "Cheetahs practice",
+      "starts_at": "2026-12-23T20:30:00-08:00",
+      "ends_at": "2026-12-23T22:00:00-08:00",
+      "location": "US Cricket Store, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Yuvan only. Recurring Thu.",
+      "id": "academics-rsm-2026-12-24",
+      "title": "RSM class",
+      "starts_at": "2026-12-24T15:30:00-08:00",
+      "ends_at": "2026-12-24T18:15:00-08:00",
+      "location": "RSM Milpitas",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "academics",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-12-24",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-12-24T18:00:00-08:00",
+      "ends_at": "2026-12-24T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-12-25",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-12-25T18:00:00-08:00",
+      "ends_at": "2026-12-25T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "End time TBD; shown until 7:30 PM for layout. Overlaps Friday Blazers practice.",
+      "id": "gym-toy-soldier-2026-12-25",
+      "title": "Toy Soldier gym (CrossFit)",
+      "starts_at": "2026-12-25T18:15:00-08:00",
+      "ends_at": "2026-12-25T19:30:00-08:00",
+      "location": "110 N 33rd St, San Jose",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "gym",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Sat.",
+      "id": "practice-cric-kingdom-2026-12-26",
+      "title": "Cric Kingdom",
+      "starts_at": "2026-12-26T17:15:00-08:00",
+      "ends_at": "2026-12-26T19:30:00-08:00",
+      "location": "US Cricket Store, 121 Ranch Dr, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Wed.",
+      "id": "practice-cheetahs-2026-12-30",
+      "title": "Cheetahs practice",
+      "starts_at": "2026-12-30T20:30:00-08:00",
+      "ends_at": "2026-12-30T22:00:00-08:00",
+      "location": "US Cricket Store, Milpitas",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Yuvan only. Recurring Thu.",
+      "id": "academics-rsm-2026-12-31",
+      "title": "RSM class",
+      "starts_at": "2026-12-31T15:30:00-08:00",
+      "ends_at": "2026-12-31T18:15:00-08:00",
+      "location": "RSM Milpitas",
+      "people": [
+        "yuvan"
+      ],
+      "category_id": "academics",
+      "status": "confirmed"
+    },
+    {
+      "all_day": false,
+      "multi_day": false,
+      "source": "seed",
+      "notes": "Recurring Thu and Fri.",
+      "id": "practice-blazers-2026-12-31",
+      "title": "Blazers Elite Pro/Premium",
+      "starts_at": "2026-12-31T18:00:00-08:00",
+      "ends_at": "2026-12-31T21:15:00-08:00",
+      "location": "FICC Fremont",
+      "people": [
+        "yuvan",
+        "varun"
+      ],
+      "category_id": "cricket-practice",
+      "status": "confirmed"
+    }
+  ],
+  "nutrition_entries": [],
+  "training_entries": [],
+  "event_requests": [],
+  "food_memory": []
+}

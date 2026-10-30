@@ -1,0 +1,16 @@
+{
+  "name": "family-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "node scripts/generate-seed.mjs",
+    "boost": "node scripts/build-boost.mjs",
+    "start": "python3 -m http.server 4173 --directory site --bind 127.0.0.1",
+    "test:logic": "node --test tests/logic.test.js",
+    "test:ui": "playwright test",
+    "test": "npm run test:logic && npm run test:ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.1"
+  }
+}

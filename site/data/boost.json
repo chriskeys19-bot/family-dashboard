@@ -1,0 +1,2242 @@
+{
+  "version": 1,
+  "timezone": "America/Los_Angeles",
+  "epoch": "2026-01-01",
+  "note": "Bundled bank. Import into daily_content later with scripts/export-boost-sql.mjs. The app prefers that table when it has rows.",
+  "lists": {
+    "kid_quotes": [
+      {
+        "text": "You have power over your mind, not outside events. Realize this, and you will find strength.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "The happiness of your life depends upon the quality of your thoughts.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "Waste no more time arguing what a good person should be. Be one.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "Very little is needed to make a happy life; it is all within yourself, in your way of thinking.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "The best revenge is to be unlike the one who performed the injury.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "Never let the future disturb you. You will meet it with the same reason that arms you today.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "Dwell on the beauty of life. Watch the stars, and see yourself running with them.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "The soul becomes dyed with the color of its thoughts.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "If it is not right, do not do it; if it is not true, do not say it.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "Loss is nothing else but change, and change is nature’s delight.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "We suffer more often in imagination than in reality.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Luck is what happens when preparation meets opportunity.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "While we are postponing, life speeds by.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "It is not because things are difficult that we do not dare; it is because we do not dare that they are difficult.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "If one does not know to which port one is sailing, no wind is favorable.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Associate with those who will make a better person of you.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Difficulties strengthen the mind, as labor does the body.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Begin at once to live, and count each separate day as a separate life.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Men are disturbed not by things, but by the views which they take of them.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "First say to yourself what you would be; and then do what you have to do.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "No one is free who is not master of themself.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "Wealth consists not in having great possessions, but in having few wants.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "Make the best use of what is in your power, and take the rest as it happens.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "He is a wise one who does not grieve for the things which he has not, but rejoices for those which he has.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "Do not explain your philosophy. Embody it.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "A journey of a thousand miles begins with a single step.",
+        "attribution": "Laozi"
+      },
+      {
+        "text": "The unexamined life is not worth living.",
+        "attribution": "Socrates"
+      },
+      {
+        "text": "To thine own self be true.",
+        "attribution": "William Shakespeare"
+      },
+      {
+        "text": "We know what we are, but know not what we may be.",
+        "attribution": "William Shakespeare"
+      },
+      {
+        "text": "The fault, dear Brutus, is not in our stars, but in ourselves.",
+        "attribution": "William Shakespeare"
+      },
+      {
+        "text": "Love all, trust a few, do wrong to none.",
+        "attribution": "William Shakespeare"
+      },
+      {
+        "text": "Our doubts are traitors, and make us lose the good we oft might win by fearing to attempt.",
+        "attribution": "William Shakespeare"
+      },
+      {
+        "text": "Sweet are the uses of adversity.",
+        "attribution": "William Shakespeare"
+      },
+      {
+        "text": "There is nothing either good or bad, but thinking makes it so.",
+        "attribution": "William Shakespeare"
+      },
+      {
+        "text": "Give every man thy ear, but few thy voice.",
+        "attribution": "William Shakespeare"
+      },
+      {
+        "text": "How far that little candle throws his beams. So shines a good deed in a weary world.",
+        "attribution": "William Shakespeare"
+      },
+      {
+        "text": "Well done is better than well said.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Energy and persistence conquer all things.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Diligence is the mother of good luck.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Lost time is never found again.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "He that can have patience can have what he will.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Hide not your talents. They for use were made. What is a sundial in the shade?",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Either write something worth reading or do something worth writing.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Never leave that till tomorrow which you can do today.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Nothing great was ever achieved without enthusiasm.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Write it on your heart that every day is the best day in the year.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "The only way to have a friend is to be one.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Go confidently in the direction of your dreams. Live the life you have imagined.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "Things do not change; we change.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "Our life is frittered away by detail. Simplify, simplify.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "If there is no struggle, there is no progress.",
+        "attribution": "Frederick Douglass"
+      },
+      {
+        "text": "Success is to be measured not so much by the position one has reached as by the obstacles overcome.",
+        "attribution": "Booker T. Washington"
+      },
+      {
+        "text": "I am the master of my fate, I am the captain of my soul.",
+        "attribution": "William Ernest Henley"
+      },
+      {
+        "text": "Forever is composed of nows.",
+        "attribution": "Emily Dickinson"
+      },
+      {
+        "text": "Hope is the thing with feathers that perches in the soul.",
+        "attribution": "Emily Dickinson"
+      },
+      {
+        "text": "The best way out is always through.",
+        "attribution": "Robert Frost"
+      },
+      {
+        "text": "Hold fast to dreams, for if dreams die life is a broken-winged bird that cannot fly.",
+        "attribution": "Langston Hughes"
+      },
+      {
+        "text": "I am large, I contain multitudes.",
+        "attribution": "Walt Whitman"
+      },
+      {
+        "text": "Keep your face always toward the sunshine, and shadows will fall behind you.",
+        "attribution": "Walt Whitman"
+      },
+      {
+        "text": "I am not afraid of storms, for I am learning how to sail my ship.",
+        "attribution": "Louisa May Alcott"
+      },
+      {
+        "text": "I am no bird; and no net ensnares me. I am a free human being with an independent will.",
+        "attribution": "Charlotte Brontë"
+      },
+      {
+        "text": "What do we live for, if it is not to make life less difficult for each other?",
+        "attribution": "George Eliot"
+      },
+      {
+        "text": "We are all in the gutter, but some of us are looking at the stars.",
+        "attribution": "Oscar Wilde"
+      },
+      {
+        "text": "Experience is simply the name we give our mistakes.",
+        "attribution": "Oscar Wilde"
+      },
+      {
+        "text": "If you tell the truth, you do not have to remember anything.",
+        "attribution": "Mark Twain"
+      },
+      {
+        "text": "The man who does not read has no advantage over the man who cannot read.",
+        "attribution": "Mark Twain"
+      },
+      {
+        "text": "Do what you can, with what you have, where you are.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "It is not the critic who counts; the credit belongs to the one who is actually in the arena.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "With malice toward none, with charity for all.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "I am not bound to win, but I am bound to be true.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "Truth is powerful and it prevails.",
+        "attribution": "Sojourner Truth"
+      },
+      {
+        "text": "Life is either a daring adventure or nothing at all.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "Alone we can do so little; together we can do so much.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "Optimism is the faith that leads to achievement.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "The best and most beautiful things in the world cannot be seen or even touched. They must be felt with the heart.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "No one can make you feel inferior without your consent.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "You must do the thing you think you cannot do.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "People will forget what you said and what you did, but never how you made them feel.",
+        "attribution": "Maya Angelou"
+      },
+      {
+        "text": "You may encounter many defeats, but you must not be defeated.",
+        "attribution": "Maya Angelou"
+      },
+      {
+        "text": "Try to be a rainbow in someone else’s cloud.",
+        "attribution": "Maya Angelou"
+      },
+      {
+        "text": "If you do not like something, change it. If you cannot change it, change your attitude.",
+        "attribution": "Maya Angelou"
+      },
+      {
+        "text": "Do the best you can until you know better. Then when you know better, do better.",
+        "attribution": "Maya Angelou"
+      },
+      {
+        "text": "Courage is the most important of the virtues, because without courage you cannot practice any other virtue consistently.",
+        "attribution": "Maya Angelou"
+      },
+      {
+        "text": "Nothing will work unless you do.",
+        "attribution": "Maya Angelou"
+      },
+      {
+        "text": "How wonderful it is that nobody need wait a single moment before starting to improve the world.",
+        "attribution": "Anne Frank"
+      },
+      {
+        "text": "Whoever is happy will make others happy too.",
+        "attribution": "Anne Frank"
+      },
+      {
+        "text": "I do not think of all the misery, but of the beauty that still remains.",
+        "attribution": "Anne Frank"
+      },
+      {
+        "text": "Injustice anywhere is a threat to justice everywhere.",
+        "attribution": "Martin Luther King Jr."
+      },
+      {
+        "text": "The time is always right to do what is right.",
+        "attribution": "Martin Luther King Jr."
+      },
+      {
+        "text": "Darkness cannot drive out darkness; only light can do that. Hate cannot drive out hate; only love can do that.",
+        "attribution": "Martin Luther King Jr."
+      },
+      {
+        "text": "If you cannot fly then run, if you cannot run then walk, if you cannot walk then crawl, but keep moving forward.",
+        "attribution": "Martin Luther King Jr."
+      },
+      {
+        "text": "Life’s most persistent and urgent question is, what are you doing for others?",
+        "attribution": "Martin Luther King Jr."
+      },
+      {
+        "text": "Education is the most powerful weapon which you can use to change the world.",
+        "attribution": "Nelson Mandela"
+      },
+      {
+        "text": "It always seems impossible until it is done.",
+        "attribution": "Nelson Mandela"
+      },
+      {
+        "text": "One child, one teacher, one book, and one pen can change the world.",
+        "attribution": "Malala Yousafzai"
+      },
+      {
+        "text": "We realize the importance of our voices only when we are silenced.",
+        "attribution": "Malala Yousafzai"
+      },
+      {
+        "text": "When they go low, we go high.",
+        "attribution": "Michelle Obama"
+      },
+      {
+        "text": "There is no limit to what we, as women, can accomplish.",
+        "attribution": "Michelle Obama"
+      },
+      {
+        "text": "You have brains in your head. You have feet in your shoes. You can steer yourself any direction you choose.",
+        "attribution": "Dr. Seuss"
+      },
+      {
+        "text": "Today you are you, that is truer than true. There is no one alive who is you-er than you.",
+        "attribution": "Dr. Seuss"
+      },
+      {
+        "text": "All we have to decide is what to do with the time that is given us.",
+        "attribution": "J. R. R. Tolkien"
+      },
+      {
+        "text": "Courage is not simply one of the virtues but the form of every virtue at the testing point.",
+        "attribution": "C. S. Lewis"
+      },
+      {
+        "text": "Isn’t it nice to think that tomorrow is a new day with no mistakes in it yet?",
+        "attribution": "L. M. Montgomery"
+      },
+      {
+        "text": "It has been my experience that you can nearly always enjoy things if you make up your mind firmly that you will.",
+        "attribution": "L. M. Montgomery"
+      },
+      {
+        "text": "All that you touch you change. All that you change changes you.",
+        "attribution": "Octavia E. Butler"
+      },
+      {
+        "text": "You are your best thing.",
+        "attribution": "Toni Morrison"
+      },
+      {
+        "text": "If you have some power, then your job is to empower somebody else.",
+        "attribution": "Toni Morrison"
+      },
+      {
+        "text": "Not everything that is faced can be changed, but nothing can be changed until it is faced.",
+        "attribution": "James Baldwin"
+      },
+      {
+        "text": "Your silence will not protect you.",
+        "attribution": "Audre Lorde"
+      },
+      {
+        "text": "Do not let what you cannot do interfere with what you can do.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Make each day your masterpiece.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Be more concerned with your character than your reputation.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Success is peace of mind from knowing you made the effort to become the best of which you are capable.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "I have failed over and over and over again in my life. And that is why I succeed.",
+        "attribution": "Michael Jordan"
+      },
+      {
+        "text": "Everything negative — pressure, challenges — is all an opportunity for me to rise.",
+        "attribution": "Kobe Bryant"
+      },
+      {
+        "text": "Perfection is not attainable, but if we chase perfection we can catch excellence.",
+        "attribution": "Vince Lombardi"
+      },
+      {
+        "text": "Get in good trouble, necessary trouble.",
+        "attribution": "John Lewis"
+      },
+      {
+        "text": "Look for the helpers.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "Often when you think you are at the end of something, you are at the beginning of something else.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "There are three ways to ultimate success. Be kind. Be kind. Be kind.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "Be kind whenever possible. It is always possible.",
+        "attribution": "Dalai Lama"
+      },
+      {
+        "text": "Happiness is not something ready made. It comes from your own actions.",
+        "attribution": "Dalai Lama"
+      },
+      {
+        "text": "Do your little bit of good where you are; it is those little bits of good put together that overwhelm the world.",
+        "attribution": "Desmond Tutu"
+      },
+      {
+        "text": "Hope is being able to see that there is light despite all of the darkness.",
+        "attribution": "Desmond Tutu"
+      },
+      {
+        "text": "Because you are alive, everything is possible.",
+        "attribution": "Thich Nhat Hanh"
+      },
+      {
+        "text": "You are the sky. Everything else is just the weather.",
+        "attribution": "Pema Chödrön"
+      },
+      {
+        "text": "Life is like riding a bicycle. To keep your balance, you must keep moving.",
+        "attribution": "Albert Einstein"
+      },
+      {
+        "text": "I have no special talent. I am only passionately curious.",
+        "attribution": "Albert Einstein"
+      },
+      {
+        "text": "Act as if what you do makes a difference. It does.",
+        "attribution": "William James"
+      },
+      {
+        "text": "Becoming is better than being.",
+        "attribution": "Carol Dweck"
+      },
+      {
+        "text": "Enthusiasm is common. Endurance is rare.",
+        "attribution": "Angela Duckworth"
+      },
+      {
+        "text": "Grit is passion and perseverance for long-term goals.",
+        "attribution": "Angela Duckworth"
+      },
+      {
+        "text": "Tell me, what is it you plan to do with your one wild and precious life?",
+        "attribution": "Mary Oliver"
+      },
+      {
+        "text": "Fight for the things that you care about, but do it in a way that will lead others to join you.",
+        "attribution": "Ruth Bader Ginsburg"
+      },
+      {
+        "text": "Real change, enduring change, happens one step at a time.",
+        "attribution": "Ruth Bader Ginsburg"
+      },
+      {
+        "text": "I have learned over the years that when one’s mind is made up, this diminishes fear.",
+        "attribution": "Rosa Parks"
+      },
+      {
+        "text": "Sí, se puede.",
+        "attribution": "Dolores Huerta"
+      },
+      {
+        "text": "Every moment is an organizing opportunity, every person a potential activist, every minute a chance to change the world.",
+        "attribution": "Dolores Huerta"
+      },
+      {
+        "text": "In a gentle way, you can shake the world.",
+        "attribution": "Mahatma Gandhi"
+      },
+      {
+        "text": "There is no charm equal to tenderness of heart.",
+        "attribution": "Jane Austen"
+      },
+      {
+        "text": "Adopt the pace of nature: her secret is patience.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Nothing can bring you peace but yourself.",
+        "attribution": "Ralph Waldo Emerson"
+      }
+    ],
+    "jokes": [
+      {
+        "text": "My cricket bat said we should see other people. I said, “You are the one who keeps getting caught.”"
+      },
+      {
+        "text": "I asked the scoreboard for advice. It said, “I only count. I do not cope.”"
+      },
+      {
+        "text": "Warm-up was one hour. My motivation clocked out at minute four."
+      },
+      {
+        "text": "The ball and I are in a situationship. It leaves every time I commit."
+      },
+      {
+        "text": "Coach said “touch the ball.” I did. Emotionally."
+      },
+      {
+        "text": "I told my shoes we were going for a run. They filed a complaint."
+      },
+      {
+        "text": "My easy run looked at the word easy and requested a translator."
+      },
+      {
+        "text": "Intervals are just arguing with yourself in public, but with cones."
+      },
+      {
+        "text": "I ran 800 meters. My dignity did 400 and sat down."
+      },
+      {
+        "text": "The stopwatch is the only friend who tells me the truth."
+      },
+      {
+        "text": "I said I was tempo-ing. The pace said, “That is a creative choice.”"
+      },
+      {
+        "text": "My water bottle is the real captain. I am just holding the bib."
+      },
+      {
+        "text": "Caught behind? More like caught lacking."
+      },
+      {
+        "text": "I packed my kit so well I forgot the kit."
+      },
+      {
+        "text": "The boundary rope and I have the same job: look useful, get stepped on."
+      },
+      {
+        "text": "I asked for a yorker. Life bowled a full toss at my plans."
+      },
+      {
+        "text": "Stumps, but make it a metaphor for my homework."
+      },
+      {
+        "text": "I told the pitch I was ready. It said, “We will see after the warm-up.”"
+      },
+      {
+        "text": "My running watch congratulated me for standing up. Growth."
+      },
+      {
+        "text": "Race day nerves showed up early and brought snacks. Rude, but prepared."
+      },
+      {
+        "text": "I do not chase the ball. We have a mutual agreement to miss each other."
+      },
+      {
+        "text": "The slip cordon is just a group chat with better posture."
+      },
+      {
+        "text": "I named my bat “Please.” As in, please go where I aimed."
+      },
+      {
+        "text": "Leg side? I do not know her."
+      },
+      {
+        "text": "I tried to be a all-rounder. I became a all-around-confused."
+      },
+      {
+        "text": "My catch was so clean the ball asked for a towel."
+      },
+      {
+        "text": "I said “mine.” The ball said, “Citation needed.”"
+      },
+      {
+        "text": "Homework and homework have never been the same word in my house."
+      },
+      {
+        "text": "The group project named itself after me and then did none of the work. Uncanny."
+      },
+      {
+        "text": "I opened the textbook. We both decided to see other people."
+      },
+      {
+        "text": "My calculator and I agree: this problem is a them issue."
+      },
+      {
+        "text": "I studied so hard my notes asked for a break."
+      },
+      {
+        "text": "Pop quiz is just a jumpscare for people with backpacks."
+      },
+      {
+        "text": "I raised my hand and immediately forgot every language."
+      },
+      {
+        "text": "The bell does not dismiss us. It rescues us."
+      },
+      {
+        "text": "My locker combination is 0-0-0 because that is also my energy."
+      },
+      {
+        "text": "I told my planner the truth. It closed itself."
+      },
+      {
+        "text": "Extra credit is a beautiful theory, like unicorns and eight hours of sleep."
+      },
+      {
+        "text": "I did the reading. The reading did not do me back."
+      },
+      {
+        "text": "My essay has a thesis: I would like to go home."
+      },
+      {
+        "text": "The cafeteria pizza has seen things. I respect it."
+      },
+      {
+        "text": "I asked for fruit. They handed me a rumor of a melon."
+      },
+      {
+        "text": "My lunch and first period have a custody agreement."
+      },
+      {
+        "text": "Dal for the soul, rice for the morale, and a napkin for the evidence."
+      },
+      {
+        "text": "I told the roti it was famous in this house. It still showed up late."
+      },
+      {
+        "text": "Snack time is my most consistent sport."
+      },
+      {
+        "text": "I do not meal-prep. I meal-hope."
+      },
+      {
+        "text": "The banana in my bag has entered its final season."
+      },
+      {
+        "text": "I logged “food.” The app said, “Bold of you to summarize.”"
+      },
+      {
+        "text": "My protein shake tasted like a decision."
+      },
+      {
+        "text": "Breakfast is a concept I support and rarely attend."
+      },
+      {
+        "text": "I put the leftovers in a container called “tomorrow’s problem.”"
+      },
+      {
+        "text": "The fridge light is the only one who checks on me."
+      },
+      {
+        "text": "I asked Gemini what I ate. My plate said, “Do not snitch.”"
+      },
+      {
+        "text": "Seconds are a love language. So is not talking during them."
+      },
+      {
+        "text": "My alarm and I are in mediation."
+      },
+      {
+        "text": "Snooze is a peace treaty with a nine-minute term."
+      },
+      {
+        "text": "I woke up early. My personality will arrive later."
+      },
+      {
+        "text": "Monday looked at my calendar and laughed in Pacific Time."
+      },
+      {
+        "text": "I set seven alarms. Six of them are emotional support."
+      },
+      {
+        "text": "My bed made a better offer than first period. I took the meeting."
+      },
+      {
+        "text": "I am not late. I am on a dramatic entrance arc."
+      },
+      {
+        "text": "The bus left. Character development stayed."
+      },
+      {
+        "text": "I told my mom five more minutes. That was a fictional genre."
+      },
+      {
+        "text": "Sleep is my longest relationship and we are going through something."
+      },
+      {
+        "text": "I dreamed I finished the assignment. Rude of my brain to lie like that."
+      },
+      {
+        "text": "My pillow has tenure. I do not."
+      },
+      {
+        "text": "I charged my phone to 100 and my will to live to 14."
+      },
+      {
+        "text": "Low battery is my only honest status."
+      },
+      {
+        "text": "I opened one tab. It invited twenty-nine relatives."
+      },
+      {
+        "text": "My screen time report is a horror novel I starred in."
+      },
+      {
+        "text": "I put the phone down. It waited. It knows my patterns."
+      },
+      {
+        "text": "Autocorrect has been roasting me since sixth grade."
+      },
+      {
+        "text": "I typed “on my way” from the couch. A bold artistic choice."
+      },
+      {
+        "text": "The group chat moves faster than any bowler I have faced."
+      },
+      {
+        "text": "I left them on read because I was buffering as a person."
+      },
+      {
+        "text": "My camera roll is 40 percent sky and 60 percent regret."
+      },
+      {
+        "text": "I took a photo of the board and called it studying."
+      },
+      {
+        "text": "Notifications are just people knocking on a door I installed."
+      },
+      {
+        "text": "I renamed the group chat “do not.” It did."
+      },
+      {
+        "text": "My friend said “pull up.” I pulled up my blanket."
+      },
+      {
+        "text": "We said “one game.” The tutorial was a lifestyle."
+      },
+      {
+        "text": "I paused the match for water and returned a different person."
+      },
+      {
+        "text": "Ranked mode is just feelings with a leaderboard."
+      },
+      {
+        "text": "I told my duo I had them. My wifi had other plans."
+      },
+      {
+        "text": "Lag is my unofficial teammate. It never passes."
+      },
+      {
+        "text": "I spectated my own decision-making. One star."
+      },
+      {
+        "text": "The final circle and my homework had the same energy: closing in."
+      },
+      {
+        "text": "I said “last match” the way people say “last episode.”"
+      },
+      {
+        "text": "My highlight reel is mostly me walking back."
+      },
+      {
+        "text": "I high-fived the air. The air was neutral about it."
+      },
+      {
+        "text": "Team talk was “communicate.” We communicated panic."
+      },
+      {
+        "text": "I stretched so hard I pulled a principle."
+      },
+      {
+        "text": "My cool-down was a philosophical position."
+      },
+      {
+        "text": "I told the hill we could be friends. The hill said, “Run that by me again.”"
+      },
+      {
+        "text": "800 meters is a short distance for a long conversation with your lungs."
+      },
+      {
+        "text": "I negative-split the run and the excuse."
+      },
+      {
+        "text": "My shoes retired before I did. They left a note: “blisters.”"
+      },
+      {
+        "text": "I hydrated. That is the whole brag and I am keeping it."
+      },
+      {
+        "text": "The finish line and I made eye contact. It looked away first."
+      },
+      {
+        "text": "I PR’d my walk to the start."
+      },
+      {
+        "text": "Coach said dig deep. I found a playlist and a grievance."
+      },
+      {
+        "text": "My hamstring sent a calendar invite called “no.”"
+      },
+      {
+        "text": "I am not sore. I am marinating."
+      },
+      {
+        "text": "Rest day is a tactical masterclass I keep meaning to attend."
+      },
+      {
+        "text": "I iced the ankle and the drama. Only one of them improved."
+      },
+      {
+        "text": "The foam roller and I are not on speaking terms."
+      },
+      {
+        "text": "I said I would do strides. I did one. It was away from the track."
+      },
+      {
+        "text": "My race plan survived until the gun. Then it became folklore."
+      },
+      {
+        "text": "I told my little brother I was fast. He asked, “Compared to what, a slideshow?”"
+      },
+      {
+        "text": "Sibling tax is real. It is collected in snacks and secrets."
+      },
+      {
+        "text": "We share a room, a charger, and exactly one brain cell. It is his today."
+      },
+      {
+        "text": "I called shotgun. The car called my bluff and made me sit middle."
+      },
+      {
+        "text": "Family group chat: four people, nineteen unanswered logistics."
+      },
+      {
+        "text": "I said “nothing” when asked what happened. A complete documentary."
+      },
+      {
+        "text": "My explanation had three acts and no point. Cinema."
+      },
+      {
+        "text": "I promised I would be ready. A fictional collaboration."
+      },
+      {
+        "text": "The GPS said nine minutes. My family heard “leave yesterday.”"
+      },
+      {
+        "text": "I found my other shoe. It was in the other shoe’s emotional radius."
+      },
+      {
+        "text": "We left on time once. Historians are divided."
+      },
+      {
+        "text": "I told the truth, then added context, then became a podcast."
+      },
+      {
+        "text": "My badge of honor is a grass stain and a finished worksheet. Mixed legacy."
+      },
+      {
+        "text": "I waved at a teammate. It was a stranger. We are close now, spiritually."
+      },
+      {
+        "text": "The sunset during practice was doing the most. I still had to run."
+      },
+      {
+        "text": "I asked the mountain for perspective. It said, “You are small. Also, hurry.”"
+      },
+      {
+        "text": "If confidence were runs, I would be not out. On a technicality."
+      },
+      {
+        "text": "I am not lost. I am taking the scenic route to the right answer."
+      },
+      {
+        "text": "My motto: show up, tie the shoes, apologize to the lungs later."
+      }
+    ],
+    "parent_quotes": [
+      {
+        "text": "When you arise in the morning, think of what a precious privilege it is to be alive, to breathe, to think, to enjoy, to love.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "Accept the things to which fate binds you, and love the people with whom fate brings you together.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "The mind adapts and converts to its own purposes the obstacle to our acting.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "You could leave life right now. Let that determine what you do and say and think.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "Receive without pride, let go without attachment.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "How much more grievous are the consequences of anger than the causes of it.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "The best answer to anger is silence.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "Dig within. Within is the wellspring of good.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "Look well into thyself; there is a source of strength which will always spring up if thou wilt always look.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "A person’s worth is no greater than the worth of their ambitions.",
+        "attribution": "Marcus Aurelius"
+      },
+      {
+        "text": "He who is brave is free.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Sometimes even to live is an act of courage.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "As long as you live, keep learning how to live.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "It is quality rather than quantity that matters.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Hang on to your youthful enthusiasms. You will be able to use them better when you are older.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "One of the most beautiful qualities of true friendship is to understand and to be understood.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "If you really want to escape the things that harass you, what you need is not to be in a different place but to be a different person.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Enjoy present pleasures in such a way as not to injure future ones.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Only time can heal what reason cannot.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "It is a rough road that leads to the heights of greatness.",
+        "attribution": "Seneca"
+      },
+      {
+        "text": "Seek not that the things which happen should happen as you wish; but wish the things which happen to be as they are.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "Any person capable of angering you becomes your master.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "It is not what happens to you, but how you react to it that matters.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "Freedom is the only worthy goal in life. It is won by disregarding things that lie beyond our control.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "Circumstances do not make the person; they reveal them.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "No great thing is created suddenly.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "Caretake this moment. Immerse yourself in its particulars.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "Know, first, who you are, and then adorn yourself accordingly.",
+        "attribution": "Epictetus"
+      },
+      {
+        "text": "Your children are not your children. They are the sons and daughters of Life’s longing for itself.",
+        "attribution": "Kahlil Gibran"
+      },
+      {
+        "text": "You may give them your love but not your thoughts, for they have their own thoughts.",
+        "attribution": "Kahlil Gibran"
+      },
+      {
+        "text": "You are the bows from which your children as living arrows are sent forth.",
+        "attribution": "Kahlil Gibran"
+      },
+      {
+        "text": "You may strive to be like them, but seek not to make them like you.",
+        "attribution": "Kahlil Gibran"
+      },
+      {
+        "text": "Work is love made visible.",
+        "attribution": "Kahlil Gibran"
+      },
+      {
+        "text": "And when you work with love you bind yourself to yourself, and to one another, and to God.",
+        "attribution": "Kahlil Gibran"
+      },
+      {
+        "text": "If you cannot work with love but only with distaste, it is better that you should leave your work.",
+        "attribution": "Kahlil Gibran"
+      },
+      {
+        "text": "The most beautiful people we have known are those who have known defeat, known suffering, known struggle, known loss, and have found their way out of the depths.",
+        "attribution": "Elisabeth Kübler-Ross"
+      },
+      {
+        "text": "People are like stained-glass windows. They sparkle and shine when the sun is out, but when the darkness sets in, their true beauty is revealed only if there is a light from within.",
+        "attribution": "Elisabeth Kübler-Ross"
+      },
+      {
+        "text": "There are three ways to ultimate success: The first way is to be kind. The second way is to be kind. The third way is to be kind.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "Anyone who does anything to help a child is a hero to me.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "When I was a boy and I would see scary things in the news, my mother would say to me, look for the helpers.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "Love isn’t a state of perfect caring. It is an active noun like struggle.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "There is no normal life that is free of pain. We can choose to be grateful for the hard lessons.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "Little by little we human beings are confronted with situations that give us more and more clues that we are not perfect.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "Parents are like shuttles on a loom. They join the threads of the past with threads of the future and leave their own bright patterns as they go.",
+        "attribution": "Fred Rogers"
+      },
+      {
+        "text": "The days are long, but the years are short.",
+        "attribution": "Gretchen Rubin"
+      },
+      {
+        "text": "What we do every day matters more than what we do once in a while.",
+        "attribution": "Gretchen Rubin"
+      },
+      {
+        "text": "Outer order contributes to inner calm.",
+        "attribution": "Gretchen Rubin"
+      },
+      {
+        "text": "Things turn out best for the people who make the best of the way things turn out.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Do not let what you cannot do interfere with what you can do.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Be true to yourself. Make each day a masterpiece. Help others. Drink deeply from good books. Make friendship a fine art. Build a shelter against a rainy day.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Ability may get you to the top, but it takes character to keep you there.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Failing to prepare is preparing to fail.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Never mistake activity for achievement.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "It is amazing how much can be accomplished if no one cares who gets the credit.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Discipline yourself, and others will not need to.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "Be more concerned with your character than your reputation, because your character is what you really are.",
+        "attribution": "John Wooden"
+      },
+      {
+        "text": "The only place success comes before work is in the dictionary.",
+        "attribution": "Vince Lombardi"
+      },
+      {
+        "text": "The quality of a person’s life is in direct proportion to their commitment to excellence.",
+        "attribution": "Vince Lombardi"
+      },
+      {
+        "text": "The harder you work, the harder it is to surrender.",
+        "attribution": "Vince Lombardi"
+      },
+      {
+        "text": "Individual commitment to a group effort — that is what makes a team work.",
+        "attribution": "Vince Lombardi"
+      },
+      {
+        "text": "The difference between a successful person and others is not a lack of strength, not a lack of knowledge, but rather a lack of will.",
+        "attribution": "Vince Lombardi"
+      },
+      {
+        "text": "The only thing we have to fear is fear itself.",
+        "attribution": "Franklin D. Roosevelt"
+      },
+      {
+        "text": "The only limit to our realization of tomorrow will be our doubts of today.",
+        "attribution": "Franklin D. Roosevelt"
+      },
+      {
+        "text": "Happiness lies not in the mere possession of money; it lies in the joy of achievement, in the thrill of creative effort.",
+        "attribution": "Franklin D. Roosevelt"
+      },
+      {
+        "text": "Happiness lies in the joy of achievement and the thrill of creative effort.",
+        "attribution": "Franklin D. Roosevelt"
+      },
+      {
+        "text": "Far and away the best prize that life offers is the chance to work hard at work worth doing.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "It is only through labor and painful effort, by grim energy and resolute courage, that we move on to better things.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "Do what you can, with what you have, where you are.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "I am a part of everything that I have read.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "Keep your eyes on the stars and your feet on the ground.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "It is hard to fail, but it is worse never to have tried to succeed.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "Nine-tenths of wisdom consists in being wise in time.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "With self-discipline most anything is possible.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "Speak softly and carry a big stick.",
+        "attribution": "Theodore Roosevelt"
+      },
+      {
+        "text": "I am not bound to win, but I am bound to be true. I am not bound to succeed, but I am bound to live up to what light I have.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "Those who deny freedom to others deserve it not for themselves.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "I do the very best I know how — the very best I can; and I mean to keep doing so until the end.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "With malice toward none; with charity for all; with firmness in the right.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "Nearly all men can stand adversity, but if you want to test a man’s character, give him power.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "I do the very best I know how, the very best I can, and I mean to keep on doing so until the end.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "The probability that we may fail in the struggle ought not to deter us from the support of a cause we believe to be just.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "Let us have faith that right makes might.",
+        "attribution": "Abraham Lincoln"
+      },
+      {
+        "text": "Early to bed and early to rise makes a man healthy, wealthy, and wise.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "There are no gains without pains.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Dost thou love life? Then do not squander time, for that is the stuff life is made of.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Lost time is never found again.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Well done is better than well said.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Energy and persistence conquer all things.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "He that can have patience can have what he will.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Never leave that till tomorrow which you can do today.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "An ounce of prevention is worth a pound of cure.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "Glass, china, and reputation are easily cracked, and never well mended.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "If you would not be forgotten as soon as you are dead and rotten, either write things worth reading, or do things worth the writing.",
+        "attribution": "Benjamin Franklin"
+      },
+      {
+        "text": "What you do speaks so loudly that I cannot hear what you say.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "The reward of a thing well done is to have done it.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Finish each day and be done with it. You have done what you could.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Our chief want is someone who will inspire us to be what we know we could be.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Do not be too timid and squeamish about your actions. All life is an experiment.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Every artist was first an amateur.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Patience and fortitude conquer all things.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Without ambition one starts nothing. Without work one finishes nothing.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "The years teach much which the days never know.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Nothing great was ever achieved without enthusiasm.",
+        "attribution": "Ralph Waldo Emerson"
+      },
+      {
+        "text": "Success usually comes to those who are too busy to be looking for it.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "It is not enough to be busy. So are the ants. The question is: what are we busy about?",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "If you have built castles in the air, your work need not be lost; that is where they should be. Now put the foundations under them.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "Be not simply good; be good for something.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "This world is but a canvas to our imagination.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "Live the life you have imagined.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "Aim above morality. Be not simply good; be good for something.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "If one advances confidently in the direction of his dreams, he will meet with a success unexpected in common hours.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "Our life is frittered away by detail. Simplify, simplify.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "Things do not change; we change.",
+        "attribution": "Henry David Thoreau"
+      },
+      {
+        "text": "I find the great thing in this world is not so much where we stand, as in what direction we are moving.",
+        "attribution": "Oliver Wendell Holmes Jr."
+      },
+      {
+        "text": "A mind that is stretched by a new experience can never go back to its old dimensions.",
+        "attribution": "Oliver Wendell Holmes Jr."
+      },
+      {
+        "text": "We must sail sometimes with the wind and sometimes against it, but we must sail, and not drift, nor lie at anchor.",
+        "attribution": "Oliver Wendell Holmes Jr."
+      },
+      {
+        "text": "The greatest thing in the world is not so much where we stand as in what direction we are moving.",
+        "attribution": "Oliver Wendell Holmes Jr."
+      },
+      {
+        "text": "I long to accomplish a great and noble task, but it is my chief duty to accomplish small tasks as if they were great and noble.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "Character cannot be developed in ease and quiet. Only through experience of trial and suffering can the soul be strengthened.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "We could never learn to be brave and patient, if there were only joy in the world.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "Although the world is full of suffering, it is also full of the overcoming of it.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "Keep your face to the sunshine and you cannot see a shadow.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "We can do anything we want if we stick to it long enough.",
+        "attribution": "Helen Keller"
+      },
+      {
+        "text": "You gain strength, courage, and confidence by every experience in which you really stop to look fear in the face.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "It takes as much energy to wish as it does to plan.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "Do what you feel in your heart to be right, for you will be criticized anyway.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "No one can make you feel inferior without your consent.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "It is not fair to ask of others what you are not willing to do yourself.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "You must do the thing you think you cannot do.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "Do what you feel in your heart to be right — for you will be criticized anyway.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "With the new day comes new strength and new thoughts.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "People grow through experience if they meet life honestly and courageously.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "Friendship with oneself is all-important, because without it one cannot be friends with anyone else.",
+        "attribution": "Eleanor Roosevelt"
+      },
+      {
+        "text": "I have learned over the years that when one’s mind is made up, this diminishes fear.",
+        "attribution": "Rosa Parks"
+      },
+      {
+        "text": "You must never be fearful about what you are doing when it is right.",
+        "attribution": "Rosa Parks"
+      },
+      {
+        "text": "Each person must live their life as a model for others.",
+        "attribution": "Rosa Parks"
+      },
+      {
+        "text": "Have a vision. Be demanding.",
+        "attribution": "Rosa Parks"
+      }
+    ],
+    "calm": [
+      {
+        "text": "You do not have to solve it in the doorway."
+      },
+      {
+        "text": "Breathe once before you answer."
+      },
+      {
+        "text": "A quieter voice lands further."
+      },
+      {
+        "text": "This feeling is a visitor, not a verdict."
+      },
+      {
+        "text": "You can be firm and still be kind."
+      },
+      {
+        "text": "Step outside for thirty seconds if you need them."
+      },
+      {
+        "text": "Their tone is information, not a threat."
+      },
+      {
+        "text": "You are allowed to pause the conversation."
+      },
+      {
+        "text": "Repair later still counts."
+      },
+      {
+        "text": "Steady is more useful than perfect."
+      },
+      {
+        "text": "You can say “not right now” and mean it warmly."
+      },
+      {
+        "text": "Nobody needs a speech at the curb."
+      },
+      {
+        "text": "Put the point in one sentence, then stop."
+      },
+      {
+        "text": "Hunger and fatigue wear an attitude costume."
+      },
+      {
+        "text": "You already showed up today. That is the job."
+      },
+      {
+        "text": "Match their volume down, not up."
+      },
+      {
+        "text": "A glass of water is a legitimate pause."
+      },
+      {
+        "text": "You can love them and still dislike this moment."
+      },
+      {
+        "text": "The group chat can wait until the ride is over."
+      },
+      {
+        "text": "Sit down before you decide."
+      },
+      {
+        "text": "You do not have to win the argument to keep the relationship."
+      },
+      {
+        "text": "Tomorrow’s version of you can finish this talk."
+      },
+      {
+        "text": "Notice your jaw. Unclench it."
+      },
+      {
+        "text": "One kind sentence beats five correct ones."
+      },
+      {
+        "text": "You are the weather they come home to. Choose a mild front."
+      },
+      {
+        "text": "Ask if they want help or a listener."
+      },
+      {
+        "text": "Silence in the car is not failure."
+      },
+      {
+        "text": "You can leave the room and come back kinder."
+      },
+      {
+        "text": "Their eye roll is a reflex, not a ruling."
+      },
+      {
+        "text": "Protect the evening. Not every issue is tonight’s issue."
+      },
+      {
+        "text": "You are allowed to not know yet."
+      },
+      {
+        "text": "A short walk resets more than a long lecture."
+      },
+      {
+        "text": "Say the feeling you have, not the case you are building."
+      },
+      {
+        "text": "You can be disappointed without being dangerous."
+      },
+      {
+        "text": "Lower the lights, lower the stakes."
+      },
+      {
+        "text": "They are learning with a half-built brain. So are you, some days."
+      },
+      {
+        "text": "Do not text the verdict. Say it in person, briefly."
+      },
+      {
+        "text": "You can hold the limit and hold their hand."
+      },
+      {
+        "text": "If you are flooded, postpone. Name the time you will return."
+      },
+      {
+        "text": "The scoreboard is not the relationship."
+      },
+      {
+        "text": "You do not need a new system tonight."
+      },
+      {
+        "text": "Warm dinner first. Hard topic second, if at all."
+      },
+      {
+        "text": "You can admire their effort without inflating it."
+      },
+      {
+        "text": "Apologize for your tone without surrendering the boundary."
+      },
+      {
+        "text": "Feet on the floor. Then the next sentence."
+      },
+      {
+        "text": "You are not behind. You are in the middle of a long game."
+      },
+      {
+        "text": "Let the first reply be “I hear you.”"
+      },
+      {
+        "text": "You can decline the bait and keep the love."
+      },
+      {
+        "text": "A messy room is not a moral failure."
+      },
+      {
+        "text": "Save the debrief for when everyone has eaten."
+      },
+      {
+        "text": "You can be proud of them in this exact ordinary hour."
+      },
+      {
+        "text": "Do not borrow tomorrow’s panic."
+      },
+      {
+        "text": "Your calm is a gift they can borrow."
+      },
+      {
+        "text": "Speak slower than you feel."
+      },
+      {
+        "text": "You can ask for a replay: “Say that another way?”"
+      },
+      {
+        "text": "The door can close without a slam."
+      },
+      {
+        "text": "You have survived every one of their ages so far."
+      },
+      {
+        "text": "Choose curiosity over cross-examination."
+      },
+      {
+        "text": "You can let a joke land before the correction."
+      },
+      {
+        "text": "Rest is part of parenting, not a prize after it."
+      },
+      {
+        "text": "You do not have to narrate their whole character from one mistake."
+      },
+      {
+        "text": "Touch their shoulder before you touch the topic."
+      },
+      {
+        "text": "You can be the adult who ends the loop."
+      },
+      {
+        "text": "Nighttime brains exaggerate. Morning brains edit."
+      },
+      {
+        "text": "You are allowed to laugh at the absurdity."
+      },
+      {
+        "text": "Keep your promise small enough to keep."
+      },
+      {
+        "text": "You can say “I need a minute” and take it."
+      },
+      {
+        "text": "Their friends matter. You still do too."
+      },
+      {
+        "text": "Do not perform patience. Practice a shorter sentence."
+      },
+      {
+        "text": "You can trust that love is still in the room when voices rise."
+      },
+      {
+        "text": "Put your phone face down while they talk."
+      },
+      {
+        "text": "You can let them save face and still hold the line."
+      },
+      {
+        "text": "The goal is a kid who comes back, not a kid who loses."
+      },
+      {
+        "text": "You are modeling how to be human under pressure."
+      },
+      {
+        "text": "A snack is sometimes the whole intervention."
+      },
+      {
+        "text": "You can thank them for telling you the hard part."
+      },
+      {
+        "text": "Leave one unsaid criticism in the drawer."
+      },
+      {
+        "text": "You do not have to match their urgency."
+      },
+      {
+        "text": "Soft eyes. Clear rule."
+      },
+      {
+        "text": "You can start over in the same conversation."
+      },
+      {
+        "text": "Remember the child who used to reach up. They still need you, sideways."
+      },
+      {
+        "text": "You can be tired and still be decent."
+      },
+      {
+        "text": "Ask what would help in the next ten minutes."
+      },
+      {
+        "text": "You are not their only teacher. You are their home."
+      },
+      {
+        "text": "Let the music be the buffer on the drive."
+      },
+      {
+        "text": "You can name your own mistake first."
+      },
+      {
+        "text": "Protect sleep like it is practice. It is."
+      },
+      {
+        "text": "You do not need them to agree in order to stay connected."
+      },
+      {
+        "text": "A boundary spoken once, calmly, is stronger than one shouted twice."
+      },
+      {
+        "text": "You can wait for the nod instead of the essay."
+      },
+      {
+        "text": "Today’s irritation is not the whole story of this family."
+      },
+      {
+        "text": "You can choose the generous interpretation once."
+      },
+      {
+        "text": "Stand near them, not over them."
+      },
+      {
+        "text": "You are allowed to enjoy them in the middle of the chaos."
+      },
+      {
+        "text": "Close the laptop before you open the question."
+      },
+      {
+        "text": "You can let a win be a win, without a lesson attached."
+      },
+      {
+        "text": "If you are spiraling, drink water and delay the text."
+      },
+      {
+        "text": "You can be specific: what, when, and done."
+      },
+      {
+        "text": "Their privacy is not rejection."
+      },
+      {
+        "text": "You can say “I love you” even when the plan failed."
+      },
+      {
+        "text": "The house does not have to be impressive to be safe."
+      },
+      {
+        "text": "You can trade being right for being reachable."
+      },
+      {
+        "text": "One deep breath is a complete strategy sometimes."
+      },
+      {
+        "text": "You do not have to preview every disaster."
+      },
+      {
+        "text": "Let them hear you speak kindly about them to someone else."
+      },
+      {
+        "text": "You can end with “We’ll figure the rest out tomorrow.”"
+      },
+      {
+        "text": "Your nervous system sets the ceiling. Lower it on purpose."
+      },
+      {
+        "text": "You can be proud of the ordinary ride home."
+      },
+      {
+        "text": "Leave room for them to tell the story their way."
+      },
+      {
+        "text": "You are doing a long kindness. It counts even when it is invisible."
+      },
+      {
+        "text": "Pause. Then the kind version."
+      },
+      {
+        "text": "You can keep the rule and drop the sarcasm."
+      },
+      {
+        "text": "Tonight, be a lighthouse, not a siren."
+      },
+      {
+        "text": "You have enough for this hour. Only this hour is required."
+      },
+      {
+        "text": "Soften your shoulders. The words will follow."
+      },
+      {
+        "text": "You can try again in five minutes. That is still the same day."
+      },
+      {
+        "text": "Love them out loud once before anyone leaves the house."
+      },
+      {
+        "text": "You can let the last word be a kind one."
+      },
+      {
+        "text": "Unclench your hands. The rule will still be there."
+      },
+      {
+        "text": "This hour is loud. You can still be the quiet part."
+      }
+    ],
+    "tips": [
+      {
+        "text": "Ask the best and worst ten minutes of their day, then stop talking."
+      },
+      {
+        "text": "When they snap, lower your volume instead of matching it."
+      },
+      {
+        "text": "A car ride is often when they talk. Leave the radio low."
+      },
+      {
+        "text": "Praise a specific effort you saw, not a vague “good job.”"
+      },
+      {
+        "text": "If you are about to lecture, ask one question first."
+      },
+      {
+        "text": "Check the week with them Sunday night, not in the driveway."
+      },
+      {
+        "text": "Hunger looks like attitude. Offer food before the big talk."
+      },
+      {
+        "text": "Say what time you need them ready, then let them manage the minutes."
+      },
+      {
+        "text": "Put the phone face down when they start a story. They notice."
+      },
+      {
+        "text": "One screen-free meal beats a perfect speech."
+      },
+      {
+        "text": "Agree on a “running late” text before the season gets busy."
+      },
+      {
+        "text": "Let them pack their own kit. Check once, calmly, the night before."
+      },
+      {
+        "text": "Ask which practice they actually want you at, and go to that one."
+      },
+      {
+        "text": "After a loss, lead with “Want a snack or a postmortem?”"
+      },
+      {
+        "text": "Keep a spare water bottle in the car. It prevents three arguments."
+      },
+      {
+        "text": "Name the plan in one sentence: where, when, who is driving."
+      },
+      {
+        "text": "If two events overlap, decide together which one is real."
+      },
+      {
+        "text": "Let them hear you tell the other parent the truth without the drama."
+      },
+      {
+        "text": "Bedtime is a boundary, not a debate club. Set it earlier than the argument."
+      },
+      {
+        "text": "Ask what they ate before you ask about homework."
+      },
+      {
+        "text": "Protein at breakfast makes the afternoon kinder for everyone."
+      },
+      {
+        "text": "Keep easy food visible: yogurt, fruit, eggs, leftovers."
+      },
+      {
+        "text": "Do not comment on their body. Comment on their energy and effort."
+      },
+      {
+        "text": "A consistent wake time helps more than a motivational talk."
+      },
+      {
+        "text": "Lights down and phones out of the bedroom are a family rule, including yours."
+      },
+      {
+        "text": "If they are wired at night, move the hard conversation to daylight."
+      },
+      {
+        "text": "Teach the ride request: who, where, what time, home by when."
+      },
+      {
+        "text": "Say yes to the friend plan when the logistics are clear."
+      },
+      {
+        "text": "Give them one weekly choice that is actually theirs."
+      },
+      {
+        "text": "Let them fail a small thing you can stand, and skip the “I told you so.”"
+      },
+      {
+        "text": "Ask how they want to be supported at the game: quiet, loud, or absent."
+      },
+      {
+        "text": "Debrief sports in the car only if they start it."
+      },
+      {
+        "text": "Keep the coach’s note factual when you pass it on."
+      },
+      {
+        "text": "Celebrate the practice they did not want to attend and did anyway."
+      },
+      {
+        "text": "If they sit the bench, sit with the feeling before the advice."
+      },
+      {
+        "text": "Ask what they are working on in training, not whether they won."
+      },
+      {
+        "text": "A shared calendar only works if you look at it together once a week."
+      },
+      {
+        "text": "Put the address in the calendar, not in someone’s memory."
+      },
+      {
+        "text": "When a plan changes, say what changed and what stayed the same."
+      },
+      {
+        "text": "Build a 15-minute buffer into every departure. Announce it as the leave time."
+      },
+      {
+        "text": "Let them set the alarm. You are the backup, not the first beep."
+      },
+      {
+        "text": "Homework questions: “What’s the next step?” beats “Are you done?”"
+      },
+      {
+        "text": "Sit nearby while they work. You do not have to understand the worksheet."
+      },
+      {
+        "text": "Ask which class feels heavy this week and offer one practical help."
+      },
+      {
+        "text": "Protect one afternoon with nothing scheduled. Boredom is allowed."
+      },
+      {
+        "text": "If grades dip, ask what is confusing before you ask what they will do."
+      },
+      {
+        "text": "Read the school email, then tell them the one action, not the whole thread."
+      },
+      {
+        "text": "Let them email the teacher with you in the room the first time."
+      },
+      {
+        "text": "Agree on phone parking during homework. Same spot every day."
+      },
+      {
+        "text": "Ask to see one thing they are proud of, not the whole gradebook."
+      },
+      {
+        "text": "When friends come over, greet them by name and then disappear."
+      },
+      {
+        "text": "Know the friend’s parent’s name. One text thread prevents a lot of fog."
+      },
+      {
+        "text": "Curfew is a clock, not a character reference. Enforce it the same way each time."
+      },
+      {
+        "text": "If they are late, hear the story before the consequence."
+      },
+      {
+        "text": "Consequences work better when they were named in advance and are short."
+      },
+      {
+        "text": "Do not take the phone for a week if a day would teach the same lesson."
+      },
+      {
+        "text": "Repair after a consequence: “We’re good. I love you.”"
+      },
+      {
+        "text": "Ask what their friends think is funny. Listen without performing youth."
+      },
+      {
+        "text": "Share one true story from your own teenage mess. Keep it short."
+      },
+      {
+        "text": "Let them teach you a song or a clip. Attention is the point."
+      },
+      {
+        "text": "If you dislike their music, ask what they like about it."
+      },
+      {
+        "text": "Notice the friend who steadies them, and say so privately."
+      },
+      {
+        "text": "Do not mock a crush. Ask if they want advice or secrecy."
+      },
+      {
+        "text": "Privacy of the diary and the phone is a trust you rebuild if you break it."
+      },
+      {
+        "text": "Knock. Wait. Then talk."
+      },
+      {
+        "text": "Their room can be their territory with one health-and-safety exception."
+      },
+      {
+        "text": "Offer a ride home from anywhere, no lecture on arrival. Debrief tomorrow."
+      },
+      {
+        "text": "The no-questions ride is sometimes how you learn the truth."
+      },
+      {
+        "text": "Say what you will do if you are worried, before you are worried."
+      },
+      {
+        "text": "Agree on a code word they can text when they need an exit."
+      },
+      {
+        "text": "Check in on mood the way you check in on practice: regularly, lightly."
+      },
+      {
+        "text": "If they go quiet for days, say what you notice and that you are here."
+      },
+      {
+        "text": "Do not force eye contact. A side-by-side walk works."
+      },
+      {
+        "text": "Name your own stress so they do not think it is about them."
+      },
+      {
+        "text": "Apologize specifically when you snap. “I was harsh about the shoes.”"
+      },
+      {
+        "text": "Ask what apology would actually help. Then do that."
+      },
+      {
+        "text": "Keep adult conflict out of their earshot and out of their group chat."
+      },
+      {
+        "text": "Let both parents deliver the same rule. Mixed signals become arguments."
+      },
+      {
+        "text": "If you disagree, settle it away from them and come back with one plan."
+      },
+      {
+        "text": "Tell them what you admire about the other parent. It steadies the house."
+      },
+      {
+        "text": "Rotate who does the late pickup so resentment does not calcify."
+      },
+      {
+        "text": "Thank each other in front of them for the invisible shift."
+      },
+      {
+        "text": "A weekly ten-minute parent huddle saves five driveway fights."
+      },
+      {
+        "text": "Write the week on a whiteboard they walk past."
+      },
+      {
+        "text": "Let them add their own events to that board. Ownership reduces nagging."
+      },
+      {
+        "text": "When they forget, ask “What’s your reset?” instead of cataloging history."
+      },
+      {
+        "text": "One nag, then a natural consequence you can live with."
+      },
+      {
+        "text": "Do not redo their forgotten homework. Do help them email the teacher."
+      },
+      {
+        "text": "Gear by the door the night before is a gift to the morning."
+      },
+      {
+        "text": "Label water bottles. It is not petty. It is Thursday."
+      },
+      {
+        "text": "Keep a small cash envelope for the unexpected snack stand."
+      },
+      {
+        "text": "Ask “What do you need from me this weekend?” on Friday."
+      },
+      {
+        "text": "Block one family meal that is not in the car."
+      },
+      {
+        "text": "At that meal, phones in a bowl. Topics optional."
+      },
+      {
+        "text": "Let them cook one simple thing a week. Competence feeds confidence."
+      },
+      {
+        "text": "Eat what they cook without a performance review."
+      },
+      {
+        "text": "If money is tight, say the real limit. Teens can handle a true number."
+      },
+      {
+        "text": "Give them a small budget for going out and let them feel the end of it."
+      },
+      {
+        "text": "Ask before you post a photo of them. Every time."
+      },
+      {
+        "text": "Their team photos are not your content. Ask."
+      },
+      {
+        "text": "Cheer for the person, not only the result, and say it that way out loud."
+      },
+      {
+        "text": "After you yell, circle back the same day. Unfinished rupture lingers."
+      },
+      {
+        "text": "End the day with one true, specific good thing you saw them do."
+      },
+      {
+        "text": "Say “I like you” as well as “I love you.” They are different sentences."
+      },
+      {
+        "text": "Touch base when they get home: a hello, not an interrogation."
+      },
+      {
+        "text": "Leave a note in the lunch or the bag. Paper still works."
+      },
+      {
+        "text": "If they will not talk, do a small practical kindness anyway."
+      },
+      {
+        "text": "Remember sleep, food, friends, and one adult who is calm. That is the core."
+      },
+      {
+        "text": "You do not have to optimize them. You have to accompany them."
+      },
+      {
+        "text": "When in doubt, feed them, listen once, and try again tomorrow."
+      },
+      {
+        "text": "Ask them to teach you the rule of a game they love. Stay a beginner on purpose."
+      },
+      {
+        "text": "If practice ends late, have the snack already in the car."
+      },
+      {
+        "text": "Let them choose the music on the way to the hard thing."
+      },
+      {
+        "text": "Write the leave-time on a sticky note at eye level, not in a speech."
+      },
+      {
+        "text": "When they bomb a test, ask what the question was actually asking."
+      },
+      {
+        "text": "Offer a redo of the conversation: “Can we try that talk again?”"
+      },
+      {
+        "text": "Keep one predictable hello and one predictable goodnight. Rituals beat lectures."
+      },
+      {
+        "text": "If they are comparing themselves to a teammate, bring it back to their own last month."
+      },
+      {
+        "text": "Ask what “done” looks like for the chore, then leave them to it."
+      },
+      {
+        "text": "End logistics texts with the time you will actually be there."
+      }
+    ]
+  }
+}

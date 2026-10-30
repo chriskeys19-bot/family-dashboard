@@ -1,0 +1,13 @@
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+artifacts/
+.supabase/
+.env
+.env.*
+family-banner.jpg
+**/family-banner.jpg
+**/*rushmore*
+meal-photos/
+*.log
