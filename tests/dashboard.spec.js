@@ -375,3 +375,140 @@ test('needs and notes stay with that kid and their parents', async ({ page }) =>
   await expect(page.locator('[data-status="approved"]')).toContainText('New bat grips');
   await expect(page.getByText('This weekend')).toBeVisible();
 });
+
+test('a kid can edit their own needs and notes, and a failed save stays visible', async ({ page }) => {
+  await page.route('**/js/store.js', async (route) => {
+    const response = await route.fetch();
+    let body = await response.text();
+    const guard = 'if (globalThis.__failSave) throw Object.assign(new Error("expired"), { status: 401 });';
+    for (const signature of [
+      'export async function addNeed(row) {',
+      'export async function updateNeed(id, patch) {',
+      'export async function addNote(row) {',
+      'export async function updateNote(id, patch) {',
+    ]) {
+      body = body.replace(signature, `${signature}\n  ${guard}`);
+    }
+    await route.fulfill({ status: 200, contentType: 'text/javascript', body });
+  });
+
+  await openBoard(page, 'yuvan');
+  await page.getByTestId('need-item').fill('New bat grips');
+  await page.getByTestId('need-why').fill('The old ones are smooth');
+  await page.getByTestId('need-date').fill('2026-11-07');
+  await page.getByTestId('need-link').fill('https://example.com/grips');
+  await page.getByTestId('urgency-soon').click();
+  await page.getByRole('button', { name: 'Add to the list' }).click();
+  await expect(page.getByTestId('need-saved')).toHaveText('Saved');
+  await expect(page.getByTestId('need-item')).toHaveValue('');
+  await expect(page.getByTestId('need-why')).toHaveValue('');
+  await expect(page.getByTestId('need-date')).toHaveValue('');
+  await expect(page.getByTestId('need-link')).toHaveValue('');
+  await expect(page.getByTestId('urgency-normal')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('urgency-soon')).toHaveAttribute('aria-pressed', 'false');
+
+  const need = page.locator('article[data-person="yuvan"]', { hasText: 'New bat grips' });
+  const needId = await need.getAttribute('data-testid');
+  const needCard = page.getByTestId(needId);
+  await needCard.getByRole('button', { name: 'Edit', exact: true }).click();
+  await needCard.getByLabel('What do you need?').fill('New batting gloves');
+  await needCard.getByLabel('Why?').fill('For the nets');
+  await needCard.getByLabel('When do you need it?').fill('2026-11-08');
+  await needCard.getByLabel('Link').fill('https://example.com/gloves');
+  await needCard.getByRole('button', { name: 'Low', exact: true }).click();
+  await needCard.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(needCard).toContainText('New bat grips');
+  await expect(needCard).toContainText('Soon');
+  await expect(page.getByText('New batting gloves')).toHaveCount(0);
+
+  await needCard.getByRole('button', { name: 'Edit', exact: true }).click();
+  await needCard.getByLabel('What do you need?').fill('New batting gloves');
+  await needCard.getByLabel('Why?').fill('For the nets');
+  await needCard.getByLabel('When do you need it?').fill('2026-11-08');
+  await needCard.getByLabel('Link').fill('https://example.com/gloves');
+  await needCard.getByRole('button', { name: 'Low', exact: true }).click();
+  await shot(page, '16-edit-need');
+  await needCard.getByRole('button', { name: 'Save', exact: true }).click();
+
+  await expect(needCard).toContainText('New batting gloves');
+  await expect(needCard).toContainText('Asked');
+  await expect(needCard).toContainText('Low');
+  await expect(needCard).toContainText('For the nets');
+  await expect(needCard).toContainText('Needed 2026-11-08');
+  await expect(needCard).toHaveAttribute('data-status', 'open');
+  await expect(needCard.getByRole('link', { name: 'Link' })).toHaveAttribute('href', 'https://example.com/gloves');
+  await expect(page.getByText('New bat grips')).toHaveCount(0);
+  await expect(page.getByTestId('need-saved')).toHaveText('Saved');
+
+  await page.getByTestId('note-body').fill('Tired after practice');
+  await page.getByTestId('mood-🙂').click();
+  await page.getByTestId('save-kid-note').click();
+  await expect(page.getByTestId('note-saved')).toHaveText('Saved');
+  await expect(page.getByTestId('note-body')).toHaveValue('');
+  await expect(page.getByTestId('mood-🙂')).toHaveAttribute('aria-pressed', 'false');
+
+  const note = page.locator('article[data-person="yuvan"]', { hasText: 'Tired after practice' });
+  const noteId = await note.getAttribute('data-testid');
+  const noteCard = page.getByTestId(noteId);
+  await noteCard.getByRole('button', { name: 'Edit', exact: true }).click();
+  await noteCard.getByLabel('What’s on your mind?').fill('Rested after practice');
+  await noteCard.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(noteCard).toContainText('Tired after practice');
+  await expect(page.getByText('Rested after practice')).toHaveCount(0);
+
+  await noteCard.getByRole('button', { name: 'Edit', exact: true }).click();
+  await noteCard.getByLabel('What’s on your mind?').fill('Rested after practice');
+  await shot(page, '17-edit-note');
+  await noteCard.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(noteCard).toContainText('Rested after practice');
+  await expect(noteCard).toContainText('🙂');
+  await expect(page.getByText('Tired after practice')).toHaveCount(0);
+  await expect(page.getByTestId('note-saved')).toHaveText('Saved');
+
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-varun').click();
+  await expect(page.getByText('New batting gloves')).toHaveCount(0);
+  await expect(page.getByText('Rested after practice')).toHaveCount(0);
+
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-ben').click();
+  const parentNeed = page.locator('article', { hasText: 'New batting gloves' });
+  await expect(parentNeed.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+  await expect(parentNeed.getByRole('button', { name: 'Approved' })).toBeVisible();
+  await expect(parentNeed.getByRole('button', { name: 'Not now' })).toBeVisible();
+  await expect(parentNeed.getByRole('button', { name: 'Bought' })).toBeVisible();
+  await expect(page.locator('article', { hasText: 'Rested after practice' }).getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+  await parentNeed.getByLabel('Reply about New batting gloves').fill('Ordered');
+  await parentNeed.getByRole('button', { name: 'Approved' }).click();
+  await expect(parentNeed).toHaveAttribute('data-status', 'approved');
+
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-yuvan').click();
+  await expect(needCard).toContainText('Approved');
+  await expect(needCard).toContainText('Ordered');
+  await expect(needCard).toContainText('New batting gloves');
+
+  await page.evaluate(() => { globalThis.__failSave = true; });
+  await needCard.getByRole('button', { name: 'Edit', exact: true }).click();
+  await needCard.getByLabel('What do you need?').fill('Should stay gloves');
+  await needCard.getByRole('button', { name: 'Save', exact: true }).click();
+  const needError = needCard.getByRole('alert');
+  await expect(needError).toBeVisible();
+  await expect(needError).toContainText(/Couldn.t save that/);
+  await expect(needError).toContainText('re-enter the password');
+  await expect(needCard.getByLabel('What do you need?')).toHaveValue('Should stay gloves');
+  await shot(page, '18-save-error');
+
+  await page.getByTestId('need-item').fill('Extra grips');
+  await page.getByRole('button', { name: 'Add to the list' }).click();
+  await expect(page.getByTestId('need-error')).toBeVisible();
+  await expect(page.getByTestId('need-error')).toContainText(/Couldn.t save that/);
+  await expect(page.getByTestId('need-item')).toHaveValue('Extra grips');
+  await expect(page.getByText('Extra grips')).toHaveCount(0);
+
+  await page.getByTestId('note-body').fill('This note should stay in the box');
+  await page.getByTestId('save-kid-note').click();
+  await expect(page.getByTestId('note-error')).toBeVisible();
+  await expect(page.getByTestId('note-error')).toContainText(/Couldn.t save that/);
+  await expect(page.getByTestId('note-body')).toHaveValue('This note should stay in the box');
+});

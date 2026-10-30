@@ -506,6 +506,24 @@ export async function updateNeed(id, patch) {
   return rows[0];
 }
 
+export async function updateNote(id, patch) {
+  if (isDemoMode()) {
+    await ensureDemo();
+    const index = overlay.notes.findIndex((row) => row.id === id);
+    if (index < 0) throw new Error('That note is gone.');
+    overlay.notes[index] = { ...overlay.notes[index], ...patch };
+    persistOverlay();
+    emit();
+    return overlay.notes[index];
+  }
+  const rows = await rest(`kid_notes?id=eq.${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: patch,
+  });
+  emit();
+  return rows[0];
+}
+
 export async function addNote(row) {
   const record = {
     ...row,
@@ -523,6 +541,10 @@ export async function addNote(row) {
   const rows = await rest('kid_notes', { method: 'POST', body: record });
   emit();
   return rows[0];
+}
+
+export function saveFailureMessage() {
+  return 'Couldn’t save that. Your session may have expired — re-enter the password and try again.';
 }
 
 export function gateMessage(code) {

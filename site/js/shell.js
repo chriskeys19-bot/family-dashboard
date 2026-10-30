@@ -275,8 +275,13 @@ function renderDashboard() {
   mount(screen);
 }
 
+let refreshToken = 0;
+
 async function refresh() {
-  bundle = await loadBundle();
+  const token = ++refreshToken;
+  const data = await loadBundle();
+  if (token !== refreshToken) return;
+  bundle = data;
   if (!profile()) {
     renderPicker();
     return;
