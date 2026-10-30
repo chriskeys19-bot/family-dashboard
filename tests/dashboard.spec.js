@@ -598,3 +598,144 @@ test('a kid can edit their own needs and notes, and a failed save stays visible'
   await expect(page.getByTestId('note-error')).toContainText(/Couldn.t save that/);
   await expect(page.getByTestId('note-body')).toHaveValue('This note should stay in the box');
 });
+
+test('dictation is hidden when the browser has no speech recognition', async ({ page }) => {
+  await openBoard(page, 'yuvan');
+  const supported = await page.evaluate(() => Boolean(globalThis.SpeechRecognition || globalThis.webkitSpeechRecognition));
+  test.skip(supported, 'this browser already exposes speech recognition');
+  await expect(page.getByRole('button', { name: 'Dictate' })).toHaveCount(0);
+  await expect(page.getByTestId('note-body')).toHaveAttribute('title', 'Use the microphone on your keyboard.');
+  await expect(page.getByTestId('need-why')).toHaveAttribute('title', 'Use the microphone on your keyboard.');
+});
+
+test('kids can dictate into notes, needs, runs, and reflections', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__recognitions = [];
+    class FakeSpeechRecognition {
+      constructor() {
+        this.lang = '';
+        this.interimResults = false;
+        this.continuous = false;
+        this.onresult = null;
+        this.onerror = null;
+        this.onend = null;
+        this.onspeechend = null;
+        window.__recognitions.push(this);
+      }
+      start() { this.running = true; }
+      stop() {
+        this.running = false;
+        this.onend?.();
+      }
+      abort() { this.stop(); }
+    }
+    window.SpeechRecognition = FakeSpeechRecognition;
+    window.webkitSpeechRecognition = FakeSpeechRecognition;
+  });
+
+  await openBoard(page, 'yuvan');
+  const note = page.getByTestId('note-body');
+  const noteMic = page.locator('.field', { has: note }).getByRole('button', { name: 'Dictate' });
+  await expect(noteMic).toHaveAttribute('aria-label', 'Dictate');
+  await expect(noteMic).toHaveAttribute('aria-pressed', 'false');
+
+  const why = page.getByTestId('need-why');
+  const whyMic = page.locator('.field', { has: why }).getByRole('button', { name: 'Dictate' });
+  await expect(whyMic).toBeVisible();
+
+  await note.fill('there');
+  await note.evaluate((el) => {
+    el.focus();
+    el.setSelectionRange(0, 0);
+  });
+  await noteMic.click();
+  await expect(noteMic).toHaveAttribute('aria-pressed', 'true');
+  await expect(noteMic).toHaveClass(/is-listening/);
+  const heard = await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    return { lang: rec.lang, interim: rec.interimResults, continuous: rec.continuous };
+  });
+  expect(heard).toEqual({ lang: 'en-US', interim: true, continuous: true });
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    rec.onresult({ results: [{ isFinal: false, 0: { transcript: 'Hi' }, length: 1 }] });
+  });
+  await expect(note).toHaveValue('Hi there');
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    rec.onresult({ results: [{ isFinal: true, 0: { transcript: 'Hello' }, length: 1 }] });
+    rec.onspeechend();
+  });
+  await expect(note).toHaveValue('Hello there');
+  await expect(noteMic).toHaveAttribute('aria-pressed', 'false');
+
+  await noteMic.click();
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    rec.onresult({ results: [{ isFinal: true, 0: { transcript: 'friend' }, length: 1 }] });
+    rec.onspeechend();
+  });
+  await expect(note).toHaveValue('Hello there friend');
+
+  await whyMic.click();
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    rec.onerror({ error: 'not-allowed' });
+  });
+  await expect(whyMic).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('.field', { has: why }).getByRole('alert')).toHaveText('Microphone is blocked. Use the keyboard mic.');
+  await expect(why).toHaveValue('');
+
+  await page.getByTestId('add-training').click();
+  const run = page.getByRole('dialog', { name: 'Log my run' });
+  const runNote = run.getByLabel('Anything else?');
+  const runMic = run.getByRole('button', { name: 'Dictate' });
+  await runMic.click();
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    rec.onresult({ results: [{ isFinal: true, 0: { transcript: 'legs felt heavy' }, length: 1 }] });
+    rec.onspeechend();
+  });
+  await expect(runNote).toHaveValue('legs felt heavy');
+  await page.getByTestId('sheet-close').click();
+
+  await page.getByTestId('check-event-practice-blazers-2026-10-30-yuvan-2026-10-30').check();
+  const sheet = page.getByTestId('reflection-sheet');
+  await expect(sheet).toBeVisible();
+  const focus = sheet.getByLabel('Other focus');
+  const learned = sheet.getByLabel('Key things you learned');
+  const extra = sheet.getByLabel('Anything else?');
+  await expect(focus).toBeVisible();
+  await expect(learned).toBeVisible();
+  await expect(extra).toBeVisible();
+  await expect(sheet.getByRole('button', { name: 'Dictate' })).toHaveCount(3);
+  await learned.locator('xpath=ancestor::div[contains(@class,"field")][1]').getByRole('button', { name: 'Dictate' }).click();
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    rec.onresult({ results: [{ isFinal: true, 0: { transcript: 'watch the ball' }, length: 1 }] });
+    rec.onspeechend();
+  });
+  await expect(learned).toHaveValue('watch the ball');
+  await page.getByTestId('reflection-skip').click();
+
+  await page.getByTestId('note-body').fill('First thought');
+  await page.getByTestId('save-kid-note').click();
+  const savedNote = page.locator('article[data-person="yuvan"]', { hasText: 'First thought' });
+  await expect(savedNote).toBeVisible();
+  const noteId = await savedNote.getAttribute('data-testid');
+  const editCard = page.getByTestId(noteId);
+  await editCard.getByRole('button', { name: 'Edit', exact: true }).click();
+  const edit = editCard.locator('textarea');
+  await edit.evaluate((el) => {
+    el.focus();
+    el.setSelectionRange(el.value.length, el.value.length);
+  });
+  const editMic = editCard.getByRole('button', { name: 'Dictate' });
+  await editMic.click();
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    rec.onresult({ results: [{ isFinal: true, 0: { transcript: 'and a second' }, length: 1 }] });
+    rec.onspeechend();
+  });
+  await expect(edit).toHaveValue('First thought and a second');
+});

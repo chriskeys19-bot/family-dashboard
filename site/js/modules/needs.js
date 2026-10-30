@@ -112,7 +112,7 @@ function urgencyControl(selected, testPrefix) {
 
 function needForm(ctx) {
   const item = el('input', { type: 'text', maxlength: '120', 'data-testid': 'need-item', placeholder: 'Bat grips' });
-  const why = el('input', { type: 'text', maxlength: '200', 'data-testid': 'need-why', placeholder: 'Optional' });
+  const why = el('input', { type: 'text', maxlength: '200', 'data-testid': 'need-why', placeholder: 'Optional', 'data-dictate': 'true' });
   const when = el('input', { type: 'date', 'data-testid': 'need-date' });
   const link = el('input', { type: 'url', 'data-testid': 'need-link', placeholder: 'https://' });
   const error = el('p', { class: 'form-error', role: 'alert', 'data-testid': 'need-error', hidden: true });
@@ -201,7 +201,7 @@ function needCard(ctx, row) {
 
   const edit = () => {
     const item = el('input', { type: 'text', maxlength: '120', value: row.item || '' });
-    const why = el('input', { type: 'text', maxlength: '200', value: row.why || '' });
+    const why = el('input', { type: 'text', maxlength: '200', value: row.why || '', 'data-dictate': 'true' });
     const when = el('input', { type: 'date', value: row.needed_on || '' });
     const link = el('input', { type: 'url', value: row.link || '', placeholder: 'https://' });
     const error = el('p', { class: 'form-error', role: 'alert', 'data-testid': `need-edit-error-${row.id}`, hidden: true });

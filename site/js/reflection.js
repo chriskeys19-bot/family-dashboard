@@ -175,7 +175,7 @@ export function openReflection(ctx, spec, existing) {
       }, label));
     }
     stack.append(chips);
-    const focusNote = el('input', { type: 'text', value: state.focus_note, maxlength: '120', placeholder: 'Anything else you worked on' });
+    const focusNote = el('input', { type: 'text', value: state.focus_note, maxlength: '120', placeholder: 'Anything else you worked on', 'data-dictate': 'true' });
     focusNote.addEventListener('input', () => { state.focus_note = focusNote.value; });
     const learned = el('textarea', { rows: '2', maxlength: '240', value: state.learned });
     learned.addEventListener('input', () => { state.learned = learned.value; });
