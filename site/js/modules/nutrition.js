@@ -9,7 +9,7 @@ import { MEAL_LABELS } from '../labels.js';
 import { itemSlug } from '../food-parse.js';
 import { defaultPortionMode, portionModesFor, scaleNutrients, sumNutrients } from '../portions.js';
 import { listPhotoNutritionSources } from '../nutrition-photo.js';
-import { formatISODate, formatISOWeekday, inInstantRange, zonedDateTimeFromISO } from '../time.js';
+import { formatISODate, zonedDateTimeFromISO } from '../time.js';
 
 const MEALS = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -587,16 +587,8 @@ registerModule({
     const today = formatISODate(ctx.now);
     const list = el('div', { class: 'stack', 'data-testid': 'nutrition-summaries' });
     for (const person of people) {
-      const rows = (ctx.nutrition || [])
-        .filter((row) => row.person_id === person.id)
-        .filter((row) => inInstantRange(row.eaten_at, ctx.range));
-      const byDay = new Map();
-      for (const row of rows) {
-        const day = formatISODate(row.eaten_at);
-        if (!byDay.has(day)) byDay.set(day, []);
-        byDay.get(day).push(row);
-      }
-      const todayEntries = byDay.get(today) || [];
+      const todayEntries = (ctx.nutrition || []).filter((row) => row.person_id === person.id
+        && formatISODate(row.eaten_at) === today);
       const card = el('article', {
         class: 'card nutrition-summary',
         'data-testid': `nutrition-summary-${person.id}`,
@@ -605,9 +597,6 @@ registerModule({
       card.append(el('p', { 'data-testid': `nutrition-today-${person.id}` }, todayEntries.length
         ? `Today: ${summaryPhrase(todayEntries)}`
         : 'Nothing logged yet today'));
-      for (const day of [...byDay.keys()].filter((key) => key !== today).sort()) {
-        card.append(el('p', { 'data-testid': `nutrition-day-${day}-${person.id}` }, `${formatISOWeekday(day)}: ${summaryPhrase(byDay.get(day))}`));
-      }
       list.append(card);
     }
     host.append(list);

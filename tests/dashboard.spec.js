@@ -354,6 +354,48 @@ test('social request shows as Requested for that kid only', async ({ page }) => 
   await expect(page.getByText('Movie with friends')).toBeVisible();
 });
 
+test('nutrition card names today only and leaves calorie history on this week', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('homeboard.demo.v1', JSON.stringify({
+      categories: null,
+      nutrition_entries: [
+        { id: 'past-week', person_id: 'yuvan', eaten_at: '2026-10-23T18:00:00-07:00', meal: 'dinner', description: 'old pasta', calories: 2200, protein_g: 80, source: 'fdc', items: [] },
+        { id: 'yesterday', person_id: 'yuvan', eaten_at: '2026-10-29T18:00:00-07:00', meal: 'dinner', description: 'yesterday dal', calories: 900, protein_g: 40, source: 'fdc', items: [] },
+        { id: 'today-lunch', person_id: 'yuvan', eaten_at: '2026-10-30T16:00:00-07:00', meal: 'lunch', description: 'rice plate', calories: 500, protein_g: 20, source: 'fdc', items: [] },
+      ],
+      training_entries: [],
+      event_requests: [],
+      food_memory: [],
+      completions: [],
+      reflections: [],
+      needs: [],
+      notes: [],
+      weights: {},
+      measurements: [],
+    }));
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openBoard(page, 'yuvan');
+  const card = page.getByTestId('module-nutrition');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — lunch');
+  await expect(card.locator('[data-testid^=nutrition-day-]')).toHaveCount(0);
+  await expect(card).not.toContainText(/kcal|protein|2200|1400|900|500|pasta|dal|rice/i);
+  await expect(page.getByTestId('week-eaten-yuvan')).toContainText('1400');
+  await expect(page.getByTestId('week-protein-yuvan')).toContainText('60');
+  await expect(page.getByTestId('week-calories-yuvan')).toBeVisible();
+  await page.getByTestId('range-1w').click();
+  await page.getByTestId('range-1m').click();
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — lunch');
+  await expect(card).not.toContainText(/kcal|2200|900/);
+  if (test.info().project.name === 'iphone-14') {
+    mkdirSync('artifacts/screenshots', { recursive: true });
+    mkdirSync('/opt/cursor/artifacts', { recursive: true });
+    await card.scrollIntoViewIfNeeded();
+    await card.screenshot({ path: join('artifacts', 'screenshots', 'nutrition-summary-mobile.png') });
+    await card.screenshot({ path: '/opt/cursor/artifacts/nutrition-summary-mobile.png' });
+  }
+});
+
 test('nutrition lookup disambiguates, remembers, and can fall back to a note', async ({ page }) => {
   await openBoard(page, 'yuvan');
   await page.getByTestId('add-nutrition').click();
