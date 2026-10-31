@@ -1,5 +1,7 @@
 import { CONFIG, isDemoMode } from './config.js';
 import { lookupDemoFoods } from './demo-foods.js';
+import { catalogMatch } from './food-catalog.js';
+import { normFoodName, parseFoodQuery } from './food-parse.js';
 
 const SESSION_KEY = 'homeboard.session';
 const PROFILE_KEY = 'homeboard.profile';
@@ -409,7 +411,24 @@ export async function lookupFoods(query, personId) {
     error.code = payload.error || 'lookup_failed';
     throw error;
   }
-  return payload;
+  return preferCatalog(query, payload);
+}
+
+function preferCatalog(query, payload) {
+  const items = Array.isArray(payload?.items) ? payload.items : [];
+  const byName = new Map(items.map((item) => [normFoodName(item.query), item]));
+  const next = parseFoodQuery(query).map((item) => {
+    const known = catalogMatch(item.name);
+    if (!known) return byName.get(normFoodName(item.name)) || null;
+    return {
+      query: item.name,
+      query_norm: normFoodName(item.name),
+      qty: item.qty,
+      matches: [known],
+    };
+  }).filter(Boolean);
+  if (!next.length) return payload;
+  return { ...payload, estimate: true, items: next };
 }
 
 export async function toggleCompletion({ personId, itemType, itemId, occurrenceOn, done, silent = false }) {
