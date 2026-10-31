@@ -514,6 +514,12 @@ label.btn { position: relative; display: flex; align-items: center; justify-cont
 .day-block { display: flex; flex-direction: column; gap: 8px; }
 .day-title { font-size: 1.15rem; }
 .day-totals { font-weight: 600; }
+.nutrition-summary {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 .estimate-banner {
   background: #f8efd4;
   color: #6d4d08;
@@ -611,7 +617,7 @@ label.btn { position: relative; display: flex; align-items: center; justify-cont
   .modules { gap: 8px; padding: 4px 8px 0; }
   .module-title, .module-head { font-size: 1.12rem; margin-bottom: 4px; }
   .module-body { gap: 6px; }
-  .event, .log-card, .boost-card, .recap-card, .checkin-card, .checkin-latest { padding: 8px 10px; }
+  .event, .log-card, .boost-card, .recap-card, .checkin-card, .checkin-latest, .nutrition-summary { padding: 8px 10px; }
   .week-card { padding: 10px; gap: 8px; }
   .week-num { font-size: 1.35rem; }
   .week-tile { padding: 8px; }

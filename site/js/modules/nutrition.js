@@ -1,5 +1,4 @@
-import { checkoffStack } from '../checkoff.js';
-import { analyzeMealPhoto, hydrateMealPhoto, rememberDemoPhoto, resizeImageFile, sumPhotoItems } from '../photo-meal.js';
+import { analyzeMealPhoto, rememberDemoPhoto, resizeImageFile, sumPhotoItems } from '../photo-meal.js';
 import { isDemoMode } from '../config.js';
 import { lookupFoods, rememberFoods, addNutrition, newId } from '../store.js';
 import { registerModule } from '../registry.js';
@@ -10,33 +9,20 @@ import { MEAL_LABELS } from '../labels.js';
 import { itemSlug } from '../food-parse.js';
 import { defaultPortionMode, portionModesFor, scaleNutrients, sumNutrients } from '../portions.js';
 import { listPhotoNutritionSources } from '../nutrition-photo.js';
-import { formatISODate, formatTime, formatWeekday, inInstantRange, shiftISODate, zonedDateTimeFromISO } from '../time.js';
+import { formatISODate, formatISOWeekday, inInstantRange, zonedDateTimeFromISO } from '../time.js';
 
 const MEALS = ['breakfast', 'lunch', 'dinner', 'snack'];
 
-function weekCard(ctx, person) {
-  const today = formatISODate(ctx.now);
-  const days = [];
-  for (let ago = 6; ago >= 0; ago -= 1) {
-    const iso = shiftISODate(today, -ago);
-    const meals = (ctx.nutrition || []).filter((row) => row.person_id === person.id
-      && formatISODate(row.eaten_at) === iso
-      && row.source !== 'note'
-      && row.calories != null);
-    days.push({ iso, ...sumNutrients(meals) });
-  }
-  const earlier = days.slice(0, 3).reduce((sum, day) => sum + day.calories, 0);
-  const recent = days.slice(4).reduce((sum, day) => sum + day.calories, 0);
-  let trend = 'About the same as earlier this week';
-  if (earlier === 0 && recent === 0) trend = 'No estimates yet this week';
-  else if (recent > earlier * 1.15) trend = 'Higher than earlier this week';
-  else if (earlier > 0 && recent < earlier * 0.85) trend = 'Lower than earlier this week';
-  const todayTotals = days[days.length - 1];
-  return el('article', { class: 'card', 'data-testid': `nutrition-week-${person.id}` },
-    el('p', { class: 'log-kicker' }, person.name),
-    el('p', { 'data-testid': `today-totals-${person.id}` }, `Today · approximate · ${Math.round(todayTotals.calories)} kcal · ${todayTotals.protein_g} g protein`),
-    el('p', { class: 'log-meta', 'data-testid': `week-trend-${person.id}` }, trend),
-    el('p', { class: 'week-days' }, days.map((day) => `${day.iso.slice(5)} ~${Math.round(day.calories)}`).join(' · ')));
+function mealType(row) {
+  return String(MEAL_LABELS[row.meal] || row.meal || 'meal').toLowerCase();
+}
+
+function summaryPhrase(entries) {
+  const ordered = entries.slice().sort((a, b) => String(a.eaten_at).localeCompare(String(b.eaten_at))
+    || String(a.id).localeCompare(String(b.id)));
+  const count = ordered.length;
+  const types = ordered.map(mealType).join(', ');
+  return `${count} ${count === 1 ? 'meal' : 'meals'} logged — ${types}`;
 }
 
 function peopleInScope(ctx) {
@@ -54,10 +40,6 @@ function basisLabel(match) {
   if (match.basis === 'piece') return 'piece';
   if (match.basis === 'cup') return 'cup';
   return 'serving';
-}
-
-function macroLine(totals) {
-  return `Approximate estimates · ${Math.round(totals.calories)} kcal · ${totals.protein_g} g protein`;
 }
 
 function openNutritionForm(ctx, kid) {
@@ -600,79 +582,34 @@ registerModule({
   },
   render(ctx, host) {
     const ids = new Set(peopleInScope(ctx));
-    const kids = ctx.people.filter((person) => person.role === 'kid' && ids.has(person.id));
-    if (kids.length) {
-      const weeks = el('div', { class: 'stack', 'data-testid': 'nutrition-weeks' });
-      for (const kid of kids) weeks.append(weekCard(ctx, kid));
-      host.append(weeks);
-    }
-    const rows = ctx.nutrition
-      .filter((row) => ids.has(row.person_id))
-      .filter((row) => inInstantRange(row.eaten_at, ctx.range))
-      .sort((a, b) => a.eaten_at.localeCompare(b.eaten_at));
-    if (!rows.length) {
-      host.append(el('p', { class: 'empty' }, 'No meals logged in this range.'));
-      return;
-    }
-    const byDay = new Map();
-    for (const row of rows) {
-      const key = formatISODate(row.eaten_at);
-      if (!byDay.has(key)) byDay.set(key, []);
-      byDay.get(key).push(row);
-    }
-    for (const [day, entries] of byDay) {
-      const section = el('section', { class: 'day-block', 'data-testid': `nutrition-day-${day}` });
-      const estimated = entries.filter((row) => row.source !== 'note' && row.calories != null);
-      section.append(el('h3', { class: 'day-title' }, formatWeekday(entries[0].eaten_at)));
-      if (estimated.length) {
-        section.append(el('p', { class: 'day-totals', 'data-testid': `day-totals-${day}` }, macroLine(sumNutrients(estimated))));
+    const people = ctx.people.filter((person) => ids.has(person.id));
+    const showName = ctx.profile.role === 'parent' && !ctx.focusPersonId;
+    const today = formatISODate(ctx.now);
+    const list = el('div', { class: 'stack', 'data-testid': 'nutrition-summaries' });
+    for (const person of people) {
+      const rows = (ctx.nutrition || [])
+        .filter((row) => row.person_id === person.id)
+        .filter((row) => inInstantRange(row.eaten_at, ctx.range));
+      const byDay = new Map();
+      for (const row of rows) {
+        const day = formatISODate(row.eaten_at);
+        if (!byDay.has(day)) byDay.set(day, []);
+        byDay.get(day).push(row);
       }
-      for (const entry of entries) {
-        const person = ctx.people.find((item) => item.id === entry.person_id);
-        const showName = ctx.profile.role === 'parent' && !ctx.focusPersonId;
-        const who = showName ? `${person?.name || entry.person_id} · ` : '';
-        const kcal = entry.source === 'note' || entry.calories == null
-          ? 'No macro estimate'
-          : `~${Math.round(Number(entry.calories))} kcal · ${Number(entry.protein_g) || 0} g protein · approximate`;
-        const card = el('article', {
-          class: 'card log-card',
-          'data-testid': `nutrition-${entry.id}`,
-          'data-source': entry.source,
-          'data-person': entry.person_id,
-        },
-        el('p', { class: 'log-kicker' }, `${who}${MEAL_LABELS[entry.meal] || entry.meal} · ${formatTime(entry.eaten_at)}`),
-        el('h3', { class: 'log-title' }, entry.description),
-        el('p', { class: 'log-meta' }, kcal));
-        if (entry.source === 'photo') {
-          if (entry.photo_path) {
-            const img = el('img', {
-              class: 'meal-thumb',
-              alt: 'Meal photo, estimate',
-              'data-testid': `meal-photo-${entry.id}`,
-            });
-            hydrateMealPhoto(img, entry.photo_path);
-            card.append(img);
-          }
-          if (entry.items?.length) {
-            const list = el('ul', { class: 'photo-breakdown', 'data-testid': `photo-breakdown-${entry.id}` });
-            for (const item of entry.items) {
-              const name = item.name || item.label || 'Food';
-              list.append(el('li', {}, `${name} · ${item.portion || 'portion'} · ${Math.round(Number(item.calories) || 0)} kcal · estimate`));
-            }
-            card.append(list);
-          }
-        }
-        const boxes = checkoffStack(ctx, [{
-          personId: entry.person_id,
-          itemType: 'nutrition',
-          itemId: entry.id,
-          occurrenceOn: formatISODate(entry.eaten_at),
-          label: entry.description,
-        }]);
-        if (boxes) card.append(boxes);
-        section.append(card);
+      const todayEntries = byDay.get(today) || [];
+      const card = el('article', {
+        class: 'card nutrition-summary',
+        'data-testid': `nutrition-summary-${person.id}`,
+      });
+      if (showName) card.append(el('p', { class: 'log-kicker' }, person.name));
+      card.append(el('p', { 'data-testid': `nutrition-today-${person.id}` }, todayEntries.length
+        ? `Today: ${summaryPhrase(todayEntries)}`
+        : 'Nothing logged yet today'));
+      for (const day of [...byDay.keys()].filter((key) => key !== today).sort()) {
+        card.append(el('p', { 'data-testid': `nutrition-day-${day}-${person.id}` }, `${formatISOWeekday(day)}: ${summaryPhrase(byDay.get(day))}`));
       }
-      host.append(section);
+      list.append(card);
     }
+    host.append(list);
   },
 });

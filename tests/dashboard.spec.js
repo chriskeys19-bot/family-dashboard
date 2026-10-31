@@ -371,8 +371,8 @@ test('nutrition lookup disambiguates, remembers, and can fall back to a note', a
   await expect(page.getByTestId('estimate-banner')).toContainText(/estimate/i);
   await expect(page.getByTestId('macro-calories')).toContainText(/\d+/);
   await page.getByTestId('save-meal').click();
-  await expect(page.getByText('2 rotis and dal')).toBeVisible();
-  await expect(page.getByTestId('day-totals-2026-10-30')).toContainText(/estimates/i);
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — breakfast');
+  await expect(page.getByTestId('module-nutrition')).not.toContainText(/kcal|protein/i);
 
   await page.getByTestId('add-nutrition').click();
   await page.getByTestId('food-query').fill('rotis');
@@ -386,8 +386,18 @@ test('nutrition lookup disambiguates, remembers, and can fall back to a note', a
   await page.getByTestId('food-query').fill('orange slices');
   await page.getByRole('button', { name: 'Snack' }).click();
   await page.getByTestId('save-note').click();
-  await expect(page.getByText('orange slices')).toBeVisible();
-  await expect(page.getByText('No macro estimate').first()).toBeVisible();
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 2 meals logged — breakfast, snack');
+  await expect(page.getByText('orange slices')).toHaveCount(0);
+  await expect(page.getByText('No macro estimate')).toHaveCount(0);
+  if (test.info().project.name === 'iphone-14') {
+    mkdirSync('artifacts/screenshots', { recursive: true });
+    mkdirSync('/opt/cursor/artifacts', { recursive: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    const nutrition = page.getByTestId('module-nutrition');
+    await nutrition.scrollIntoViewIfNeeded();
+    await nutrition.screenshot({ path: join('artifacts', 'screenshots', 'nutrition-summary-mobile.png') });
+    await nutrition.screenshot({ path: '/opt/cursor/artifacts/nutrition-summary-mobile.png' });
+  }
 });
 
 test('a vague McDonald’s dinner is one approximate meal', async ({ page }) => {
@@ -403,15 +413,18 @@ test('a vague McDonald’s dinner is one approximate meal', async ({ page }) => 
   await expect(page.getByTestId('macro-calories')).toHaveText('780 kcal');
   await expect(page.getByText('20 g protein').first()).toBeVisible();
   await page.getByTestId('save-meal').click();
-  await expect(page.getByTestId('today-totals-varun')).toContainText('780 kcal');
-  await expect(page.getByTestId('today-totals-varun')).toContainText('20 g protein');
-  await expect(page.getByTestId('week-trend-varun')).toBeVisible();
-  await expect(page.getByTestId('day-totals-2026-10-30')).toContainText('Approximate estimates');
+  await expect(page.getByTestId('nutrition-today-varun')).toHaveText('Today: 1 meal logged — dinner');
+  await expect(page.getByTestId('module-nutrition')).not.toContainText(/kcal|protein/i);
 
   await page.getByTestId('switch-profile').click();
   await page.getByTestId('profile-ben').click();
-  await expect(page.getByTestId('today-totals-varun')).toContainText('780 kcal');
-  await expect(page.getByTestId('today-totals-yuvan')).toContainText('0 kcal');
+  await expect(page.getByTestId('nutrition-today-varun')).toHaveText('Today: 1 meal logged — dinner');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Nothing logged yet today');
+  await page.getByTestId('tab-yuvan').click();
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Nothing logged yet today');
+  await expect(page.getByTestId('nutrition-today-varun')).toHaveCount(0);
+  await page.getByTestId('range-1w').click();
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Nothing logged yet today');
 });
 
 test('snap meal stubs an estimate, lets the kid edit, and parents see the thumbnail', async ({ page }) => {
@@ -435,22 +448,21 @@ test('snap meal stubs an estimate, lets the kid edit, and parents see the thumbn
   await expect(page.getByTestId('photo-totals')).toContainText('470');
   await shot(page, '11-photo-review');
   await page.getByTestId('save-photo-meal').click();
-  const card = page.locator('[data-source="photo"]');
-  await expect(card).toContainText('Rice, dal, and vegetables');
-  await expect(card).toContainText('250 kcal');
-  await expect(card).toContainText('estimate');
-  const thumb = page.locator('[data-testid^=meal-photo-]');
-  await expect(thumb).toBeVisible();
-  await expect(thumb).toHaveAttribute('src', /^blob:/);
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — breakfast');
+  await expect(page.locator('[data-testid^=meal-photo-]')).toHaveCount(0);
+  await expect(page.locator('[data-testid^=photo-breakdown-]')).toHaveCount(0);
+  await expect(page.getByTestId('module-nutrition')).not.toContainText(/Rice|kcal/);
   expect(calls).toEqual([]);
   await shot(page, '12-photo-saved');
 
   await page.getByTestId('switch-profile').click();
   await page.getByTestId('profile-ben').click();
-  await expect(page.locator('[data-testid^=meal-photo-]')).toBeVisible();
-  await expect(page.locator('[data-testid^=photo-breakdown-]')).toContainText('Rice');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — breakfast');
+  await expect(page.locator('[data-testid^=meal-photo-]')).toHaveCount(0);
+  await expect(page.locator('[data-testid^=photo-breakdown-]')).toHaveCount(0);
   await page.getByTestId('tab-varun').click();
-  await expect(page.getByText('Rice, dal, and vegetables')).toHaveCount(0);
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveCount(0);
+  await expect(page.getByTestId('nutrition-today-varun')).toHaveText('Nothing logged yet today');
 });
 
 test('log my run asks simple questions, shows pace and feel, and stays after lock', async ({ page }) => {
