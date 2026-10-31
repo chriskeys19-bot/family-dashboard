@@ -1,22 +1,40 @@
 export const PORTION_MODES = [
   { id: 'small', label: 'Small' },
-  { id: 'medium', label: 'Medium' },
+  { id: 'regular', label: 'Regular' },
   { id: 'large', label: 'Large' },
   { id: 'cup', label: '1 cup' },
   { id: 'piece', label: '1 piece' },
   { id: 'grams', label: 'Grams' },
 ];
 
+export function portionModesFor(match) {
+  if (match?.sizes) return PORTION_MODES.filter((mode) => ['small', 'regular', 'large'].includes(mode.id));
+  if (match?.basis === 'piece') return PORTION_MODES.filter((mode) => mode.id !== 'cup');
+  if (match?.basis === 'cup') return PORTION_MODES.filter((mode) => mode.id !== 'piece');
+  return PORTION_MODES;
+}
+
 export function defaultPortionMode(match) {
+  if (match?.sizes) return 'regular';
   if (match.basis === 'piece') return 'piece';
   if (match.basis === 'cup') return 'cup';
-  return 'medium';
+  return 'regular';
 }
 
 export function scaleNutrients(match, portion) {
   const qty = Number(portion.qty);
   const safeQty = Number.isFinite(qty) && qty > 0 ? qty : 0;
   const grams = Number(portion.grams);
+  const sized = match.sizes?.[portion.mode];
+  if (sized) {
+    const round1 = (n) => Math.round((Number(n) || 0) * safeQty * 10) / 10;
+    return {
+      calories: Math.round((Number(sized.calories) || 0) * safeQty),
+      protein_g: round1(sized.protein_g),
+      carbs_g: round1(sized.carbs_g),
+      fat_g: round1(sized.fat_g),
+    };
+  }
   const basisGrams = match.basis === '100g' ? 100 : (Number(match.basis_grams) || 100);
   let factor = 0;
   if (portion.mode === 'grams') {
@@ -28,7 +46,7 @@ export function scaleNutrients(match, portion) {
     if (match.basis === 'piece') factor = safeQty;
     else factor = (safeQty * (Number(match.piece_grams) || 50)) / basisGrams;
   } else {
-    const size = portion.mode === 'small' ? 0.75 : portion.mode === 'large' ? 1.5 : 1;
+    const size = portion.mode === 'small' ? 0.75 : portion.mode === 'large' ? 1.35 : 1;
     factor = safeQty * size;
   }
   const round1 = (n) => Math.round((Number(n) || 0) * factor * 10) / 10;

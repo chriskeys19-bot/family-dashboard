@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import { dashboardAuthorized } from '../_shared/auth.ts';
-import { normFoodName, nutrientValue, parseFoodQuery, roughFillers, searchTerm } from '../_shared/food.ts';
+import { catalogMatch, isVagueRestaurant, normFoodName, nutrientValue, parseFoodQuery, plausibleFdcCalories, roughFillers, searchTerm } from '../_shared/food.ts';
 import { json, preflight } from '../_shared/http.ts';
 
 type FdcFood = {
@@ -36,8 +36,13 @@ Deno.serve(async (req) => {
   const results = [];
   for (const item of items) {
     const queryNorm = normFoodName(item.name);
-    let matches = await searchFdc(searchTerm(item.name), apiKey);
-    if (!matches.length) matches = roughFillers(queryNorm);
+    const known = catalogMatch(item.name);
+    let matches = known ? [known] : await searchFdc(searchTerm(item.name), apiKey);
+    if (!known && !matches.length) matches = roughFillers(queryNorm);
+    if (known || isVagueRestaurant(queryNorm)) {
+      results.push({ query: item.name, query_norm: queryNorm, qty: item.qty, matches });
+      continue;
+    }
     const remembered = memory.find((row) => row.query_norm === queryNorm);
     if (remembered) {
       const existing = matches.find((match) => String(match.fdc_id) === String(remembered.fdc_id));
@@ -92,8 +97,10 @@ async function searchFdc(term: string, apiKey: string) {
   const ranked = foods
     .map((food) => ({ food, score: rank(food, term) }))
     .sort((a, b) => b.score - a.score || a.food.description.localeCompare(b.food.description))
-    .slice(0, 3)
-    .map(({ food }) => toMatch(food));
+    .slice(0, 8)
+    .map(({ food }) => toMatch(food))
+    .filter((match): match is NonNullable<typeof match> => Boolean(match))
+    .slice(0, 3);
   return ranked;
 }
 
@@ -112,9 +119,8 @@ function rank(food: FdcFood, term: string): number {
 }
 
 function toMatch(food: FdcFood) {
-  const calories = nutrientValue(food, [1008], /^energy$/i)
-    ?? nutrientValue(food, [2047, 2048], /energy/i)
-    ?? 0;
+  const calories = nutrientValue(food, [1008], /^energy$/i) ?? 0;
+  if (!plausibleFdcCalories(calories)) return null;
   return {
     fdc_id: String(food.fdcId),
     label: food.brandName ? `${food.description} (${food.brandName})` : food.description,

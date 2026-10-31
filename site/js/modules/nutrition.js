@@ -8,11 +8,36 @@ import { openSheet, closeSheet } from '../sheet.js';
 import { el, field } from '../dom.js';
 import { MEAL_LABELS } from '../labels.js';
 import { itemSlug } from '../food-parse.js';
-import { PORTION_MODES, defaultPortionMode, scaleNutrients, sumNutrients } from '../portions.js';
+import { defaultPortionMode, portionModesFor, scaleNutrients, sumNutrients } from '../portions.js';
 import { listPhotoNutritionSources } from '../nutrition-photo.js';
-import { formatISODate, formatTime, formatWeekday, inInstantRange, zonedDateTimeFromISO } from '../time.js';
+import { formatISODate, formatTime, formatWeekday, inInstantRange, shiftISODate, zonedDateTimeFromISO } from '../time.js';
 
 const MEALS = ['breakfast', 'lunch', 'dinner', 'snack'];
+
+function weekCard(ctx, person) {
+  const today = formatISODate(ctx.now);
+  const days = [];
+  for (let ago = 6; ago >= 0; ago -= 1) {
+    const iso = shiftISODate(today, -ago);
+    const meals = (ctx.nutrition || []).filter((row) => row.person_id === person.id
+      && formatISODate(row.eaten_at) === iso
+      && row.source !== 'note'
+      && row.calories != null);
+    days.push({ iso, ...sumNutrients(meals) });
+  }
+  const earlier = days.slice(0, 3).reduce((sum, day) => sum + day.calories, 0);
+  const recent = days.slice(4).reduce((sum, day) => sum + day.calories, 0);
+  let trend = 'About the same as earlier this week';
+  if (earlier === 0 && recent === 0) trend = 'No estimates yet this week';
+  else if (recent > earlier * 1.15) trend = 'Higher than earlier this week';
+  else if (earlier > 0 && recent < earlier * 0.85) trend = 'Lower than earlier this week';
+  const todayTotals = days[days.length - 1];
+  return el('article', { class: 'card', 'data-testid': `nutrition-week-${person.id}` },
+    el('p', { class: 'log-kicker' }, person.name),
+    el('p', { 'data-testid': `today-totals-${person.id}` }, `Today · approximate · ${Math.round(todayTotals.calories)} kcal · ${todayTotals.protein_g} g protein`),
+    el('p', { class: 'log-meta', 'data-testid': `week-trend-${person.id}` }, trend),
+    el('p', { class: 'week-days' }, days.map((day) => `${day.iso.slice(5)} ~${Math.round(day.calories)}`).join(' · ')));
+}
 
 function peopleInScope(ctx) {
   if (ctx.profile.role === 'kid') return [ctx.profile.id];
@@ -32,7 +57,7 @@ function basisLabel(match) {
 }
 
 function macroLine(totals) {
-  return `Estimates · ${Math.round(totals.calories)} kcal · P ${totals.protein_g} g · C ${totals.carbs_g} g · F ${totals.fat_g} g`;
+  return `Approximate estimates · ${Math.round(totals.calories)} kcal · ${totals.protein_g} g protein`;
 }
 
 function openNutritionForm(ctx, kid) {
@@ -200,7 +225,7 @@ function openNutritionForm(ctx, kid) {
     };
     const stack = el('div', { class: 'stack', 'data-testid': 'photo-review' });
     stack.append(
-      el('p', { class: 'estimate-banner', 'data-testid': 'estimate-banner' }, 'These are estimates, not lab values.'),
+      el('p', { class: 'estimate-banner', 'data-testid': 'estimate-banner' }, 'Approximate estimates, not lab values.'),
       el('p', { class: 'log-meta', 'data-testid': 'photo-confidence' }, `Confidence ${estimate.confidence || 'medium'} · estimate`),
       el('div', { class: 'field' }, el('span', { class: 'field-label' }, 'Meal'), meals),
     );
@@ -374,11 +399,11 @@ function openNutritionForm(ctx, kid) {
             paintPicks();
           },
         }, el('span', { class: 'match-label' }, match.remembered ? `${match.label} · Your usual` : match.label),
-          el('span', { class: 'match-meta' }, `${match.calories} kcal / ${basisLabel(match)}${match.rough ? ' · rough' : ''}`)));
+          el('span', { class: 'match-meta' }, `~${match.calories} kcal · ${match.protein_g} g protein / ${basisLabel(match)} · approximate`)));
       }
       const current = state.picks.get(item.query_norm);
       const portions = el('div', { class: 'choice-row', role: 'group', 'aria-label': `Portion for ${item.query}` });
-      for (const mode of PORTION_MODES) {
+      for (const mode of portionModesFor(current?.match)) {
         portions.append(el('button', {
           type: 'button',
           class: `btn choice${current?.mode === mode.id ? ' is-on' : ''}`,
@@ -482,10 +507,10 @@ function openNutritionForm(ctx, kid) {
     const error = el('p', { class: 'form-error', 'data-testid': 'form-error', hidden: true });
     const list = el('ul', { class: 'confirm-list' });
     for (const row of rows) {
-      list.append(el('li', {}, `${row.qty} × ${row.label} · ${row.calories} kcal`));
+      list.append(el('li', {}, `${row.qty} × ${row.label} · ~${row.calories} kcal · ${row.protein_g} g protein · approximate`));
     }
     body.replaceChildren(el('div', { class: 'stack' },
-      el('p', { class: 'estimate-banner', 'data-testid': 'estimate-banner' }, 'These are estimates, not lab values.'),
+      el('p', { class: 'estimate-banner', 'data-testid': 'estimate-banner' }, 'Approximate estimates, not lab values.'),
       el('p', { class: 'macro-calories', 'data-testid': 'macro-calories' }, `${totals.calories} kcal`),
       el('p', { class: 'macro-split' }, `P ${totals.protein_g} g · C ${totals.carbs_g} g · F ${totals.fat_g} g`),
       list,
@@ -573,6 +598,12 @@ registerModule({
   },
   render(ctx, host) {
     const ids = new Set(peopleInScope(ctx));
+    const kids = ctx.people.filter((person) => person.role === 'kid' && ids.has(person.id));
+    if (kids.length) {
+      const weeks = el('div', { class: 'stack', 'data-testid': 'nutrition-weeks' });
+      for (const kid of kids) weeks.append(weekCard(ctx, kid));
+      host.append(weeks);
+    }
     const rows = ctx.nutrition
       .filter((row) => ids.has(row.person_id))
       .filter((row) => inInstantRange(row.eaten_at, ctx.range))
@@ -600,7 +631,7 @@ registerModule({
         const who = showName ? `${person?.name || entry.person_id} · ` : '';
         const kcal = entry.source === 'note' || entry.calories == null
           ? 'No macro estimate'
-          : `~${Math.round(Number(entry.calories))} kcal · estimate`;
+          : `~${Math.round(Number(entry.calories))} kcal · ${Number(entry.protein_g) || 0} g protein · approximate`;
         const card = el('article', {
           class: 'card log-card',
           'data-testid': `nutrition-${entry.id}`,

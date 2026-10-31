@@ -1,3 +1,4 @@
+import { catalogMatch, isVagueRestaurant } from './food-catalog.js';
 import { normFoodName, parseFoodQuery } from './food-parse.js';
 
 const DEMO_FOODS = [
@@ -119,7 +120,16 @@ export function lookupDemoFoods(query, memory = []) {
     stub: true,
     items: items.map((item) => {
       const queryNorm = normFoodName(item.name);
-      let matches = matchesFor(queryNorm);
+      const known = catalogMatch(item.name);
+      let matches = known ? [known] : matchesFor(queryNorm);
+      if (known || isVagueRestaurant(queryNorm)) {
+        return {
+          query: item.name,
+          query_norm: queryNorm,
+          qty: item.qty,
+          matches,
+        };
+      }
       const remembered = memory.find((row) => row.query_norm === queryNorm);
       if (remembered) {
         const existing = matches.find((match) => match.fdc_id === remembered.fdc_id);

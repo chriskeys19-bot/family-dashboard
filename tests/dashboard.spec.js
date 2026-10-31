@@ -359,7 +359,7 @@ test('nutrition lookup disambiguates, remembers, and can fall back to a note', a
   await expect(page.getByTestId('macro-calories')).toContainText(/\d+/);
   await page.getByTestId('save-meal').click();
   await expect(page.getByText('2 rotis and dal')).toBeVisible();
-  await expect(page.getByTestId('day-totals-2026-10-30')).toContainText('Estimates');
+  await expect(page.getByTestId('day-totals-2026-10-30')).toContainText(/estimates/i);
 
   await page.getByTestId('add-nutrition').click();
   await page.getByTestId('food-query').fill('rotis');
@@ -375,6 +375,30 @@ test('nutrition lookup disambiguates, remembers, and can fall back to a note', a
   await page.getByTestId('save-note').click();
   await expect(page.getByText('orange slices')).toBeVisible();
   await expect(page.getByText('No macro estimate').first()).toBeVisible();
+});
+
+test('a vague McDonald’s dinner is one approximate meal', async ({ page }) => {
+  await openBoard(page, 'varun');
+  await page.getByTestId('add-nutrition').click();
+  await page.getByTestId('food-query').fill("McDonald's");
+  await page.getByRole('button', { name: 'Dinner' }).click();
+  await page.getByTestId('lookup-foods').click();
+  await expect(page.getByRole('button', { name: /Typical McDonald/ })).toBeVisible();
+  await expect(page.getByTestId('portion-mcdonalds-regular')).toHaveAttribute('aria-pressed', 'true');
+  await page.getByTestId('confirm-estimates').click();
+  await expect(page.getByTestId('estimate-banner')).toContainText(/approximate/i);
+  await expect(page.getByTestId('macro-calories')).toHaveText('780 kcal');
+  await expect(page.getByText('20 g protein').first()).toBeVisible();
+  await page.getByTestId('save-meal').click();
+  await expect(page.getByTestId('today-totals-varun')).toContainText('780 kcal');
+  await expect(page.getByTestId('today-totals-varun')).toContainText('20 g protein');
+  await expect(page.getByTestId('week-trend-varun')).toBeVisible();
+  await expect(page.getByTestId('day-totals-2026-10-30')).toContainText('Approximate estimates');
+
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-ben').click();
+  await expect(page.getByTestId('today-totals-varun')).toContainText('780 kcal');
+  await expect(page.getByTestId('today-totals-yuvan')).toContainText('0 kcal');
 });
 
 test('snap meal stubs an estimate, lets the kid edit, and parents see the thumbnail', async ({ page }) => {

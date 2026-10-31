@@ -3,6 +3,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
 import { boostForPerson, dayNumberFromISO } from '../site/js/boost.js';
+import { estimateLoggedMeal } from '../site/js/food-catalog.js';
 import { sumPhotoItems } from '../site/js/photo-meal.js';
 import { assembleJournal } from '../site/js/journal.js';
 import { buildRecap } from '../site/js/recap.js';
@@ -140,10 +141,26 @@ test('journal export packs one Pacific day including the recap', () => {
   assert.equal(journal.runs.length, 1);
   assert.equal(journal.meals.length, 1);
   assert.equal(journal.meal_totals.calories, 400);
+  assert.equal(journal.daily_totals.protein_g, 20);
+  assert.equal(journal.daily_totals.approximate, true);
+  assert.equal(journal.meal_totals.approximate, true);
   assert.equal(journal.notes[0].body, 'hello');
   assert.equal(journal.needs[0].item, 'grips');
   assert.equal(journal.recap.yesterday, '2026-10-30');
   assert.equal(journal.timezone, 'America/Los_Angeles');
+});
+
+test('oct 30 meal estimates stay one serving each', () => {
+  const yuvan = estimateLoggedMeal('pulao, curd rice with chicken, McDonald’s snack wrap, McChicken, chocolate shake');
+  assert.equal(yuvan.items.length, 5);
+  assert.equal(yuvan.items.every((item) => item.known), true);
+  assert.equal(yuvan.calories, 2180);
+  assert.equal(yuvan.protein_g, 81);
+  const varun = estimateLoggedMeal("McDonald's");
+  assert.equal(varun.items.length, 1);
+  assert.equal(varun.calories, 780);
+  assert.equal(varun.protein_g, 20);
+  assert.ok(varun.calories < 1200);
 });
 
 test('the public site folder has no family photos', () => {

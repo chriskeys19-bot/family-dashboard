@@ -2,7 +2,7 @@
 
 export function parseFoodQuery(input) {
   return String(input || '')
-    .split(/\s*(?:,|&|\+|\/|\band\b|\bwith\b)\s*/i)
+    .split(/\s*(?:,|&|\+|\/|\band\b)\s*/i)
     .map((part) => part.trim())
     .filter(Boolean)
     .map((part) => {
