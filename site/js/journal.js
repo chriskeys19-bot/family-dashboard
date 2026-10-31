@@ -1,3 +1,4 @@
+import { practiceMentions } from './practice-duration.js';
 import { buildRecap } from './recap.js';
 import { dayBounds, shiftISODate } from './time.js';
 
@@ -54,6 +55,7 @@ export function assembleJournal({
     timezone: 'America/Los_Angeles',
     completions: dayCompletions,
     reflections: dayReflections,
+    practice_mentions: practiceMentions(dayReflections),
     runs,
     meals,
     meal_totals: sumMeals(meals),

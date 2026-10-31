@@ -100,6 +100,9 @@ registerModule({
       if (cricket) {
         const block = el('div', { 'data-testid': `recap-cricket-${person.id}` });
         block.append(el('h3', { class: 'recap-heading' }, 'Cricket'));
+        if (cricket.durations?.length) {
+          block.append(el('p', { 'data-testid': `recap-practice-duration-${person.id}` }, `Practiced ${cricket.durations.join(', ')}.`));
+        }
         if (cricket.themes.length) block.append(el('p', {}, `Focused on ${cricket.themes.join(' and ')}.`));
         if (cricket.feel || cricket.trend) block.append(el('p', {}, [cricket.feel, cricket.trend].filter(Boolean).join(' · ')));
         for (const line of cricket.learned) block.append(el('p', { class: 'event-notes' }, line));

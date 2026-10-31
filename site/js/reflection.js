@@ -1,4 +1,5 @@
 import { el, field } from './dom.js';
+import { PRACTICE_DURATIONS, formatPracticeDuration, scheduledMinutes } from './practice-duration.js';
 import { FEELS, feelMeta, feelPhrase, feelPicker } from './feel.js';
 import { closeSheet, openSheet } from './sheet.js';
 import { saveReflection } from './store.js';
@@ -51,6 +52,10 @@ export function reflectionBlurb(row) {
   const focus = (row.focus || []).map((id) => FOCUS_CHIPS.find(([key]) => key === id)?.[1] || id);
   if (focus.length) bits.push(focus.join(', '));
   if (row.focus_note) bits.push(row.focus_note);
+  if (row.kind === 'practice') {
+    const length = formatPracticeDuration(row.duration_minutes);
+    if (length) bits.push(length);
+  }
   const feel = feelPhrase(row.feel);
   if (feel) bits.push(feel);
   const node = el('div', {
@@ -87,11 +92,16 @@ export function cricketRecap(reflections, personId, yesterday) {
     else trend = 'In line with recent sessions.';
   }
   const learned = mine.map((row) => row.learned).filter(Boolean);
+  const durations = mine
+    .filter((row) => row.kind !== 'game')
+    .map((row) => formatPracticeDuration(row.duration_minutes))
+    .filter(Boolean);
   return {
     themes,
     feel: avg == null ? '' : feelPhrase(Math.round(avg)),
     trend,
     learned,
+    durations,
   };
 }
 
@@ -105,8 +115,13 @@ export function openReflection(ctx, spec, existing) {
   const kind = cricketKind(spec.categoryId);
   if (!kind) return;
   const current = existing || findReflection(ctx.reflections, spec) || {};
+  const event = (ctx.events || []).find((item) => item.id === spec.itemId);
+  const savedMinutes = Number(current.duration_minutes);
   const state = {
     session_type: current.session_type || '',
+    duration_minutes: Number.isFinite(savedMinutes) && savedMinutes > 0
+      ? savedMinutes
+      : (scheduledMinutes(event?.starts_at, event?.ends_at) ?? ''),
     focus: new Set(current.focus || []),
     focus_note: current.focus_note || '',
     learned: current.learned || '',
@@ -155,6 +170,7 @@ export function openReflection(ctx, spec, existing) {
         }, label));
       }
       stack.append(types);
+      stack.append(durationPicker());
     } else {
       stack.append(gameStats());
     }
@@ -192,6 +208,50 @@ export function openReflection(ctx, spec, existing) {
         el('button', { type: 'submit', class: 'btn primary', 'data-testid': 'reflection-save' }, 'Save')),
     );
     body.replaceChildren(stack);
+  }
+
+  function durationPicker() {
+    const selected = Number(state.duration_minutes);
+    const onPreset = PRACTICE_DURATIONS.some(([minutes]) => minutes === selected);
+    const wrap = el('div', { class: 'stack', 'data-testid': 'practice-duration' });
+    wrap.append(el('p', { class: 'field-label' }, 'How long did you practice?'));
+    const choices = el('div', { class: 'choice-row', role: 'group', 'aria-label': 'How long did you practice?' });
+    for (const [minutes, label] of PRACTICE_DURATIONS) {
+      const on = selected === minutes;
+      choices.append(el('button', {
+        type: 'button',
+        class: `btn choice${on ? ' is-on' : ''}`,
+        'aria-pressed': on ? 'true' : 'false',
+        'data-testid': `duration-${minutes}`,
+        onclick: () => {
+          state.duration_minutes = on ? '' : minutes;
+          const sheetBody = document.querySelector('[data-testid="reflection-sheet"] .sheet-body');
+          if (sheetBody) paint(sheetBody);
+        },
+      }, label));
+    }
+    const custom = el('input', {
+      type: 'text',
+      inputmode: 'numeric',
+      maxlength: '4',
+      placeholder: 'Minutes',
+      'data-testid': 'duration-custom',
+      'aria-label': 'Custom minutes',
+      value: onPreset || !selected ? '' : String(selected),
+    });
+    custom.addEventListener('input', () => {
+      const raw = custom.value.trim();
+      const n = Number(raw);
+      state.duration_minutes = raw === '' || !Number.isFinite(n) ? '' : Math.round(n);
+      for (const button of choices.querySelectorAll('[data-testid^="duration-"]')) {
+        const minutes = Number(button.getAttribute('data-testid').replace('duration-', ''));
+        const on = state.duration_minutes === minutes;
+        button.classList.toggle('is-on', on);
+        button.setAttribute('aria-pressed', on ? 'true' : 'false');
+      }
+    });
+    wrap.append(choices, field('Or type minutes', custom, 'Optional'));
+    return wrap;
   }
 
   function gameStats() {
@@ -239,6 +299,13 @@ export function openReflection(ctx, spec, existing) {
     return field(label, input);
   }
 
+  function minutesOrNull(value) {
+    if (value === '' || value == null) return null;
+    const n = Math.round(Number(value));
+    if (!Number.isFinite(n) || n <= 0 || n > 24 * 60) return null;
+    return n;
+  }
+
   function numOrNull(value) {
     if (value === '' || value == null) return null;
     const n = Number(value);
@@ -254,6 +321,7 @@ export function openReflection(ctx, spec, existing) {
       occurrence_on: spec.occurrenceOn,
       kind,
       session_type: kind === 'practice' ? (state.session_type || null) : null,
+      duration_minutes: kind === 'practice' ? minutesOrNull(state.duration_minutes) : null,
       focus: [...state.focus],
       focus_note: state.focus_note.trim() || null,
       learned: state.learned.trim() || null,

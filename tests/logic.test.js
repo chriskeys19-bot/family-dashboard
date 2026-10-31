@@ -128,7 +128,7 @@ test('journal export packs one Pacific day including the recap', () => {
       { person_id: 'yuvan', item_type: 'event', item_id: 'a', occurrence_on: '2026-10-30', completed_at: '2026-10-31T03:00:00Z' },
       { person_id: 'yuvan', item_type: 'event', item_id: 'b', occurrence_on: '2026-10-31', completed_at: '2026-10-31T18:00:00Z' },
     ],
-    reflections: [{ person_id: 'yuvan', event_id: 'a', occurrence_on: '2026-10-30', focus: ['batting'], feel: 5 }],
+    reflections: [{ person_id: 'yuvan', event_id: 'a', occurrence_on: '2026-10-30', kind: 'practice', focus: ['batting'], feel: 5, duration_minutes: 90 }],
     training: [{ person_id: 'yuvan', trained_on: '2026-10-30', session_type: 'easy', feel: 4 }],
     nutrition: [{ person_id: 'yuvan', eaten_at: '2026-10-30T18:00:00-07:00', source: 'fdc', calories: 400, protein_g: 20, carbs_g: 40, fat_g: 10 }],
     notes: [{ person_id: 'yuvan', body: 'hello', created_at: '2026-10-30T20:00:00-07:00' }],
@@ -136,6 +136,7 @@ test('journal export packs one Pacific day including the recap', () => {
   });
   assert.equal(journal.completions.length, 1);
   assert.equal(journal.reflections.length, 1);
+  assert.deepEqual(journal.practice_mentions, ['Practiced 1.5 hr.']);
   assert.equal(journal.runs.length, 1);
   assert.equal(journal.meals.length, 1);
   assert.equal(journal.meal_totals.calories, 400);

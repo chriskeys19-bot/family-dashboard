@@ -78,6 +78,7 @@ export function assembleJournal({
     timezone: 'America/Los_Angeles',
     completions,
     reflections,
+    practice_mentions: practiceMentions(reflections),
     runs,
     meals,
     meal_totals: sumMeals(meals),
@@ -85,6 +86,28 @@ export function assembleJournal({
     needs,
     recap,
   };
+}
+
+function practiceMentions(rows: Row[]) {
+  return rows
+    .filter((row) => row.kind !== 'game' && Number(row.duration_minutes) > 0)
+    .map((row) => `Practiced ${formatPracticeMinutes(row.duration_minutes)}.`);
+}
+
+function formatPracticeMinutes(minutes: unknown) {
+  const n = Math.round(Number(minutes));
+  if (!Number.isFinite(n) || n <= 0) return '';
+  const presets: Record<number, string> = {
+    30: '30 min',
+    60: '1 hr',
+    90: '1.5 hr',
+    120: '2 hr',
+    150: '2.5 hr',
+    180: '3 hr+',
+  };
+  if (presets[n]) return presets[n];
+  if (n % 60 === 0) return `${n / 60} hr`;
+  return `${n} min`;
 }
 
 function buildRecap({

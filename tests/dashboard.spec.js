@@ -262,6 +262,37 @@ test('a kid can check off only their own event, and parents see it', async ({ pa
   await expect(page.getByTestId('check-event-practice-blazers-2026-10-30-yuvan-2026-10-30')).toHaveCount(0);
 });
 
+test('practice check-off asks how long and parents can see it', async ({ page }) => {
+  await openBoard(page, 'yuvan', new Date('2026-10-31T18:00:00Z'));
+  await page.getByTestId('check-event-practice-blazers-2026-10-30-yuvan-2026-10-30').check();
+  const sheet = page.getByTestId('reflection-sheet');
+  await expect(sheet.getByText('How long did you practice?')).toBeVisible();
+  await expect(sheet.getByTestId('duration-custom')).toHaveValue('195');
+  await expect(sheet.getByTestId('duration-180')).toHaveAttribute('aria-pressed', 'false');
+  await sheet.getByTestId('duration-90').click();
+  await expect(sheet.getByTestId('duration-90')).toHaveAttribute('aria-pressed', 'true');
+  await expect(sheet.getByTestId('duration-custom')).toHaveValue('');
+  await sheet.getByTestId('reflection-save').click();
+  await expect(page.getByTestId('recap-practice-duration-yuvan')).toContainText('Practiced 1.5 hr.');
+
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-ben').click();
+  await expect(page.getByTestId('recap-practice-duration-yuvan')).toContainText('Practiced 1.5 hr.');
+});
+
+test('saved practice length shows on the event for parents', async ({ page }) => {
+  await openBoard(page, 'yuvan');
+  await page.getByTestId('check-event-practice-blazers-2026-10-30-yuvan-2026-10-30').check();
+  const sheet = page.getByTestId('reflection-sheet');
+  await expect(sheet.getByText('How long did you practice?')).toBeVisible();
+  await sheet.getByTestId('duration-120').click();
+  await sheet.getByTestId('reflection-save').click();
+  await expect(page.getByTestId('reflection-practice-blazers-2026-10-30-yuvan')).toContainText('2 hr');
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-ben').click();
+  await expect(page.getByTestId('reflection-practice-blazers-2026-10-30-yuvan')).toContainText('2 hr');
+});
+
 test('yesterday recap lists a missed practice and accepts a late check', async ({ page }) => {
   await openBoard(page, 'yuvan', new Date('2026-10-31T18:00:00Z'));
   const recap = page.getByTestId('recap-yuvan');
