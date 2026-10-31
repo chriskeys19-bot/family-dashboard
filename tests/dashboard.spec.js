@@ -894,3 +894,30 @@ test('dictation keeps a paragraph once when results are cumulative or repeated',
   });
   await expect(note).toHaveValue('I went to practice today');
 });
+
+test('this week counts cricket and gym, and parents can set weight', async ({ page }) => {
+  await openBoard(page, 'yuvan');
+  await expect(page.getByTestId('week-span')).toContainText('Sun Oct 25 – Sat Oct 31');
+  await expect(page.getByTestId('week-yuvan')).toBeVisible();
+  await expect(page.getByTestId('edit-weights')).toHaveCount(0);
+  await page.getByTestId('check-event-practice-blazers-2026-10-30-yuvan-2026-10-30').check();
+  const sheet = page.getByTestId('reflection-sheet');
+  await sheet.getByTestId('duration-30').click();
+  await sheet.getByTestId('reflection-save').click();
+  await expect(page.getByTestId('week-cricket-yuvan')).toContainText('30 min');
+  await expect(page.getByTestId('week-cricket-yuvan')).toContainText('last week');
+  await page.getByTestId('check-event-gym-toy-soldier-2026-10-30-yuvan-2026-10-30').check();
+  await expect(page.getByTestId('week-gym-yuvan')).toContainText('1 session');
+
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-ben').click();
+  await expect(page.getByTestId('week-family')).toContainText('30 min');
+  await expect(page.getByTestId('week-varun')).toContainText('Cricket 0');
+  await page.getByTestId('edit-weights').click();
+  await page.getByTestId('weight-yuvan').fill('100');
+  await page.getByTestId('save-weights').click();
+  await expect(page.getByTestId('week-weight-yuvan')).toContainText('100 lb');
+  await page.getByTestId('tab-yuvan').click();
+  await expect(page.getByTestId('week-family')).toHaveCount(0);
+  await expect(page.getByTestId('week-yuvan')).toContainText('100 lb');
+});

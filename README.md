@@ -147,6 +147,7 @@ supabase functions deploy fdc-lookup --no-verify-jwt
 supabase functions deploy event-requests --no-verify-jwt
 supabase functions deploy photo-meal --no-verify-jwt
 supabase functions deploy journal-export --no-verify-jwt
+supabase functions deploy weekly-summary --no-verify-jwt
 ```
 
 `--no-verify-jwt` is required. `auth-gate` is public so the password exchange can happen. The other functions check the dashboard JWT (or, for event requests, `ASSISTANT_TOKEN`) themselves.
@@ -201,12 +202,32 @@ curl -s -X POST \
 
 A dashboard session token from `auth-gate` works in `Authorization: Bearer` as well.
 
+`weekly-summary` uses the same `JOURNAL_EXPORT_TOKEN`. `week_start` must be a Sunday (`YYYY-MM-DD`, America/Los_Angeles weeks run Sunday–Saturday). Omit `person_id` for every boy plus a family rollup. The body includes cricket hours, miles, gym sessions and hours, calories eaten, protein, estimated calories burned, and highlights (`best_reflection`, `longest_run`). Burn estimates use each boy’s `person_settings.weight_kg` (default 40 kg) and are marked `approximate`.
+
 Nightly journal for one kid (the token is not the family password):
 
 ```bash
 curl -s \
   -H "x-journal-token: $JOURNAL_EXPORT_TOKEN" \
   "https://<ref>.supabase.co/functions/v1/journal-export?person_id=yuvan&date=2026-10-30"
+```
+
+Weekly summary (Sunday of that week):
+
+```bash
+curl -s \
+  -H "x-journal-token: $JOURNAL_EXPORT_TOKEN" \
+  "https://<ref>.supabase.co/functions/v1/weekly-summary?week_start=2026-10-25"
+```
+
+One boy:
+
+```bash
+curl -s -X POST \
+  -H "content-type: application/json" \
+  -H "authorization: Bearer $JOURNAL_EXPORT_TOKEN" \
+  -d '{"week_start":"2026-10-25","person_id":"yuvan"}' \
+  "https://<ref>.supabase.co/functions/v1/weekly-summary"
 ```
 
 ## GitHub Pages

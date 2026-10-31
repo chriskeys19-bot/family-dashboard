@@ -25,6 +25,7 @@ function emptyOverlay() {
     reflections: [],
     needs: [],
     notes: [],
+    weights: {},
   };
 }
 
@@ -179,6 +180,7 @@ async function ensureDemo() {
   if (!overlay.reflections) overlay.reflections = [];
   if (!overlay.needs) overlay.needs = [];
   if (!overlay.notes) overlay.notes = [];
+  if (!overlay.weights) overlay.weights = {};
   if (!boostLists) boostLists = await loadBundledBoost();
 }
 
@@ -188,7 +190,10 @@ function persistOverlay() {
 
 function demoBundle() {
   return {
-    people: seed.people,
+    people: seed.people.map((person) => ({
+      ...person,
+      weight_kg: overlay.weights?.[person.id] ?? (person.role === 'kid' ? 40 : null),
+    })),
     categories: (overlay.categories || seed.categories).map((row) => ({ ...row })),
     events: seed.events.map((row) => ({ ...row, people: [...row.people] })),
     nutrition_entries: overlay.nutrition_entries.map((row) => ({ ...row })),
@@ -227,12 +232,40 @@ async function rest(path, { method = 'GET', body, prefer } = {}) {
   return text ? JSON.parse(text) : null;
 }
 
+async function restOptional(path) {
+  try {
+    return await rest(path);
+  } catch {
+    return [];
+  }
+}
+
+export async function saveWeight(personId, weightKg) {
+  const kg = Number(weightKg);
+  if (!Number.isFinite(kg) || kg <= 0) throw new Error('Enter a weight.');
+  if (isDemoMode()) {
+    await ensureDemo();
+    knownPerson(personId);
+    overlay.weights[personId] = kg;
+    persistOverlay();
+    emit();
+    return { person_id: personId, weight_kg: kg };
+  }
+  const rows = await rest('person_settings?on_conflict=person_id', {
+    method: 'POST',
+    prefer: 'resolution=merge-duplicates,return=representation',
+    body: { person_id: personId, weight_kg: kg },
+  });
+  emit();
+  return Array.isArray(rows) ? rows[0] : rows;
+}
+
 export async function loadBundle() {
   if (isDemoMode()) {
     await ensureDemo();
     return demoBundle();
   }
-  const [people, categories, events, nutrition, training, requests, memory, completions, reflections, needs, notes, boostLists] = await Promise.all([
+  const [people, categories, events, nutrition, training, requests, memory, completions, reflections, needs, notes, boostLists, settings] = await Promise.all([
     rest('people?select=*&order=sort_order.asc'),
     rest('categories?select=*&order=sort_order.asc'),
     rest('events?select=*&order=starts_at.asc'),
@@ -245,9 +278,14 @@ export async function loadBundle() {
     rest('kid_needs?select=*&order=created_at.desc'),
     rest('kid_notes?select=*&order=created_at.desc'),
     loadLiveBoostLists(),
+    restOptional('person_settings?select=*'),
   ]);
+  const weightById = new Map((settings || []).map((row) => [row.person_id, Number(row.weight_kg)]));
   return {
-    people,
+    people: people.map((person) => ({
+      ...person,
+      weight_kg: weightById.get(person.id) || (person.role === 'kid' ? 40 : null),
+    })),
     categories,
     events,
     nutrition_entries: nutrition,

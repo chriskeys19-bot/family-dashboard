@@ -3,6 +3,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
 import { boostForPerson, dayNumberFromISO } from '../site/js/boost.js';
+import { summarizeFamily, summarizeWeek, weekRange } from '../site/js/week.js';
 import { estimateLoggedMeal } from '../site/js/food-catalog.js';
 import { sumPhotoItems } from '../site/js/photo-meal.js';
 import { assembleJournal } from '../site/js/journal.js';
@@ -148,6 +149,42 @@ test('journal export packs one Pacific day including the recap', () => {
   assert.equal(journal.needs[0].item, 'grips');
   assert.equal(journal.recap.yesterday, '2026-10-30');
   assert.equal(journal.timezone, 'America/Los_Angeles');
+});
+
+test('a week is Sunday through Saturday and counts checked cricket, gym, and runs', () => {
+  const range = weekRange('2026-10-30');
+  assert.deepEqual(range, { start: '2026-10-25', end: '2026-10-31' });
+  assert.equal(weekRange('2026-11-01').start, '2026-11-01');
+  const person = { id: 'yuvan', name: 'Yuvan', weight_kg: 40 };
+  const events = [
+    { id: 'practice', category_id: 'cricket-practice', status: 'confirmed', people: ['yuvan'], starts_at: '2026-10-30T18:00:00-07:00', ends_at: '2026-10-30T21:15:00-07:00' },
+    { id: 'game', category_id: 'cricket-games', status: 'confirmed', people: ['yuvan'], starts_at: '2026-10-31T08:00:00-07:00', ends_at: '2026-10-31T12:00:00-07:00' },
+    { id: 'gym', category_id: 'gym', status: 'confirmed', people: ['yuvan'], starts_at: '2026-10-30T18:15:00-07:00', ends_at: '2026-10-30T19:30:00-07:00' },
+  ];
+  const summary = summarizeWeek({
+    person,
+    events,
+    completions: [
+      { person_id: 'yuvan', item_type: 'event', item_id: 'practice', occurrence_on: '2026-10-30', completed_at: '2026-10-30T19:00:00-07:00' },
+      { person_id: 'yuvan', item_type: 'event', item_id: 'gym', occurrence_on: '2026-10-30', completed_at: '2026-10-30T19:30:00-07:00' },
+    ],
+    reflections: [{ person_id: 'yuvan', event_id: 'practice', occurrence_on: '2026-10-30', kind: 'practice', duration_minutes: 30, learned: 'kept my head still' }],
+    training: [{ person_id: 'yuvan', trained_on: '2026-10-30', distance_m: 5000, duration_seconds: 1800, session_type: 'easy' }],
+    nutrition: [{ person_id: 'yuvan', eaten_at: '2026-10-30T18:00:00-07:00', source: 'fdc', calories: 780, protein_g: 20 }],
+    range,
+  });
+  assert.equal(summary.cricket_minutes, 30);
+  assert.equal(summary.gym_sessions, 1);
+  assert.equal(summary.gym_minutes, 75);
+  assert.equal(summary.miles_run, 3.1);
+  assert.equal(summary.calories_eaten, 780);
+  assert.equal(summary.protein_g, 20);
+  assert.equal(summary.calories_burned, 701);
+  assert.equal(summary.highlights.best_reflection.text, 'kept my head still');
+  assert.equal(summary.highlights.longest_run.miles, 3.1);
+  const family = summarizeFamily([summary, { ...summary, person_id: 'varun', name: 'Varun', cricket_minutes: 0, miles_run: 0, gym_sessions: 0, gym_minutes: 0, calories_eaten: 0, protein_g: 0, calories_burned: 0, highlights: { best_reflection: null, longest_run: null } }]);
+  assert.equal(family.cricket_minutes, 30);
+  assert.equal(family.calories_eaten, 780);
 });
 
 test('oct 30 meal estimates stay one serving each', () => {

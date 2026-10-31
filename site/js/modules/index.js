@@ -1,4 +1,5 @@
 /** Registry entry point. Import a new module here. Do not edit the shell. */
+import './week.js';
 import './recap.js';
 import './boost.js';
 import './schedule.js';
