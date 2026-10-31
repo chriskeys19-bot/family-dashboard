@@ -6,7 +6,7 @@
     "seed": "node scripts/generate-seed.mjs",
     "boost": "node scripts/build-boost.mjs",
     "start": "python3 -m http.server 4173 --directory site --bind 127.0.0.1",
-    "test:logic": "node --test tests/logic.test.js",
+    "test:logic": "node --experimental-strip-types --test tests/logic.test.js tests/food.test.js",
     "test:ui": "playwright test",
     "test": "npm run test:logic && npm run test:ui"
   },

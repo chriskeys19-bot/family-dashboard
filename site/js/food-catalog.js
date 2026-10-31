@@ -14,22 +14,22 @@ const DISHES = [
     regular: [430, 29, 42, 14],
     large: [580, 38, 55, 20],
   }),
-  dish('mcchicken', 'McChicken', ['mcchicken', 'mc chicken', 'mcdonalds mcchicken'], {
-    small: [400, 14, 39, 21],
-    regular: [400, 14, 39, 21],
-    large: [400, 14, 39, 21],
+  dish('mcchicken', 'McChicken', ['mcchicken', 'mchicken', 'm chicken', 'mc chicken', 'mcdonalds mcchicken'], {
+    small: [390, 14, 39, 21],
+    regular: [390, 14, 39, 21],
+    large: [390, 14, 39, 21],
   }),
-  dish('snack-wrap', 'McDonald’s snack wrap', [
-    'snack wrap', 'snackwrap', 'mcdonalds snack wrap', 'chicken snack wrap', 'mcwrap',
+  dish('snack-wrap', 'Ranch snack wrap', [
+    'ranch snack wrap', 'ranch snack rap', 'snack wrap', 'snack rap', 'snackwrap', 'mcdonalds snack wrap', 'chicken snack wrap', 'mcwrap',
   ], {
-    small: [350, 15, 32, 16],
-    regular: [350, 15, 32, 16],
-    large: [350, 15, 32, 16],
+    small: [400, 17, 38, 18],
+    regular: [400, 17, 38, 18],
+    large: [400, 17, 38, 18],
   }),
   dish('chocolate-shake', 'Chocolate shake', [
-    'chocolate shake', 'choc shake', 'chocolate milkshake', 'mcdonalds chocolate shake', 'mcflurry chocolate',
+    'chocolate shake', 'choc shake', 'chocolate milkshake', 'mcdonalds chocolate shake',
   ], {
-    small: [510, 13, 82, 15],
+    small: [520, 12, 82, 15],
     regular: [640, 16, 102, 18],
     large: [830, 21, 135, 24],
   }),
@@ -79,13 +79,44 @@ export function isVagueRestaurant(queryNorm) {
   return /^(mcdonalds|mcd)( (dinner|lunch|breakfast|meal|food|snack))?$/.test(queryNorm);
 }
 
+export function stripRestaurantBrand(queryNorm) {
+  let text = queryNorm;
+  let previous = '';
+  while (text && text !== previous) {
+    previous = text;
+    text = text.replace(/^(?:mcdonalds|mcd)\s+/, '').replace(/\s+(?:mcdonalds|mcd)$/, '').trim();
+  }
+  return text;
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function hasWholeAlias(text, alias) {
+  if (!text || !alias) return false;
+  if (text === alias) return true;
+  return new RegExp(`(?:^|\\s)${escapeRegExp(alias)}(?:\\s|$)`).test(text);
+}
+
 export function catalogMatch(name) {
   const queryNorm = normFoodName(name);
   if (!queryNorm) return null;
-  if (isVagueRestaurant(queryNorm)) return typicalMcdonaldsMeal();
-  const found = DISHES.find((entry) => entry.aliases.includes(queryNorm));
-  if (!found) return null;
-  return toMatch(`chain-${found.id}`, found.label, found.sizes);
+  const stripped = stripRestaurantBrand(queryNorm);
+  const texts = stripped && stripped !== queryNorm ? [stripped, queryNorm] : [queryNorm];
+  let found = null;
+  let bestLen = -1;
+  for (const entry of DISHES) {
+    for (const alias of entry.aliases) {
+      if (texts.some((text) => hasWholeAlias(text, alias)) && alias.length > bestLen) {
+        found = entry;
+        bestLen = alias.length;
+      }
+    }
+  }
+  if (found) return toMatch(`chain-${found.id}`, found.label, found.sizes);
+  if (isVagueRestaurant(queryNorm) || isVagueRestaurant(stripped)) return typicalMcdonaldsMeal();
+  return null;
 }
 
 /** One approximate regular-portion estimate for a logged description. */

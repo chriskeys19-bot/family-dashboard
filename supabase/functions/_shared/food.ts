@@ -2,7 +2,7 @@
 
 export function parseFoodQuery(input: string): Array<{ qty: number; name: string }> {
   return String(input || '')
-    .split(/\s*(?:,|&|\+|\/|\band\b)\s*/i)
+    .split(/\s*(?:,|\.(?!\d)|&|\+|\/|\band\b)\s*/i)
     .map((part) => part.trim())
     .filter(Boolean)
     .map((part) => {
@@ -82,26 +82,60 @@ function catalogItem(id: string, label: string, sizes: { small: [number, number,
 const CATALOG: Array<{ aliases: string[]; match: ReturnType<typeof catalogItem> }> = [
   { aliases: ['pulao', 'veg pulao', 'vegetable pulao', 'pulav'], match: catalogItem('chain-pulao', 'Pulao', { small: [250, 5, 40, 6], regular: [360, 7, 58, 9], large: [500, 10, 80, 13] }) },
   { aliases: ['curd rice with chicken', 'curd rice chicken', 'curd rice and chicken', 'yogurt rice with chicken'], match: catalogItem('chain-curd-rice-chicken', 'Curd rice with chicken', { small: [300, 20, 30, 10], regular: [430, 29, 42, 14], large: [580, 38, 55, 20] }) },
-  { aliases: ['mcchicken', 'mc chicken', 'mcdonalds mcchicken'], match: catalogItem('chain-mcchicken', 'McChicken', { small: [400, 14, 39, 21], regular: [400, 14, 39, 21], large: [400, 14, 39, 21] }) },
-  { aliases: ['snack wrap', 'snackwrap', 'mcdonalds snack wrap', 'chicken snack wrap', 'mcwrap'], match: catalogItem('chain-snack-wrap', 'McDonald’s snack wrap', { small: [350, 15, 32, 16], regular: [350, 15, 32, 16], large: [350, 15, 32, 16] }) },
-  { aliases: ['chocolate shake', 'choc shake', 'chocolate milkshake', 'mcdonalds chocolate shake'], match: catalogItem('chain-chocolate-shake', 'Chocolate shake', { small: [510, 13, 82, 15], regular: [640, 16, 102, 18], large: [830, 21, 135, 24] }) },
+  { aliases: ['mcchicken', 'mchicken', 'm chicken', 'mc chicken', 'mcdonalds mcchicken'], match: catalogItem('chain-mcchicken', 'McChicken', { small: [390, 14, 39, 21], regular: [390, 14, 39, 21], large: [390, 14, 39, 21] }) },
+  { aliases: ['ranch snack wrap', 'ranch snack rap', 'snack wrap', 'snack rap', 'snackwrap', 'mcdonalds snack wrap', 'chicken snack wrap', 'mcwrap'], match: catalogItem('chain-snack-wrap', 'Ranch snack wrap', { small: [400, 17, 38, 18], regular: [400, 17, 38, 18], large: [400, 17, 38, 18] }) },
+  { aliases: ['chocolate shake', 'choc shake', 'chocolate milkshake', 'mcdonalds chocolate shake'], match: catalogItem('chain-chocolate-shake', 'Chocolate shake', { small: [520, 12, 82, 15], regular: [640, 16, 102, 18], large: [830, 21, 135, 24] }) },
 ];
 
 export function isVagueRestaurant(queryNorm: string) {
   return /^(mcdonalds|mcd)( (dinner|lunch|breakfast|meal|food|snack))?$/.test(queryNorm);
 }
 
+/** Drop a leading or trailing McDonald's so "McDonald's MC chicken" can hit the sandwich. */
+export function stripRestaurantBrand(queryNorm: string) {
+  let text = queryNorm;
+  let previous = '';
+  while (text && text !== previous) {
+    previous = text;
+    text = text.replace(/^(?:mcdonalds|mcd)\s+/, '').replace(/\s+(?:mcdonalds|mcd)$/, '').trim();
+  }
+  return text;
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function hasWholeAlias(text: string, alias: string) {
+  if (!text || !alias) return false;
+  if (text === alias) return true;
+  return new RegExp(`(?:^|\\s)${escapeRegExp(alias)}(?:\\s|$)`).test(text);
+}
+
 export function catalogMatch(name: string) {
   const queryNorm = normFoodName(name);
   if (!queryNorm) return null;
-  if (isVagueRestaurant(queryNorm)) {
+  const stripped = stripRestaurantBrand(queryNorm);
+  const texts = stripped && stripped !== queryNorm ? [stripped, queryNorm] : [queryNorm];
+  let best: (typeof CATALOG)[number] | null = null;
+  let bestLen = -1;
+  for (const entry of CATALOG) {
+    for (const alias of entry.aliases) {
+      if (texts.some((text) => hasWholeAlias(text, alias)) && alias.length > bestLen) {
+        best = entry;
+        bestLen = alias.length;
+      }
+    }
+  }
+  if (best) return best.match;
+  if (isVagueRestaurant(queryNorm) || isVagueRestaurant(stripped)) {
     return catalogItem('chain-mcdonalds-meal', 'Typical McDonald’s meal', {
       small: [550, 18, 68, 20],
       regular: [780, 20, 95, 30],
       large: [1100, 28, 130, 42],
     }, 'One sandwich, small fries, and a small drink. Approximate.');
   }
-  return CATALOG.find((entry) => entry.aliases.includes(queryNorm))?.match ?? null;
+  return null;
 }
 
 export function plausibleFdcCalories(calories: number) {

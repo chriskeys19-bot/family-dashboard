@@ -191,8 +191,8 @@ test('oct 30 meal estimates stay one serving each', () => {
   const yuvan = estimateLoggedMeal('pulao, curd rice with chicken, McDonald’s snack wrap, McChicken, chocolate shake');
   assert.equal(yuvan.items.length, 5);
   assert.equal(yuvan.items.every((item) => item.known), true);
-  assert.equal(yuvan.calories, 2180);
-  assert.equal(yuvan.protein_g, 81);
+  assert.equal(yuvan.calories, 2220);
+  assert.equal(yuvan.protein_g, 83);
   const varun = estimateLoggedMeal("McDonald's");
   assert.equal(varun.items.length, 1);
   assert.equal(varun.calories, 780);
