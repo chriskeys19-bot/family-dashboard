@@ -71,8 +71,33 @@ function burn(met, kg, minutes) {
   return met * kg * (minutes / 60);
 }
 
+const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+function emptyDays(range) {
+  const days = [];
+  let cursor = range.start;
+  while (cursor <= range.end && days.length < 7) {
+    days.push({
+      date: cursor,
+      label: DAY_LABELS[days.length],
+      cricket: 0,
+      run: 0,
+      gym: 0,
+      eaten: 0,
+      burned: 0,
+    });
+    cursor = shiftISODate(cursor, 1);
+  }
+  return days;
+}
+
+function daySlot(days, iso) {
+  return days.find((day) => day.date === iso) || null;
+}
+
 export function summarizeWeek({ person, events, completions, reflections, training, nutrition, range }) {
   const kg = weightKg(person);
+  const days = emptyDays(range);
   let cricketMinutes = 0;
   let gymMinutes = 0;
   let gymSessions = 0;
@@ -97,13 +122,18 @@ export function summarizeWeek({ person, events, completions, reflections, traini
     const reflection = reflectionFor(reflections, person.id, event.id, day);
     const logged = Number(reflection?.duration_minutes);
     const minutes = kind !== 'gym' && logged > 0 ? logged : scheduled;
+    const slot = daySlot(days, day);
+    const kcal = burn(MET[kind], kg, minutes);
     if (kind === 'gym') {
       gymSessions += 1;
       gymMinutes += minutes;
+      if (slot) slot.gym += minutes;
     } else {
       cricketMinutes += minutes;
+      if (slot) slot.cricket += minutes;
     }
-    burned += burn(MET[kind], kg, minutes);
+    burned += kcal;
+    if (slot) slot.burned += kcal;
     if (reflection) weekReflections.push(reflection);
   }
 
@@ -115,7 +145,13 @@ export function summarizeWeek({ person, events, completions, reflections, traini
     const hours = (Number(row.duration_seconds) || 0) / 3600;
     const rowMiles = distanceM / 1609.344;
     miles += rowMiles;
-    if (hours > 0 && rowMiles > 0) burned += runMet(rowMiles / hours) * kg * hours;
+    const runKcal = hours > 0 && rowMiles > 0 ? runMet(rowMiles / hours) * kg * hours : 0;
+    burned += runKcal;
+    const runSlot = daySlot(days, row.trained_on);
+    if (runSlot) {
+      runSlot.run += (Number(row.duration_seconds) || 0) / 60;
+      runSlot.burned += runKcal;
+    }
     if (!longest || distanceM > longest.distance_m) longest = row;
   }
 
@@ -126,6 +162,8 @@ export function summarizeWeek({ person, events, completions, reflections, traini
     if (!inWeek(formatISODate(row.eaten_at), range)) continue;
     calories += Number(row.calories) || 0;
     protein += Number(row.protein_g) || 0;
+    const mealSlot = daySlot(days, formatISODate(row.eaten_at));
+    if (mealSlot) mealSlot.eaten += Number(row.calories) || 0;
   }
 
   for (const row of reflections || []) {
@@ -153,6 +191,7 @@ export function summarizeWeek({ person, events, completions, reflections, traini
     calories_eaten: Math.round(calories),
     protein_g: round1(protein),
     calories_burned: Math.round(burned),
+    days: days.map((day) => ({ ...day, eaten: Math.round(day.eaten), burned: Math.round(day.burned) })),
     approximate: true,
     highlights: {
       best_reflection: best ? {
@@ -207,7 +246,27 @@ export function summarizeFamily(boys) {
     gym_hours: round1(totals.gym_minutes / 60),
     cricket_label: totals.cricket_minutes ? formatPracticeDuration(totals.cricket_minutes) : '0',
     gym_label: totals.gym_minutes ? formatPracticeDuration(totals.gym_minutes) : '0',
+    days: sumDays(boys),
     approximate: true,
     highlights: { best_reflection: best, longest_run: longest },
   };
+}
+
+function sumDays(boys) {
+  const template = boys.find((boy) => Array.isArray(boy.days))?.days || [];
+  return template.map((day, index) => {
+    const merged = { date: day.date, label: day.label, cricket: 0, run: 0, gym: 0, eaten: 0, burned: 0 };
+    for (const boy of boys) {
+      const src = boy.days?.[index];
+      if (!src) continue;
+      merged.cricket += src.cricket || 0;
+      merged.run += src.run || 0;
+      merged.gym += src.gym || 0;
+      merged.eaten += src.eaten || 0;
+      merged.burned += src.burned || 0;
+    }
+    merged.eaten = Math.round(merged.eaten);
+    merged.burned = Math.round(merged.burned);
+    return merged;
+  });
 }

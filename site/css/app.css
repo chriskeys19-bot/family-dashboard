@@ -424,6 +424,47 @@ label.btn { position: relative; display: flex; align-items: center; justify-cont
   border-radius: 18px;
   box-shadow: var(--shadow);
 }
+.week-card { padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.week-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.week-name { margin: 0; font-family: var(--serif); font-size: 1.35rem; font-weight: 500; }
+.week-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.week-card.is-wide .week-tiles { grid-template-columns: 1fr 1fr; }
+@media (min-width: 720px) {
+  .week-card.is-wide .week-tiles { grid-template-columns: repeat(3, 1fr); }
+}
+.week-tile {
+  min-width: 0;
+  padding: 10px;
+  border-radius: 14px;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.week-tile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+.week-num { margin: 0; font-family: var(--serif); font-size: 1.65rem; line-height: 1; font-weight: 500; }
+.week-label { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+.week-approx { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--gold); }
+.week-delta { margin: 2px 0 0; font-size: 12px; font-weight: 600; }
+.week-delta.is-up, .week-tile.is-up .week-ring { color: var(--green); }
+.week-delta.is-down, .week-tile.is-down .week-ring { color: var(--clay); }
+.week-delta.is-flat, .week-tile.is-flat .week-ring { color: var(--muted); }
+.week-ring { width: 36px; height: 36px; flex: 0 0 auto; }
+.week-chart-block { display: flex; flex-direction: column; gap: 6px; }
+.week-chart-title { margin: 0; font-size: 13px; font-weight: 600; color: var(--ink); }
+.week-chart { width: 100%; height: auto; display: block; }
+.week-legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; font-size: 12px; color: var(--muted); }
+.week-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }
+.week-pair {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(280px, 1fr);
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+}
+.week-pair > .week-card { scroll-snap-align: start; }
 .event, .log-card { padding: 14px; display: flex; flex-direction: column; gap: 6px; }
 .event.is-overlap { box-shadow: inset 3px 0 0 #9b2335; }
 .event-when { color: var(--green-deep); font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }

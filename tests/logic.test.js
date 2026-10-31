@@ -174,6 +174,12 @@ test('a week is Sunday through Saturday and counts checked cricket, gym, and run
     range,
   });
   assert.equal(summary.cricket_minutes, 30);
+  assert.equal(summary.days.length, 7);
+  assert.equal(summary.days[5].date, '2026-10-30');
+  assert.equal(summary.days[5].cricket, 30);
+  assert.equal(summary.days[5].gym, 75);
+  assert.equal(summary.days[5].eaten, 780);
+  assert.ok(summary.days[5].run > 0);
   assert.equal(summary.gym_sessions, 1);
   assert.equal(summary.gym_minutes, 75);
   assert.equal(summary.miles_run, 3.1);

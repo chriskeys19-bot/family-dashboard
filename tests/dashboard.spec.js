@@ -904,15 +904,21 @@ test('this week counts cricket and gym, and parents can set weight', async ({ pa
   const sheet = page.getByTestId('reflection-sheet');
   await sheet.getByTestId('duration-30').click();
   await sheet.getByTestId('reflection-save').click();
-  await expect(page.getByTestId('week-cricket-yuvan')).toContainText('30 min');
+  await expect(page.getByTestId('week-cricket-yuvan')).toContainText('0.5');
+  await expect(page.getByTestId('week-cricket-yuvan')).toContainText('Cricket hours');
   await expect(page.getByTestId('week-cricket-yuvan')).toContainText('last week');
+  await expect(page.getByTestId('week-activity-yuvan').locator('svg')).toBeVisible();
+  await expect(page.getByTestId('week-calories-yuvan')).toContainText('approx');
   await page.getByTestId('check-event-gym-toy-soldier-2026-10-30-yuvan-2026-10-30').check();
-  await expect(page.getByTestId('week-gym-yuvan')).toContainText('1 session');
+  await expect(page.getByTestId('week-gym-yuvan')).toContainText('1');
+  await expect(page.getByTestId('week-gym-yuvan')).toContainText('Gym sessions');
 
   await page.getByTestId('switch-profile').click();
   await page.getByTestId('profile-ben').click();
-  await expect(page.getByTestId('week-family')).toContainText('30 min');
-  await expect(page.getByTestId('week-varun')).toContainText('Cricket 0');
+  await expect(page.getByTestId('week-family')).toContainText('0.5');
+  await expect(page.getByTestId('week-pair')).toBeVisible();
+  await expect(page.getByTestId('week-varun')).toContainText('Cricket hours');
+  await expect(page.getByTestId('week-cricket-varun')).toContainText('0');
   await page.getByTestId('edit-weights').click();
   await page.getByTestId('weight-yuvan').fill('100');
   await page.getByTestId('save-weights').click();
