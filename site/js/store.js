@@ -466,6 +466,39 @@ export async function addNutrition(row) {
   return rows[0];
 }
 
+export async function updateNutrition(id, row) {
+  if (!id) throw new Error('Missing meal.');
+  const record = { ...row, id };
+  if (isDemoMode()) {
+    await ensureDemo();
+    const index = overlay.nutrition_entries.findIndex((item) => item.id === id);
+    if (index < 0) throw new Error('That meal is no longer here.');
+    overlay.nutrition_entries[index] = { ...overlay.nutrition_entries[index], ...record };
+    persistOverlay();
+    emit();
+    return overlay.nutrition_entries[index];
+  }
+  const rows = await rest(`nutrition_entries?id=eq.${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: record,
+  });
+  emit();
+  return Array.isArray(rows) ? rows[0] : rows;
+}
+
+export async function deleteNutrition(id) {
+  if (!id) throw new Error('Missing meal.');
+  if (isDemoMode()) {
+    await ensureDemo();
+    overlay.nutrition_entries = overlay.nutrition_entries.filter((item) => item.id !== id);
+    persistOverlay();
+    emit();
+    return;
+  }
+  await rest(`nutrition_entries?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE' });
+  emit();
+}
+
 export async function addTraining(row) {
   const record = { ...row, id: row.id || newId(), note: row.note || null };
   if (isDemoMode()) {

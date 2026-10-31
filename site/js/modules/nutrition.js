@@ -1,6 +1,6 @@
 import { analyzeMealPhoto, rememberDemoPhoto, resizeImageFile, sumPhotoItems } from '../photo-meal.js';
 import { isDemoMode } from '../config.js';
-import { lookupFoods, rememberFoods, addNutrition, newId } from '../store.js';
+import { lookupFoods, rememberFoods, addNutrition, updateNutrition, deleteNutrition, newId } from '../store.js';
 import { registerModule } from '../registry.js';
 import { chooseKid } from '../kids.js';
 import { openSheet, closeSheet } from '../sheet.js';
@@ -9,7 +9,7 @@ import { MEAL_LABELS } from '../labels.js';
 import { itemSlug } from '../food-parse.js';
 import { defaultPortionMode, portionModesFor, scaleNutrients, sumNutrients } from '../portions.js';
 import { listPhotoNutritionSources } from '../nutrition-photo.js';
-import { formatISODate, zonedDateTimeFromISO } from '../time.js';
+import { formatISODate, formatTime, zonedDateTimeFromISO, zonedParts } from '../time.js';
 
 const MEALS = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -42,19 +42,70 @@ function basisLabel(match) {
   return 'serving';
 }
 
-function openNutritionForm(ctx, kid) {
+function clockInput(iso) {
+  if (!iso) return '';
+  const { hour, minute } = zonedParts(iso);
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+function canEditMeal(ctx, personId) {
+  if (ctx.profile.role === 'parent') return true;
+  return ctx.profile.role === 'kid' && ctx.profile.id === personId;
+}
+
+function pencil() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('width', '20');
+  svg.setAttribute('height', '20');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', 'M4 16.5V20h3.5L18.8 8.7l-3.5-3.5L4 16.5zM16.8 3.7l3.5 3.5');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', 'currentColor');
+  path.setAttribute('stroke-width', '1.7');
+  path.setAttribute('stroke-linejoin', 'round');
+  svg.append(path);
+  return svg;
+}
+
+function openNutritionForm(ctx, kid, existing) {
   const state = {
-    meal: '',
-    query: '',
-    time: '',
+    id: existing?.id || null,
+    meal: existing?.meal || '',
+    query: existing?.description || '',
+    originalQuery: existing?.description || '',
+    time: existing ? clockInput(existing.eaten_at) : '',
+    note: existing?.note || '',
     lookup: null,
     picks: new Map(),
+    editingItems: existing?.source === 'fdc' ? (existing.items || []) : [],
+    photo: null,
   };
+  if (existing?.source === 'photo') {
+    state.photo = {
+      path: existing.photo_path || '',
+      estimate: {
+        description: existing.description,
+        confidence: 'medium',
+        note: existing.note || '',
+        items: (existing.items || []).map((item) => ({
+          name: item.name || item.label || 'Food',
+          portion: item.portion || '',
+          calories: Number(item.calories) || 0,
+          protein_g: Number(item.protein_g) || 0,
+          carbs_g: Number(item.carbs_g) || 0,
+          fat_g: Number(item.fat_g) || 0,
+        })),
+      },
+    };
+  }
 
   openSheet({
-    title: 'Log food',
+    title: existing ? 'Edit meal' : 'Log food',
     render(body) {
-      paintEntry(body);
+      if (existing?.source === 'photo' && state.photo) paintPhotoReview();
+      else paintEntry(body);
     },
   });
 
@@ -70,6 +121,7 @@ function openNutritionForm(ctx, kid) {
       placeholder: '2 rotis and dal',
       value: state.query,
       'data-testid': 'food-query',
+      'data-dictate': 'true',
     });
     const time = el('input', { type: 'time', step: '60', value: state.time });
     query.addEventListener('input', () => { state.query = query.value; });
@@ -206,10 +258,22 @@ function openNutritionForm(ctx, kid) {
       totals.textContent = `Estimates · ${Math.round(summed.calories)} kcal · P ${summed.protein_g} g · C ${summed.carbs_g} g · F ${summed.fat_g} g`;
     };
     const stack = el('div', { class: 'stack', 'data-testid': 'photo-review' });
+    const note = el('input', {
+      type: 'text',
+      maxlength: '200',
+      value: state.note || '',
+      'data-testid': 'photo-note',
+      'data-dictate': 'true',
+    });
+    note.addEventListener('input', () => { state.note = note.value; });
+    const time = el('input', { type: 'time', step: '60', value: state.time, 'data-testid': 'photo-time' });
+    time.addEventListener('input', () => { state.time = time.value; });
     stack.append(
       el('p', { class: 'estimate-banner', 'data-testid': 'estimate-banner' }, 'Approximate estimates, not lab values.'),
       el('p', { class: 'log-meta', 'data-testid': 'photo-confidence' }, `Confidence ${estimate.confidence || 'medium'} · estimate`),
       el('div', { class: 'field' }, el('span', { class: 'field-label' }, 'Meal'), meals),
+      field('Time', time, 'Optional. Blank uses now.'),
+      field('Photo note', note),
     );
     estimate.items.forEach((item, index) => {
       const name = el('input', { type: 'text', value: item.name, 'aria-label': `Food ${index + 1}` });
@@ -261,13 +325,13 @@ function openNutritionForm(ctx, kid) {
     }
     const estimate = state.photo.estimate;
     const summed = sumPhotoItems(estimate.items);
-    const id = newId();
+    const id = state.id || newId();
     const photoPath = state.photo.path || `demo/${id}`;
-    if (isDemoMode()) rememberDemoPhoto(photoPath, state.photo.blob);
+    if (isDemoMode() && state.photo.blob) rememberDemoPhoto(photoPath, state.photo.blob);
     try {
-      await addNutrition(entryFrom({
+      await persistNutrition(entryFrom({
         id,
-        description: estimate.description || estimate.items.map((item) => item.name).filter(Boolean).join(', '),
+        description: state.query.trim() || estimate.description || estimate.items.map((item) => item.name).filter(Boolean).join(', '),
         items: estimate.items,
         calories: summed.calories,
         protein_g: summed.protein_g,
@@ -275,7 +339,7 @@ function openNutritionForm(ctx, kid) {
         fat_g: summed.fat_g,
         source: 'photo',
         photo_path: photoPath,
-        note: `Photo estimate · confidence ${estimate.confidence || 'medium'}`,
+        note: state.note.trim() || `Photo estimate · confidence ${estimate.confidence || 'medium'}`,
       }));
       closeSheet();
     } catch (err) {
@@ -286,7 +350,7 @@ function openNutritionForm(ctx, kid) {
 
   async function saveNote(error) {
     try {
-      await addNutrition(entryFrom({
+      await persistNutrition(entryFrom({
         description: state.query.trim(),
         items: [],
         calories: null,
@@ -316,7 +380,13 @@ function openNutritionForm(ctx, kid) {
       is_estimate: true,
       photo_path: null,
       ...extra,
+      id: state.id || extra.id,
     };
+  }
+
+  async function persistNutrition(record) {
+    if (state.id) return updateNutrition(state.id, { ...record, id: state.id });
+    return addNutrition(record);
   }
 
   async function runLookup(error) {
@@ -334,14 +404,17 @@ function openNutritionForm(ctx, kid) {
         return;
       }
       state.picks = new Map();
+      const savedItems = state.query.trim() === state.originalQuery ? state.editingItems : [];
       for (const item of state.lookup.items || []) {
-        const match = item.matches?.[0];
+        const saved = savedItems.find((row) => row.query_norm === item.query_norm);
+        const match = (saved && item.matches?.find((candidate) => candidate.fdc_id === saved.fdc_id))
+          || item.matches?.[0];
         if (!match) continue;
         state.picks.set(item.query_norm, {
           match,
-          mode: defaultPortionMode(match),
-          qty: item.qty || 1,
-          grams: 100,
+          mode: saved?.portion || defaultPortionMode(match),
+          qty: saved?.qty ?? item.qty ?? 1,
+          grams: saved?.grams ?? 100,
         });
       }
       paintPicks();
@@ -522,7 +595,7 @@ function openNutritionForm(ctx, kid) {
         basis_grams: row.basis_grams,
         piece_grams: row.piece_grams,
       })));
-      await addNutrition(entryFrom({
+      await persistNutrition(entryFrom({
         description: state.query.trim(),
         items: rows.map(({ catalog, ...row }) => row),
         calories: totals.calories,
@@ -547,7 +620,7 @@ function openNutritionForm(ctx, kid) {
     }
     try {
       const estimate = await source.estimate({ personId: kid.id, meal: state.meal });
-      await addNutrition(entryFrom({
+      await persistNutrition(entryFrom({
         description: estimate.description,
         items: estimate.items || [],
         calories: estimate.calories,
@@ -564,6 +637,56 @@ function openNutritionForm(ctx, kid) {
       error.textContent = err.message || 'Photo estimate failed.';
     }
   }
+}
+
+function mealRow(ctx, entry) {
+  const type = MEAL_LABELS[entry.meal] || entry.meal || 'Meal';
+  const row = el('div', { class: 'meal-row', 'data-testid': `meal-row-${entry.id}` });
+  const show = () => {
+    const nodes = [
+      el('div', { class: 'meal-row-copy' },
+        el('p', { class: 'meal-row-type' }, type),
+        el('p', { class: 'meal-row-desc', title: entry.description || '' }, entry.description || ''),
+        el('p', { class: 'meal-row-time' }, formatTime(entry.eaten_at))),
+    ];
+    if (canEditMeal(ctx, entry.person_id)) {
+      const person = ctx.people.find((item) => item.id === entry.person_id);
+      nodes.push(el('button', {
+        type: 'button',
+        class: 'icon-btn',
+        'aria-label': `Edit ${type}`,
+        'data-testid': `edit-meal-${entry.id}`,
+        onclick: () => openNutritionForm(ctx, person, entry),
+      }, pencil()));
+      nodes.push(el('button', {
+        type: 'button',
+        class: 'btn ghost meal-delete',
+        'aria-label': `Delete ${type}`,
+        'data-testid': `delete-meal-${entry.id}`,
+        onclick: () => confirm(),
+      }, 'Delete'));
+    }
+    row.replaceChildren(...nodes);
+  };
+  const confirm = () => {
+    row.replaceChildren(
+      el('p', { class: 'meal-row-confirm' }, 'Delete this meal?'),
+      el('button', {
+        type: 'button',
+        class: 'btn primary',
+        'data-testid': `confirm-delete-meal-${entry.id}`,
+        onclick: () => deleteNutrition(entry.id),
+      }, 'Delete'),
+      el('button', {
+        type: 'button',
+        class: 'btn ghost',
+        'data-testid': `cancel-delete-meal-${entry.id}`,
+        onclick: () => show(),
+      }, 'Cancel'),
+    );
+  };
+  show();
+  return row;
 }
 
 registerModule({
@@ -597,6 +720,9 @@ registerModule({
       card.append(el('p', { 'data-testid': `nutrition-today-${person.id}` }, todayEntries.length
         ? `Today: ${summaryPhrase(todayEntries)}`
         : 'Nothing logged yet today'));
+      const ordered = todayEntries.slice().sort((a, b) => String(a.eaten_at).localeCompare(String(b.eaten_at))
+        || String(a.id).localeCompare(String(b.id)));
+      for (const entry of ordered) card.append(mealRow(ctx, entry));
       list.append(card);
     }
     host.append(list);

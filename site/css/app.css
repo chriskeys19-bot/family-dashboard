@@ -518,8 +518,38 @@ label.btn { position: relative; display: flex; align-items: center; justify-cont
   padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
+.meal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+}
+.meal-row-copy { flex: 1; min-width: 0; }
+.meal-row-type { font-weight: 600; }
+.meal-row-desc, .meal-row-time { color: var(--muted); font-size: 14px; }
+.meal-row-desc {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.meal-delete { min-height: 40px; min-width: 40px; padding: 8px 12px; }
+.meal-row-confirm { font-weight: 600; }
 .estimate-banner {
   background: #f8efd4;
   color: #6d4d08;
