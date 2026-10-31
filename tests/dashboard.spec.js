@@ -521,7 +521,6 @@ test('snap meal stubs an estimate, lets the kid edit, and parents see the thumbn
 });
 
 test('editing a meal keeps one row and delete clears it', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
   await openBoard(page, 'yuvan');
   await page.getByTestId('add-nutrition').click();
   await page.getByTestId('food-query').fill('2 rotis and dal');

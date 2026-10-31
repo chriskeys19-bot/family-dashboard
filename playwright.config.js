@@ -25,7 +25,11 @@ export default defineConfig({
     timeout: 20000,
   },
   projects: [
+    { name: 'desktop-chrome', use: { ...devices['Desktop Chrome'], ...phone } },
+    { name: 'desktop-firefox', use: { ...devices['Desktop Firefox'], ...phone } },
+    { name: 'desktop-safari', use: { ...devices['Desktop Safari'], ...phone } },
     { name: 'iphone-14', use: { ...devices['iPhone 14'], ...phone } },
     { name: 'pixel-7', use: { ...devices['Pixel 7'], ...phone } },
+    { name: 'android-small', use: { ...devices['Galaxy S8'], ...phone } },
   ],
 });
