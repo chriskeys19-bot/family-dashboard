@@ -121,7 +121,7 @@ function activityChart(days) {
     class: 'week-chart',
     viewBox: `0 0 ${width} ${height}`,
     role: 'img',
-    'aria-label': 'Stacked minutes of cricket, running, and gym, Sunday through Saturday',
+    'aria-label': 'Cricket, running, and gym by day, Sunday through Saturday',
   });
   chart.append(svg('line', { x1: 0, y1: padTop + inner, x2: width, y2: padTop + inner, stroke: '#e0d3c0', 'stroke-width': 1 }));
   days.forEach((day, index) => {
@@ -157,7 +157,7 @@ function calorieChart(days) {
     class: 'week-chart',
     viewBox: `0 0 ${width} ${height}`,
     role: 'img',
-    'aria-label': 'Approximate calories eaten and burned, Sunday through Saturday',
+    'aria-label': 'Calories eaten and burned by day, Sunday through Saturday',
   });
   chart.append(svg('line', { x1: 0, y1: padTop + inner, x2: width, y2: padTop + inner, stroke: '#e0d3c0', 'stroke-width': 1 }));
   days.forEach((day, index) => {
@@ -190,7 +190,7 @@ function counterCard(summary, last, { family = false } = {}) {
   const days = summary.days || [];
   return el('article', { class: `card week-card${family ? ' is-wide' : ''}`, 'data-testid': `week-${id}` },
     el('div', { class: 'week-head' },
-      el('h3', { class: 'week-name' }, family ? 'Both boys' : summary.name),
+      el('p', { class: 'week-name' }, family ? 'Both boys' : summary.name),
       family ? null : el('p', { class: 'log-meta', 'data-testid': `week-weight-${id}` }, `${summary.weight_lb} lb`)),
     el('div', { class: 'week-tiles' },
       statTile({ testid: `week-cricket-${id}`, value: summary.cricket_hours, label: 'Cricket hours', now: summary.cricket_hours, last: last.cricket_hours }),
