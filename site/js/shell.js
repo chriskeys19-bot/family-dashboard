@@ -114,6 +114,8 @@ function buildCtx() {
     reflections: bundle.reflections || [],
     needs: bundle.needs || [],
     notes: bundle.notes || [],
+    measurements: bundle.measurements || [],
+    measurementsAvailable: bundle.measurementsAvailable !== false,
     boostLists: bundle.boostLists,
     now,
     range: getRange(rangeId, now),
@@ -344,6 +346,13 @@ function renderDashboard() {
     });
     const body = el('div', { class: 'module-body', id: `module-body-${mod.id}` });
     mod.render(ctx, body);
+    if (!body.childElementCount) continue;
+    if (mod.chrome === false) {
+      section.classList.add('is-bare');
+      section.append(body);
+      modules.append(section);
+      continue;
+    }
     if (COLLAPSIBLE.has(mod.id)) {
       const open = sectionOpen(current.id, mod.id);
       const toggle = el('button', {

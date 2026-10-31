@@ -108,6 +108,8 @@ In the SQL editor, run, in order:
 
 Or, with the CLI: `supabase link --project-ref <ref>` and `supabase db push` (this needs the database password).
 
+Monthly height and weight uses `supabase/migrations/20261031150000_body_measurements.sql`. Apply that file from the SQL editor or `db push`. The dashboard still opens if the table is not there yet.
+
 ### 2. Secrets
 
 ```bash

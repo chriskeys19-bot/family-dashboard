@@ -2,6 +2,7 @@ import { CONFIG, isDemoMode } from './config.js';
 import { lookupDemoFoods } from './demo-foods.js';
 import { catalogMatch } from './food-catalog.js';
 import { defaultWeightKg } from './goal-note.js';
+import { latestMeasurement } from './measure.js';
 import { normFoodName, parseFoodQuery } from './food-parse.js';
 
 function savedWeight(person, saved) {
@@ -34,6 +35,7 @@ function emptyOverlay() {
     needs: [],
     notes: [],
     weights: {},
+    measurements: [],
   };
 }
 
@@ -189,6 +191,7 @@ async function ensureDemo() {
   if (!overlay.needs) overlay.needs = [];
   if (!overlay.notes) overlay.notes = [];
   if (!overlay.weights) overlay.weights = {};
+  if (!overlay.measurements) overlay.measurements = [];
   if (!boostLists) boostLists = await loadBundledBoost();
 }
 
@@ -196,12 +199,22 @@ function persistOverlay() {
   localStorage.setItem(OVERLAY_KEY, JSON.stringify(overlay));
 }
 
-function demoBundle() {
+function applyBody(person, savedKg, measurements) {
+  const latest = latestMeasurement(measurements, person.id);
+  const height = Number(latest?.height_cm);
   return {
-    people: seed.people.map((person) => ({
-      ...person,
-      weight_kg: savedWeight(person, overlay.weights?.[person.id]),
-    })),
+    ...person,
+    weight_kg: savedWeight(person, savedKg),
+    height_cm: height > 0 ? height : null,
+  };
+}
+
+function demoBundle() {
+  const measurements = (overlay.measurements || []).map((row) => ({ ...row }));
+  return {
+    people: seed.people.map((person) => applyBody(person, overlay.weights?.[person.id], measurements)),
+    measurements,
+    measurementsAvailable: true,
     categories: (overlay.categories || seed.categories).map((row) => ({ ...row })),
     events: seed.events.map((row) => ({ ...row, people: [...row.people] })),
     nutrition_entries: overlay.nutrition_entries.map((row) => ({ ...row })),
@@ -248,6 +261,57 @@ async function restOptional(path) {
   }
 }
 
+function missingMeasurementTable(error) {
+  const text = `${error?.status || ''} ${error?.message || ''}`;
+  return error?.status === 404 || /body_measurements|PGRST205|schema cache|does not exist/i.test(text);
+}
+
+async function loadMeasurements() {
+  try {
+    const rows = await rest('body_measurements?select=*&order=measured_on.desc,created_at.desc');
+    return { rows: rows || [], available: true };
+  } catch {
+    return { rows: [], available: false };
+  }
+}
+
+export async function saveMeasurement(row) {
+  const heightCm = Number(row.height_cm);
+  const weightKg = Number(row.weight_kg);
+  if (!Number.isFinite(heightCm) || heightCm <= 0) throw new Error('Enter a height.');
+  if (!Number.isFinite(weightKg) || weightKg <= 0) throw new Error('Enter a weight.');
+  const record = {
+    id: row.id || newId(),
+    person_id: row.person_id,
+    measured_on: row.measured_on,
+    height_cm: Math.round(heightCm * 10) / 10,
+    weight_kg: Math.round(weightKg * 10) / 10,
+    note: String(row.note || '').trim() || null,
+    created_at: row.created_at || new Date().toISOString(),
+  };
+  if (isDemoMode()) {
+    await ensureDemo();
+    knownPerson(record.person_id);
+    overlay.measurements.push(record);
+    overlay.weights[record.person_id] = record.weight_kg;
+    persistOverlay();
+    emit();
+    return record;
+  }
+  try {
+    await rest('body_measurements', { method: 'POST', body: record });
+  } catch (error) {
+    if (missingMeasurementTable(error)) {
+      const err = new Error('The check-in isn’t available yet.');
+      err.code = 'missing_table';
+      throw err;
+    }
+    throw error;
+  }
+  await saveWeight(record.person_id, record.weight_kg);
+  return record;
+}
+
 export async function saveWeight(personId, weightKg) {
   const kg = Number(weightKg);
   if (!Number.isFinite(kg) || kg <= 0) throw new Error('Enter a weight.');
@@ -273,7 +337,7 @@ export async function loadBundle() {
     await ensureDemo();
     return demoBundle();
   }
-  const [people, categories, events, nutrition, training, requests, memory, completions, reflections, needs, notes, boostLists, settings] = await Promise.all([
+  const [people, categories, events, nutrition, training, requests, memory, completions, reflections, needs, notes, boostLists, settings, measurementState] = await Promise.all([
     rest('people?select=*&order=sort_order.asc'),
     rest('categories?select=*&order=sort_order.asc'),
     rest('events?select=*&order=starts_at.asc'),
@@ -287,13 +351,14 @@ export async function loadBundle() {
     rest('kid_notes?select=*&order=created_at.desc'),
     loadLiveBoostLists(),
     restOptional('person_settings?select=*'),
+    loadMeasurements(),
   ]);
   const weightById = new Map((settings || []).map((row) => [row.person_id, Number(row.weight_kg)]));
+  const measurementRows = measurementState?.rows || [];
   return {
-    people: people.map((person) => ({
-      ...person,
-      weight_kg: savedWeight(person, weightById.get(person.id)),
-    })),
+    people: people.map((person) => applyBody(person, weightById.get(person.id), measurementRows)),
+    measurements: measurementRows,
+    measurementsAvailable: measurementState?.available !== false,
     categories,
     events,
     nutrition_entries: nutrition,

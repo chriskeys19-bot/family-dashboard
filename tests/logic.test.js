@@ -8,6 +8,7 @@ import { estimateLoggedMeal } from '../site/js/food-catalog.js';
 import { sumPhotoItems } from '../site/js/photo-meal.js';
 import { assembleJournal } from '../site/js/journal.js';
 import { activityFactor, ageOn, goalWriteup, mifflinMale } from '../site/js/goal-note.js';
+import { feetInchesToCm, formatHeight, hasMeasurementThisMonth, latestMeasurement } from '../site/js/measure.js';
 import { buildRecap } from '../site/js/recap.js';
 import { eventTouchesDay, formatRangeLabel, getRange, zonedWallTime } from '../site/js/time.js';
 
@@ -218,6 +219,31 @@ test('yesterday write-up uses teen fuel targets without body talk', () => {
   const sentences = note.text.split(/(?<=\.)\s+/);
   assert.ok(sentences.length >= 2 && sentences.length <= 4);
   assert.equal(goalWriteup({ person: { id: 'ben', name: 'Ben' }, todayISO: '2026-10-30' }), null);
+  const taller = goalWriteup({
+    person: { id: 'yuvan', name: 'Yuvan', weight_kg: 59, height_cm: 190 },
+    events: [],
+    completions: [],
+    reflections: [],
+    training: [{ person_id: 'yuvan', trained_on: '2026-10-29', distance_m: 3000, duration_seconds: 1200, session_type: 'easy' }],
+    nutrition: [{ person_id: 'yuvan', eaten_at: '2026-10-29T18:00:00-07:00', source: 'fdc', calories: 1800, protein_g: 40 }],
+    todayISO: '2026-10-30',
+  });
+  assert.ok(taller.needKcal > note.needKcal);
+  assert.doesNotMatch(taller.text, /weight|lb|skinny|fat|loss/i);
+});
+
+test('a check-in stores height in centimeters and the latest row wins', () => {
+  assert.equal(feetInchesToCm(5, 6), 167.6);
+  assert.equal(formatHeight(167.6), '5 ft 6 in');
+  const rows = [
+    { person_id: 'yuvan', measured_on: '2026-09-02', height_cm: 176, created_at: '2026-09-02T12:00:00Z' },
+    { person_id: 'yuvan', measured_on: '2026-10-30', height_cm: 177.8, created_at: '2026-10-30T12:00:00Z' },
+    { person_id: 'varun', measured_on: '2026-10-01', height_cm: 165, created_at: '2026-10-01T12:00:00Z' },
+  ];
+  assert.equal(latestMeasurement(rows, 'yuvan').height_cm, 177.8);
+  assert.equal(hasMeasurementThisMonth(rows, 'yuvan', '2026-10-30'), true);
+  assert.equal(hasMeasurementThisMonth(rows, 'varun', '2026-11-01'), false);
+  assert.equal(latestMeasurement(rows, 'ben'), null);
 });
 
 test('oct 30 meal estimates stay one serving each', () => {

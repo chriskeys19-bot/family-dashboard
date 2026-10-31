@@ -49,8 +49,10 @@ export function goalWriteup({ person, events, completions, reflections, training
   if (!body) return null;
   const yesterday = shiftISODate(todayISO, -1);
   const kg = Number(person.weight_kg) > 0 ? Number(person.weight_kg) : body.weightKg;
+  const measuredHeight = Number(person.height_cm);
+  const heightCm = measuredHeight > 0 ? measuredHeight : body.heightCm;
   const age = ageOn(body.birth, yesterday);
-  const bmr = mifflinMale(kg, body.heightCm, age);
+  const bmr = mifflinMale(kg, heightCm, age);
   const day = summarizeWeek({
     person: { ...person, weight_kg: kg },
     events,

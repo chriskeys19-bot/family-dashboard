@@ -2,6 +2,7 @@
 import './week.js';
 import './recap.js';
 import './boost.js';
+import './checkin.js';
 import './schedule.js';
 import './nutrition.js';
 import './training.js';
