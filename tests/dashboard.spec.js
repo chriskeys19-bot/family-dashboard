@@ -655,7 +655,7 @@ test('kids can dictate into notes, needs, runs, and reflections', async ({ page 
     const rec = window.__recognitions.at(-1);
     return { lang: rec.lang, interim: rec.interimResults, continuous: rec.continuous };
   });
-  expect(heard).toEqual({ lang: 'en-US', interim: true, continuous: true });
+  expect(heard).toEqual({ lang: 'en-US', interim: true, continuous: false });
   await page.evaluate(() => {
     const rec = window.__recognitions.at(-1);
     rec.onresult({ results: [{ isFinal: false, 0: { transcript: 'Hi' }, length: 1 }] });
@@ -738,4 +738,104 @@ test('kids can dictate into notes, needs, runs, and reflections', async ({ page 
     rec.onspeechend();
   });
   await expect(edit).toHaveValue('First thought and a second');
+});
+
+test('dictation keeps a paragraph once when results are cumulative or repeated', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__recognitions = [];
+    class FakeSpeechRecognition {
+      constructor() {
+        this.lang = '';
+        this.interimResults = false;
+        this.continuous = false;
+        this.onresult = null;
+        this.onerror = null;
+        this.onend = null;
+        this.onspeechend = null;
+        window.__recognitions.push(this);
+      }
+      start() { this.running = true; }
+      stop() {
+        this.running = false;
+        this.onend?.();
+      }
+      abort() { this.stop(); }
+    }
+    window.SpeechRecognition = FakeSpeechRecognition;
+    window.webkitSpeechRecognition = FakeSpeechRecognition;
+  });
+
+  await openBoard(page, 'yuvan');
+  const note = page.getByTestId('note-body');
+  const noteMic = page.locator('.field', { has: note }).getByRole('button', { name: 'Dictate' });
+  const paragraph = 'I went to practice and bowled three overs';
+
+  await noteMic.click();
+  await expect(noteMic).toHaveAttribute('aria-pressed', 'true');
+  expect(await page.evaluate(() => window.__recognitions.length)).toBe(1);
+
+  await page.evaluate(async (text) => {
+    const control = document.querySelector('[data-testid="note-body"]');
+    const mod = await import('/js/dictate.js');
+    mod.attachDictation(control);
+    mod.attachDictation(control);
+    const rec = window.__recognitions.at(-1);
+    const chunk = (transcript, isFinal) => ({ isFinal, 0: { transcript }, length: 1 });
+    const copies = Array.from({ length: 8 }, () => chunk(text, true));
+    rec.onresult({ resultIndex: 0, results: copies });
+    rec.onresult({ resultIndex: 0, results: copies });
+    rec.onresult({
+      resultIndex: 7,
+      results: copies.map((item, index) => (index === 7 ? chunk(`${text} today`, true) : item)),
+    });
+  }, paragraph);
+  await expect(note).toHaveValue(`${paragraph} today`);
+  expect(await note.inputValue()).toBe(`${paragraph} today`);
+
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    rec.onend();
+    rec.onresult({
+      resultIndex: 0,
+      results: [{ isFinal: true, 0: { transcript: 'should be ignored after end' }, length: 1 }],
+    });
+  });
+  await expect(note).toHaveValue(`${paragraph} today`);
+  await expect(noteMic).toHaveAttribute('aria-pressed', 'false');
+  expect(await page.locator('.field', { has: note }).getByRole('button', { name: 'Dictate' }).count()).toBe(1);
+  expect(await page.evaluate(() => window.__recognitions.length)).toBe(1);
+
+  await note.fill('');
+  await noteMic.click();
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    const chunk = (transcript, isFinal) => ({ isFinal, 0: { transcript }, length: 1 });
+    rec.onresult({ resultIndex: 0, results: [chunk('hel', false)] });
+    rec.onresult({ resultIndex: 0, results: [chunk('hello', false)] });
+  });
+  await expect(note).toHaveValue('hello');
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    const chunk = (transcript, isFinal) => ({ isFinal, 0: { transcript }, length: 1 });
+    rec.onresult({ resultIndex: 0, results: [chunk('I went', true)] });
+    rec.onresult({
+      resultIndex: 1,
+      results: [chunk('I went', true), chunk('to prac', false)],
+    });
+  });
+  await expect(note).toHaveValue('I went to prac');
+  await page.evaluate(() => {
+    const rec = window.__recognitions.at(-1);
+    const chunk = (transcript, isFinal) => ({ isFinal, 0: { transcript }, length: 1 });
+    rec.onresult({
+      resultIndex: 1,
+      results: [chunk('I went', true), chunk('to practice', true)],
+    });
+    rec.onresult({
+      resultIndex: 2,
+      results: [chunk('I went', true), chunk('to practice', true), chunk('today', true)],
+    });
+    rec.onspeechend();
+  });
+  await expect(note).toHaveValue('I went to practice today');
 });
