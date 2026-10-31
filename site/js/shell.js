@@ -23,6 +23,9 @@ import {
 import { formatLongDate, formatRangeLabel, getRange } from './time.js';
 import { CONFIG } from './config.js';
 
+const COLLAPSIBLE = new Set(['recap', 'schedule', 'nutrition', 'training', 'needs', 'notes']);
+const COLLAPSE_KEY = 'homeboard.sections.v1';
+
 const RANGES = [
   { id: '3d', label: '3 days' },
   { id: '1w', label: 'Week' },
@@ -34,6 +37,45 @@ let profileId = null;
 let rangeId = '3d';
 let tab = 'all';
 let refreshToken = 0;
+
+function collapseMap() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(COLLAPSE_KEY) || '{}');
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function sectionOpen(personId, moduleId) {
+  const value = collapseMap()[`${personId}.${moduleId}`];
+  return value == null ? true : Boolean(value);
+}
+
+function setSectionOpen(section, body, toggle, personId, moduleId, open) {
+  const map = collapseMap();
+  map[`${personId}.${moduleId}`] = open;
+  localStorage.setItem(COLLAPSE_KEY, JSON.stringify(map));
+  toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  body.hidden = !open;
+  section.classList.toggle('is-collapsed', !open);
+}
+
+function chevron() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'module-chevron');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', 'M6 9l6 6 6-6');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', 'currentColor');
+  path.setAttribute('stroke-width', '1.8');
+  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
+  svg.append(path);
+  return svg;
+}
 
 function appRoot() {
   return document.getElementById('app');
@@ -300,10 +342,26 @@ function renderDashboard() {
       'data-table': mod.dataTable,
       'data-testid': `module-${mod.id}`,
     });
-    section.append(el('h2', { class: 'module-title' }, mod.label));
-    const body = el('div', { class: 'module-body' });
+    const body = el('div', { class: 'module-body', id: `module-body-${mod.id}` });
     mod.render(ctx, body);
-    section.append(body);
+    if (COLLAPSIBLE.has(mod.id)) {
+      const open = sectionOpen(current.id, mod.id);
+      const toggle = el('button', {
+        type: 'button',
+        class: 'module-toggle',
+        'aria-expanded': open ? 'true' : 'false',
+        'aria-controls': body.id,
+        'data-testid': `toggle-${mod.id}`,
+        onclick: () => setSectionOpen(section, body, toggle, current.id, mod.id, toggle.getAttribute('aria-expanded') !== 'true'),
+      }, el('span', {}, mod.label), chevron());
+      if (!open) {
+        body.hidden = true;
+        section.classList.add('is-collapsed');
+      }
+      section.append(el('h2', { class: 'module-head' }, toggle), body);
+    } else {
+      section.append(el('h2', { class: 'module-title' }, mod.label), body);
+    }
     modules.append(section);
   }
   screen.append(modules);

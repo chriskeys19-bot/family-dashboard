@@ -1,4 +1,4 @@
-import { el } from './dom.js';
+import { choosePressed, el } from './dom.js';
 
 export const FEELS = [
   { value: 1, emoji: '😣', label: 'Tough' },
@@ -21,15 +21,19 @@ export function feelPicker({ selected, onPick, testPrefix = 'feel' }) {
   const row = el('div', { class: 'feel-row', role: 'group', 'aria-label': 'How did it feel?' });
   for (const face of FEELS) {
     const on = Number(selected) === face.value;
-    row.append(el('button', {
+    const button = el('button', {
       type: 'button',
       class: `feel-btn${on ? ' is-on' : ''}`,
       'aria-pressed': on ? 'true' : 'false',
       'aria-label': face.label,
       'data-testid': `${testPrefix}-${face.value}`,
       'data-feel': String(face.value),
-      onclick: () => onPick(face.value),
-    }, el('span', { class: 'feel-emoji', 'aria-hidden': 'true' }, face.emoji), el('span', { class: 'feel-word' }, face.label)));
+      onclick: () => {
+        choosePressed(row, button);
+        onPick(face.value);
+      },
+    }, el('span', { class: 'feel-emoji', 'aria-hidden': 'true' }, face.emoji), el('span', { class: 'feel-word' }, face.label));
+    row.append(button);
   }
   return row;
 }

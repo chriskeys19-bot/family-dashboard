@@ -1,4 +1,4 @@
-import { el, field } from './dom.js';
+import { choosePressed, el, field, setPressed } from './dom.js';
 import { PRACTICE_DURATIONS, formatPracticeDuration, scheduledMinutes } from './practice-duration.js';
 import { FEELS, feelMeta, feelPhrase, feelPicker } from './feel.js';
 import { closeSheet, openSheet } from './sheet.js';
@@ -163,9 +163,9 @@ export function openReflection(ctx, spec, existing) {
           class: `btn choice${state.session_type === id ? ' is-on' : ''}`,
           'aria-pressed': state.session_type === id ? 'true' : 'false',
           'data-testid': `session-type-${id}`,
-          onclick: () => {
+          onclick: (event) => {
             state.session_type = id;
-            paint(body);
+            choosePressed(types, event.currentTarget);
           },
         }, label));
       }
@@ -183,10 +183,10 @@ export function openReflection(ctx, spec, existing) {
         class: `btn choice${on ? ' is-on' : ''}`,
         'aria-pressed': on ? 'true' : 'false',
         'data-testid': `focus-${id}`,
-        onclick: () => {
+        onclick: (event) => {
           if (state.focus.has(id)) state.focus.delete(id);
           else state.focus.add(id);
-          paint(body);
+          setPressed(event.currentTarget, state.focus.has(id));
         },
       }, label));
     }
@@ -201,7 +201,7 @@ export function openReflection(ctx, spec, existing) {
       field('Other focus', focusNote),
       field('Key things you learned', learned),
       el('p', { class: 'field-label' }, 'How did it feel?'),
-      feelPicker({ selected: state.feel, onPick: (value) => { state.feel = value; paint(body); } }),
+      feelPicker({ selected: state.feel, onPick: (value) => { state.feel = value; } }),
       field('Anything else?', notes, 'Optional'),
       el('div', { class: 'choice-row' },
         el('button', { type: 'button', class: 'btn ghost', 'data-testid': 'reflection-skip', onclick: () => closeSheet() }, 'Skip'),
@@ -223,10 +223,12 @@ export function openReflection(ctx, spec, existing) {
         class: `btn choice${on ? ' is-on' : ''}`,
         'aria-pressed': on ? 'true' : 'false',
         'data-testid': `duration-${minutes}`,
-        onclick: () => {
-          state.duration_minutes = on ? '' : minutes;
-          const sheetBody = document.querySelector('[data-testid="reflection-sheet"] .sheet-body');
-          if (sheetBody) paint(sheetBody);
+        onclick: (event) => {
+          const next = state.duration_minutes === minutes ? '' : minutes;
+          state.duration_minutes = next;
+          choosePressed(choices, next === minutes ? event.currentTarget : null);
+          const custom = wrap.querySelector('[data-testid="duration-custom"]');
+          if (custom && next) custom.value = '';
         },
       }, label));
     }
@@ -257,32 +259,32 @@ export function openReflection(ctx, spec, existing) {
   function gameStats() {
     const wrap = el('div', { class: 'stack' });
     wrap.append(el('p', { class: 'field-label' }, 'How did you go? All optional.'));
-    wrap.append(toggle('Batted', state.batted, 'batted', 'game-batted'));
-    if (state.batted) {
-      wrap.append(el('div', { class: 'time-pair' },
-        numField('Runs', state.runs, 'game-runs', (value) => { state.runs = value; }),
-        numField('Balls', state.balls, 'game-balls', (value) => { state.balls = value; })));
-    }
-    wrap.append(toggle('Bowled', state.bowled, 'bowled', 'game-bowled'));
-    if (state.bowled) {
-      wrap.append(el('div', { class: 'time-pair' },
-        numField('Overs', state.overs, 'game-overs', (value) => { state.overs = value; }),
-        numField('Wickets', state.wickets, 'game-wickets', (value) => { state.wickets = value; })));
-    }
+    const batting = el('div', { class: 'time-pair', 'data-testid': 'game-batting-fields' },
+      numField('Runs', state.runs, 'game-runs', (value) => { state.runs = value; }),
+      numField('Balls', state.balls, 'game-balls', (value) => { state.balls = value; }));
+    const bowling = el('div', { class: 'time-pair', 'data-testid': 'game-bowling-fields' },
+      numField('Overs', state.overs, 'game-overs', (value) => { state.overs = value; }),
+      numField('Wickets', state.wickets, 'game-wickets', (value) => { state.wickets = value; }));
+    batting.hidden = !state.batted;
+    bowling.hidden = !state.bowled;
+    wrap.append(toggle('Batted', state.batted, 'batted', 'game-batted', batting));
+    wrap.append(batting);
+    wrap.append(toggle('Bowled', state.bowled, 'bowled', 'game-bowled', bowling));
+    wrap.append(bowling);
     wrap.append(numField('Catches', state.catches, 'game-catches', (value) => { state.catches = value; }));
     return wrap;
   }
 
-  function toggle(label, on, key, testid) {
+  function toggle(label, on, key, testid, extra) {
     return el('button', {
       type: 'button',
       class: `btn choice${on ? ' is-on' : ''}`,
       'aria-pressed': on ? 'true' : 'false',
       'data-testid': testid,
-      onclick: () => {
+      onclick: (event) => {
         state[key] = !state[key];
-        const body = document.querySelector('[data-testid="reflection-sheet"] .sheet-body');
-        if (body) paint(body);
+        setPressed(event.currentTarget, state[key]);
+        if (extra) extra.hidden = !state[key];
       },
     }, label);
   }

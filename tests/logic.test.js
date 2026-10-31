@@ -7,6 +7,7 @@ import { summarizeFamily, summarizeWeek, weekRange } from '../site/js/week.js';
 import { estimateLoggedMeal } from '../site/js/food-catalog.js';
 import { sumPhotoItems } from '../site/js/photo-meal.js';
 import { assembleJournal } from '../site/js/journal.js';
+import { activityFactor, ageOn, goalWriteup, mifflinMale } from '../site/js/goal-note.js';
 import { buildRecap } from '../site/js/recap.js';
 import { eventTouchesDay, formatRangeLabel, getRange, zonedWallTime } from '../site/js/time.js';
 
@@ -191,6 +192,32 @@ test('a week is Sunday through Saturday and counts checked cricket, gym, and run
   const family = summarizeFamily([summary, { ...summary, person_id: 'varun', name: 'Varun', cricket_minutes: 0, miles_run: 0, gym_sessions: 0, gym_minutes: 0, calories_eaten: 0, protein_g: 0, calories_burned: 0, highlights: { best_reflection: null, longest_run: null } }]);
   assert.equal(family.cricket_minutes, 30);
   assert.equal(family.calories_eaten, 780);
+});
+
+test('yesterday write-up uses teen fuel targets without body talk', () => {
+  assert.equal(ageOn('2012-01-15', '2026-10-29'), 14);
+  assert.equal(ageOn('2013-06-15', '2026-10-29'), 13);
+  const yuvanBmr = mifflinMale(59, 176.5, 14);
+  assert.ok(yuvanBmr > 1400 && yuvanBmr < 1900);
+  assert.equal(activityFactor(0), 1.4);
+  assert.equal(activityFactor(500), 1.7);
+  const note = goalWriteup({
+    person: { id: 'yuvan', name: 'Yuvan', weight_kg: 59 },
+    events: [],
+    completions: [],
+    reflections: [],
+    training: [{ person_id: 'yuvan', trained_on: '2026-10-29', distance_m: 3000, duration_seconds: 1200, session_type: 'easy' }],
+    nutrition: [{ person_id: 'yuvan', eaten_at: '2026-10-29T18:00:00-07:00', source: 'fdc', calories: 1800, protein_g: 40 }],
+    todayISO: '2026-10-30',
+  });
+  assert.match(note.text, /1800 kcal/);
+  assert.match(note.text, /40 g of protein/);
+  assert.match(note.text, /cricket and running/i);
+  assert.match(note.text, /run/);
+  assert.doesNotMatch(note.text, /weight|lb|skinny|fat|loss/i);
+  const sentences = note.text.split(/(?<=\.)\s+/);
+  assert.ok(sentences.length >= 2 && sentences.length <= 4);
+  assert.equal(goalWriteup({ person: { id: 'ben', name: 'Ben' }, todayISO: '2026-10-30' }), null);
 });
 
 test('oct 30 meal estimates stay one serving each', () => {

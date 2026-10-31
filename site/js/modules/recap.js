@@ -2,6 +2,7 @@ import { checkoffControl } from '../checkoff.js';
 import { cricketRecap } from '../reflection.js';
 import { el } from '../dom.js';
 import { registerModule } from '../registry.js';
+import { goalWriteup } from '../goal-note.js';
 import { buildRecap, mealLine, sessionLine } from '../recap.js';
 import { formatISODate, formatISOWeekday } from '../time.js';
 
@@ -73,6 +74,18 @@ registerModule({
       });
       card.append(el('p', { class: 'log-kicker' }, `${person.name} · ${formatISOWeekday(recap.yesterday)}`));
       card.append(el('p', { class: 'recap-counts', 'data-testid': `recap-counts-${person.id}` }, `Done ${recap.doneCount} · Missed ${recap.missedCount}`));
+      const writeup = goalWriteup({
+        person,
+        events: ctx.events,
+        nutrition: ctx.nutrition,
+        training: ctx.training,
+        completions: ctx.completions,
+        reflections: ctx.reflections,
+        todayISO: today,
+      });
+      if (writeup) {
+        card.append(el('p', { class: 'recap-writeup', 'data-testid': `recap-writeup-${person.id}` }, writeup.text));
+      }
       if (recap.doneEvents.length || recap.meals.length || recap.sessions.length) {
         card.append(el('h3', { class: 'recap-heading' }, 'Done'));
         if (recap.doneEvents.length) card.append(eventList(ctx, person, recap.doneEvents, recap.yesterday));

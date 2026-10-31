@@ -209,6 +209,8 @@ test('kids differ on the daily boost and parents get calm and a tip', async ({ p
   await expect(page.getByTestId('module-boost')).toBeVisible();
   await expect(page.getByTestId('module-recap')).toBeVisible();
   const modules = await page.locator('[data-testid^=module-]').evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-testid')));
+  expect(modules[0]).toBe('module-boost');
+  expect(modules.indexOf('module-boost')).toBeLessThan(modules.indexOf('module-week'));
   expect(modules.indexOf('module-recap')).toBeLessThan(modules.indexOf('module-schedule'));
   expect(modules.indexOf('module-boost')).toBeLessThan(modules.indexOf('module-schedule'));
   const yuvanJoke = await page.getByTestId('boost-joke').innerText();
@@ -926,4 +928,47 @@ test('this week counts cricket and gym, and parents can set weight', async ({ pa
   await page.getByTestId('tab-yuvan').click();
   await expect(page.getByTestId('week-family')).toHaveCount(0);
   await expect(page.getByTestId('week-yuvan')).toContainText('100 lb');
+});
+
+test('collapsible sections stay closed for that person after a refresh', async ({ page }) => {
+  await openBoard(page, 'yuvan');
+  const nutrition = page.getByTestId('toggle-nutrition');
+  await expect(nutrition).toHaveAttribute('aria-expanded', 'true');
+  await expect(nutrition.locator('svg')).toBeVisible();
+  await expect(page.getByTestId('module-nutrition').locator('.module-body')).toBeVisible();
+  await expect(page.getByTestId('toggle-week')).toHaveCount(0);
+  await nutrition.click();
+  await expect(nutrition).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('module-nutrition').locator('.module-body')).toBeHidden();
+
+  await page.getByTestId('toggle-schedule').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'false');
+
+  await page.getByTestId('range-1w').click();
+  await expect(page.getByTestId('toggle-nutrition')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('module-week').locator('.module-body')).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByTestId('dashboard')).toBeVisible();
+  await expect(page.getByTestId('toggle-nutrition')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('module-nutrition').locator('.module-body')).toBeHidden();
+
+  await page.getByTestId('toggle-notes').click();
+  await expect(page.getByTestId('note-body')).toBeHidden();
+  await page.getByTestId('toggle-notes').click();
+  await page.getByTestId('note-body').fill('Still here');
+  await expect(page.getByTestId('note-body')).toHaveValue('Still here');
+  await page.getByTestId('toggle-notes').click();
+
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-varun').click();
+  await expect(page.getByTestId('toggle-nutrition')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('module-nutrition').locator('.module-body')).toBeVisible();
+
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-yuvan').click();
+  await expect(page.getByTestId('toggle-nutrition')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('toggle-notes')).toHaveAttribute('aria-expanded', 'false');
 });

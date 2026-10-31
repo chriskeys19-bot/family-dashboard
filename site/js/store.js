@@ -1,7 +1,15 @@
 import { CONFIG, isDemoMode } from './config.js';
 import { lookupDemoFoods } from './demo-foods.js';
 import { catalogMatch } from './food-catalog.js';
+import { defaultWeightKg } from './goal-note.js';
 import { normFoodName, parseFoodQuery } from './food-parse.js';
+
+function savedWeight(person, saved) {
+  if (person.role !== 'kid') return null;
+  const kg = Number(saved);
+  if (Number.isFinite(kg) && kg > 0) return kg;
+  return defaultWeightKg(person.id) || 40;
+}
 
 const SESSION_KEY = 'homeboard.session';
 const PROFILE_KEY = 'homeboard.profile';
@@ -192,7 +200,7 @@ function demoBundle() {
   return {
     people: seed.people.map((person) => ({
       ...person,
-      weight_kg: overlay.weights?.[person.id] ?? (person.role === 'kid' ? 40 : null),
+      weight_kg: savedWeight(person, overlay.weights?.[person.id]),
     })),
     categories: (overlay.categories || seed.categories).map((row) => ({ ...row })),
     events: seed.events.map((row) => ({ ...row, people: [...row.people] })),
@@ -284,7 +292,7 @@ export async function loadBundle() {
   return {
     people: people.map((person) => ({
       ...person,
-      weight_kg: weightById.get(person.id) || (person.role === 'kid' ? 40 : null),
+      weight_kg: savedWeight(person, weightById.get(person.id)),
     })),
     categories,
     events,

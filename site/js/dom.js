@@ -8,6 +8,8 @@ export function el(tag, attrs = {}, ...children) {
     else if (key === 'style' && typeof value === 'object') Object.assign(node.style, value);
     else if (key.startsWith('on') && typeof value === 'function') {
       node.addEventListener(key.slice(2).toLowerCase(), value);
+    } else if (key === 'value' && 'value' in node) {
+      node.value = String(value);
     } else if (value === true) node.setAttribute(key, '');
     else node.setAttribute(key, String(value));
   }
@@ -45,6 +47,15 @@ export function field(label, control, hint) {
   }
   if (dictate?.status) wrap.append(dictate.status);
   return wrap;
+}
+
+export function setPressed(button, on) {
+  button.classList.toggle('is-on', on);
+  button.setAttribute('aria-pressed', on ? 'true' : 'false');
+}
+
+export function choosePressed(group, button) {
+  for (const item of group.querySelectorAll(':scope > button')) setPressed(item, item === button);
 }
 
 export function safeColor(value) {

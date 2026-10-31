@@ -20,7 +20,7 @@ registerModule({
   label: 'Daily boost',
   dataTable: 'daily_content',
   placement: 'day',
-  sortOrder: 2,
+  sortOrder: -1,
   renderEntryForm() {
     return null;
   },

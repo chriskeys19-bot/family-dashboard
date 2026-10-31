@@ -5,7 +5,7 @@ import { lookupFoods, rememberFoods, addNutrition, newId } from '../store.js';
 import { registerModule } from '../registry.js';
 import { chooseKid } from '../kids.js';
 import { openSheet, closeSheet } from '../sheet.js';
-import { el, field } from '../dom.js';
+import { choosePressed, el, field } from '../dom.js';
 import { MEAL_LABELS } from '../labels.js';
 import { itemSlug } from '../food-parse.js';
 import { defaultPortionMode, portionModesFor, scaleNutrients, sumNutrients } from '../portions.js';
@@ -100,9 +100,9 @@ function openNutritionForm(ctx, kid) {
         class: `btn choice${state.meal === meal ? ' is-on' : ''}`,
         'aria-pressed': state.meal === meal ? 'true' : 'false',
         'data-meal': meal,
-        onclick: () => {
+        onclick: (event) => {
           state.meal = meal;
-          paintEntry(hostBody());
+          choosePressed(meals, event.currentTarget);
         },
       }, MEAL_LABELS[meal]));
     }
@@ -212,9 +212,9 @@ function openNutritionForm(ctx, kid) {
         type: 'button',
         class: `btn choice${state.meal === meal ? ' is-on' : ''}`,
         'aria-pressed': state.meal === meal ? 'true' : 'false',
-        onclick: () => {
+        onclick: (event) => {
           state.meal = meal;
-          paintPhotoReview();
+          choosePressed(meals, event.currentTarget);
         },
       }, MEAL_LABELS[meal]));
     }
@@ -409,12 +409,14 @@ function openNutritionForm(ctx, kid) {
           class: `btn choice${current?.mode === mode.id ? ' is-on' : ''}`,
           'aria-pressed': current?.mode === mode.id ? 'true' : 'false',
           'data-testid': `portion-${slug}-${mode.id}`,
-          onclick: () => {
+          onclick: (event) => {
             const next = state.picks.get(item.query_norm);
             if (!next) return;
+            const previous = next.mode;
             next.mode = mode.id;
             state.picks.set(item.query_norm, next);
-            paintPicks();
+            if (mode.id === 'grams' || previous === 'grams') paintPicks();
+            else choosePressed(portions, event.currentTarget);
           },
         }, mode.label));
       }
@@ -443,7 +445,7 @@ function openNutritionForm(ctx, kid) {
         });
         qty.addEventListener('input', () => {
           const next = state.picks.get(item.query_norm);
-          next.qty = Number(qty.value);
+          next.qty = qty.value;
           state.picks.set(item.query_norm, next);
         });
         block.append(field('Quantity', qty));
