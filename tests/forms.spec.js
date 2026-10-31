@@ -22,6 +22,10 @@ async function openBoard(page, profile) {
   await page.getByRole('button', { name: 'Continue' }).click();
   await page.getByTestId(`profile-${profile}`).click();
   await expect(page.getByTestId('dashboard')).toBeVisible();
+  for (const id of ['recap', 'schedule', 'nutrition', 'training', 'needs', 'notes']) {
+    const toggle = page.getByTestId(`toggle-${id}`);
+    if (await toggle.count() && (await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
+  }
 }
 
 async function clickEach(locator) {

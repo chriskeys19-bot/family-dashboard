@@ -88,6 +88,7 @@ test('monthly check-in sits under the boost, can wait a day, and updates height 
   await again.getByTestId('checkin-save-yuvan').click();
   await expect(page.getByTestId('checkin-card-yuvan')).toHaveCount(0);
   await expect(page.getByTestId('week-weight-yuvan')).toContainText('120 lb');
+  await page.getByTestId('toggle-recap').click();
   await expect(page.getByTestId('recap-writeup-yuvan')).toBeVisible();
   await expect(page.getByTestId('measure-varun')).toHaveCount(0);
 

@@ -27,13 +27,24 @@ async function shot(page, name) {
   }
 }
 
-async function openBoard(page, profile, time = FIXED) {
+const COLLAPSIBLE_IDS = ['recap', 'schedule', 'nutrition', 'training', 'needs', 'notes'];
+
+async function expandSections(page) {
+  for (const id of COLLAPSIBLE_IDS) {
+    const toggle = page.getByTestId(`toggle-${id}`);
+    if (await toggle.count() === 0) continue;
+    if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
+  }
+}
+
+async function openBoard(page, profile, time = FIXED, { expand = true } = {}) {
   await page.clock.install({ time });
   await page.goto('/');
   await page.getByLabel('Password').fill('family');
   await page.getByRole('button', { name: 'Continue' }).click();
   await page.getByTestId(`profile-${profile}`).click();
   await expect(page.getByTestId('dashboard')).toBeVisible();
+  if (expand) await expandSections(page);
 }
 
 test('password gate rejects a miss, then opens profiles', async ({ page }) => {
@@ -930,45 +941,80 @@ test('this week counts cricket and gym, and parents can set weight', async ({ pa
   await expect(page.getByTestId('week-yuvan')).toContainText('100 lb');
 });
 
-test('collapsible sections stay closed for that person after a refresh', async ({ page }) => {
-  await openBoard(page, 'yuvan');
-  const nutrition = page.getByTestId('toggle-nutrition');
-  await expect(nutrition).toHaveAttribute('aria-expanded', 'true');
-  await expect(nutrition.locator('svg')).toBeVisible();
-  await expect(page.getByTestId('module-nutrition').locator('.module-body')).toBeVisible();
+test('collapsible sections start closed and stay open only for this page session', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('homeboard.sections.v1', JSON.stringify({ 'yuvan.nutrition': true, 'ben.schedule': true }));
+  });
+  await openBoard(page, 'yuvan', FIXED, { expand: false });
   await expect(page.getByTestId('toggle-week')).toHaveCount(0);
+  await expect(page.getByTestId('toggle-boost')).toHaveCount(0);
+  await expect(page.getByTestId('toggle-checkin')).toHaveCount(0);
+  await expect(page.getByTestId('module-week').locator('.module-body')).toBeVisible();
+  await expect(page.getByTestId('module-boost').locator('.module-body')).toBeVisible();
+  await expect(page.getByTestId('checkin-card-yuvan')).toBeVisible();
+  for (const id of COLLAPSIBLE_IDS) {
+    const toggle = page.getByTestId(`toggle-${id}`);
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(toggle.locator('svg')).toBeVisible();
+    await expect(page.getByTestId(`module-${id}`).locator('.module-body')).toBeHidden();
+  }
+  expect(await page.evaluate(() => localStorage.getItem('homeboard.sections.v1'))).toBeNull();
+
+  const nutrition = page.getByTestId('toggle-nutrition');
   await nutrition.click();
-  await expect(nutrition).toHaveAttribute('aria-expanded', 'false');
-  await expect(page.getByTestId('module-nutrition').locator('.module-body')).toBeHidden();
+  await expect(nutrition).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('module-nutrition').locator('.module-body')).toBeVisible();
+  await page.getByTestId('toggle-needs').click();
+  await page.getByTestId('need-item').fill('New grips');
+  await page.getByRole('button', { name: 'Add to the list' }).click();
+  await expect(page.getByText('New grips')).toBeVisible();
+  await expect(nutrition).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('toggle-needs')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'false');
 
   await page.getByTestId('toggle-schedule').focus();
   await page.keyboard.press('Enter');
-  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'true');
 
   await page.getByTestId('range-1w').click();
-  await expect(page.getByTestId('toggle-nutrition')).toHaveAttribute('aria-expanded', 'false');
-  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'false');
+  await expect(nutrition).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('toggle-needs')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('toggle-recap')).toHaveAttribute('aria-expanded', 'false');
   await expect(page.getByTestId('module-week').locator('.module-body')).toBeVisible();
+
+  await page.getByTestId('range-1m').click();
+  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('toggle-notes')).toHaveAttribute('aria-expanded', 'false');
 
   await page.reload();
   await expect(page.getByTestId('dashboard')).toBeVisible();
-  await expect(page.getByTestId('toggle-nutrition')).toHaveAttribute('aria-expanded', 'false');
-  await expect(page.getByTestId('module-nutrition').locator('.module-body')).toBeHidden();
+  for (const id of COLLAPSIBLE_IDS) {
+    await expect(page.getByTestId(`toggle-${id}`)).toHaveAttribute('aria-expanded', 'false');
+  }
+  await expect(page.getByTestId('checkin-card-yuvan')).toBeVisible();
 
-  await page.getByTestId('toggle-notes').click();
-  await expect(page.getByTestId('note-body')).toBeHidden();
-  await page.getByTestId('toggle-notes').click();
-  await page.getByTestId('note-body').fill('Still here');
-  await expect(page.getByTestId('note-body')).toHaveValue('Still here');
-  await page.getByTestId('toggle-notes').click();
+  await page.getByTestId('switch-profile').click();
+  await page.getByTestId('profile-ben').click();
+  for (const id of COLLAPSIBLE_IDS) {
+    await expect(page.getByTestId(`toggle-${id}`)).toHaveAttribute('aria-expanded', 'false');
+  }
+  await expect(page.getByTestId('module-checkin')).toBeVisible();
+  await expect(page.getByTestId('module-week').locator('.module-body')).toBeVisible();
+  await page.getByTestId('toggle-schedule').click();
+  await page.getByTestId('toggle-recap').click();
+  await page.getByTestId('tab-yuvan').click();
+  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('toggle-recap')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('toggle-nutrition')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('checkin-card-yuvan')).toBeVisible();
+  await page.getByTestId('range-3d').click();
+  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('toggle-recap')).toHaveAttribute('aria-expanded', 'true');
 
   await page.getByTestId('switch-profile').click();
   await page.getByTestId('profile-varun').click();
-  await expect(page.getByTestId('toggle-nutrition')).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.getByTestId('module-nutrition').locator('.module-body')).toBeVisible();
-
-  await page.getByTestId('switch-profile').click();
-  await page.getByTestId('profile-yuvan').click();
-  await expect(page.getByTestId('toggle-nutrition')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('toggle-schedule')).toHaveAttribute('aria-expanded', 'true');
   await expect(page.getByTestId('toggle-notes')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('checkin-card-varun')).toBeVisible();
 });

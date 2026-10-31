@@ -24,7 +24,7 @@ import { formatLongDate, formatRangeLabel, getRange } from './time.js';
 import { CONFIG } from './config.js';
 
 const COLLAPSIBLE = new Set(['recap', 'schedule', 'nutrition', 'training', 'needs', 'notes']);
-const COLLAPSE_KEY = 'homeboard.sections.v1';
+const openSections = new Set();
 
 const RANGES = [
   { id: '3d', label: '3 days' },
@@ -38,24 +38,13 @@ let rangeId = '3d';
 let tab = 'all';
 let refreshToken = 0;
 
-function collapseMap() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(COLLAPSE_KEY) || '{}');
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
+function sectionOpen(moduleId) {
+  return openSections.has(moduleId);
 }
 
-function sectionOpen(personId, moduleId) {
-  const value = collapseMap()[`${personId}.${moduleId}`];
-  return value == null ? true : Boolean(value);
-}
-
-function setSectionOpen(section, body, toggle, personId, moduleId, open) {
-  const map = collapseMap();
-  map[`${personId}.${moduleId}`] = open;
-  localStorage.setItem(COLLAPSE_KEY, JSON.stringify(map));
+function setSectionOpen(section, body, toggle, moduleId, open) {
+  if (open) openSections.add(moduleId);
+  else openSections.delete(moduleId);
   toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   body.hidden = !open;
   section.classList.toggle('is-collapsed', !open);
@@ -354,14 +343,14 @@ function renderDashboard() {
       continue;
     }
     if (COLLAPSIBLE.has(mod.id)) {
-      const open = sectionOpen(current.id, mod.id);
+      const open = sectionOpen(mod.id);
       const toggle = el('button', {
         type: 'button',
         class: 'module-toggle',
         'aria-expanded': open ? 'true' : 'false',
         'aria-controls': body.id,
         'data-testid': `toggle-${mod.id}`,
-        onclick: () => setSectionOpen(section, body, toggle, current.id, mod.id, toggle.getAttribute('aria-expanded') !== 'true'),
+        onclick: () => setSectionOpen(section, body, toggle, mod.id, toggle.getAttribute('aria-expanded') !== 'true'),
       }, el('span', {}, mod.label), chevron());
       if (!open) {
         body.hidden = true;
@@ -395,6 +384,11 @@ async function refresh() {
 }
 
 export function boot() {
+  try {
+    localStorage.removeItem('homeboard.sections.v1');
+  } catch {
+    // Private mode can refuse storage. The in-memory set still starts closed.
+  }
   bindKeyboardInset();
   subscribe(() => {
     if (document.querySelector('[data-testid="dashboard"]')) {
