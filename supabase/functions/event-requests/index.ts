@@ -11,9 +11,11 @@ Deno.serve(async (req) => {
   const admin = adminClient();
   if (!admin) return json({ error: 'missing_service_role' }, 500);
 
+  const onlyPerson = auth.kind === 'jwt' && auth.claims.role === 'kid' ? auth.claims.personId : null;
+
   if (req.method === 'GET') {
     const status = new URL(req.url).searchParams.get('status') || 'pending';
-    return json({ requests: await listRequests(admin, status) });
+    return json({ requests: await listRequests(admin, status, onlyPerson) });
   }
 
   if (req.method === 'POST') {
@@ -24,9 +26,10 @@ Deno.serve(async (req) => {
       return json({ error: 'bad_request' }, 400);
     }
     if (body.action === 'list') {
-      return json({ requests: await listRequests(admin, body.status || 'pending') });
+      return json({ requests: await listRequests(admin, body.status || 'pending', onlyPerson) });
     }
     if (body.action === 'mark_handled') {
+      if (onlyPerson) return json({ error: 'forbidden' }, 403);
       const id = String(body.id || '');
       if (!id) return json({ error: 'bad_request' }, 400);
       const { data, error } = await admin
@@ -52,8 +55,9 @@ function adminClient() {
   return createClient(url, key, { auth: { persistSession: false } });
 }
 
-async function listRequests(admin: ReturnType<typeof createClient>, status: string) {
+async function listRequests(admin: ReturnType<typeof createClient>, status: string, onlyPerson: string | null) {
   let query = admin.from('event_requests').select('*, people(name)').order('starts_at', { ascending: true });
+  if (onlyPerson) query = query.eq('person_id', onlyPerson);
   if (status === 'pending' || status === 'requested') query = query.eq('status', 'requested');
   else if (status === 'handled') query = query.eq('status', 'handled');
   else if (status !== 'all') query = query.eq('status', 'requested');

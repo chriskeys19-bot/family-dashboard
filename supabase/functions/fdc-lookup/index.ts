@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
-import { dashboardAuthorized } from '../_shared/auth.ts';
+import { canActFor, dashboardClaims } from '../_shared/auth.ts';
 import { catalogMatch, isVagueRestaurant, normFoodName, nutrientValue, parseFoodQuery, plausibleFdcCalories, roughFillers, searchTerm } from '../_shared/food.ts';
 import { json, preflight } from '../_shared/http.ts';
 
@@ -15,7 +15,8 @@ Deno.serve(async (req) => {
   const early = preflight(req);
   if (early) return early;
   if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
-  if (!await dashboardAuthorized(req)) return json({ error: 'unauthorized' }, 401);
+  const claims = await dashboardClaims(req);
+  if (!claims) return json({ error: 'unauthorized' }, 401);
 
   const apiKey = Deno.env.get('FDC_API_KEY') || '';
   if (!apiKey) return json({ error: 'missing_fdc_key' }, 500);
@@ -30,6 +31,7 @@ Deno.serve(async (req) => {
     return json({ error: 'bad_request' }, 400);
   }
   if (!query || !/^[a-z0-9_-]{1,64}$/.test(personId)) return json({ error: 'bad_request' }, 400);
+  if (!canActFor(claims, personId)) return json({ error: 'forbidden' }, 403);
 
   const memory = await loadMemory(personId);
   const items = parseFoodQuery(query).slice(0, 8);

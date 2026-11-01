@@ -22,7 +22,7 @@ function summaryPhrase(entries) {
     || String(a.id).localeCompare(String(b.id)));
   const count = ordered.length;
   const types = ordered.map(mealType).join(', ');
-  return `${count} ${count === 1 ? 'meal' : 'meals'} logged — ${types}`;
+  return `${count} ${count === 1 ? 'meal' : 'meals'} logged today: ${types}`;
 }
 
 function peopleInScope(ctx) {
@@ -718,7 +718,7 @@ registerModule({
       });
       if (showName) card.append(el('p', { class: 'log-kicker' }, person.name));
       card.append(el('p', { 'data-testid': `nutrition-today-${person.id}` }, todayEntries.length
-        ? `Today: ${summaryPhrase(todayEntries)}`
+        ? summaryPhrase(todayEntries)
         : 'Nothing logged yet today'));
       const ordered = todayEntries.slice().sort((a, b) => String(a.eaten_at).localeCompare(String(b.eaten_at))
         || String(a.id).localeCompare(String(b.id)));

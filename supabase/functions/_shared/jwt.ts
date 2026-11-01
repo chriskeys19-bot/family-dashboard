@@ -28,9 +28,19 @@ export async function signJwt(payload: Record<string, unknown>, secret: string):
   return `${data}.${bytesToB64url(sig)}`;
 }
 
+export type DashboardClaims = { role: 'parent' | 'kid'; personId: string | null };
+
 export async function verifyDashboardJwt(token: string, secret: string): Promise<boolean> {
+  return (await readDashboardClaims(token, secret)) !== null;
+}
+
+/**
+ * Verified dashboard identity. Tokens minted before per-person sign-in have no
+ * dashboard_role. Those came from the shared parent password, so they stay parent.
+ */
+export async function readDashboardClaims(token: string, secret: string): Promise<DashboardClaims | null> {
   const parts = token.split('.');
-  if (parts.length !== 3 || !secret) return false;
+  if (parts.length !== 3 || !secret) return null;
   const [header, body, sig] = parts;
   try {
     const key = await crypto.subtle.importKey(
@@ -46,13 +56,18 @@ export async function verifyDashboardJwt(token: string, secret: string): Promise
       b64urlToBytes(sig),
       new TextEncoder().encode(`${header}.${body}`),
     );
-    if (!ok) return false;
+    if (!ok) return null;
     const payload = JSON.parse(new TextDecoder().decode(b64urlToBytes(body)));
-    if (payload.role !== 'authenticated') return false;
-    if (payload.dashboard_access !== true) return false;
-    if (typeof payload.exp !== 'number' || payload.exp * 1000 < Date.now()) return false;
-    return true;
+    if (payload.role !== 'authenticated') return null;
+    if (payload.dashboard_access !== true) return null;
+    if (typeof payload.exp !== 'number' || payload.exp * 1000 < Date.now()) return null;
+    const role = payload.dashboard_role ?? 'parent';
+    if (role === 'parent') return { role: 'parent', personId: null };
+    if (role === 'kid' && typeof payload.person_id === 'string' && /^[a-z0-9_-]{1,64}$/.test(payload.person_id)) {
+      return { role: 'kid', personId: payload.person_id };
+    }
+    return null;
   } catch {
-    return false;
+    return null;
   }
 }

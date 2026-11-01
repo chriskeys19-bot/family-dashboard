@@ -138,7 +138,7 @@ test('meal edit opens prefilled, keeps chip text, saves once, and delete confirm
   await sheet.getByTestId('confirm-estimates').click();
   await sheet.getByTestId('save-meal').click();
   await expect(page.locator('[data-testid^=meal-row-]')).toHaveCount(1);
-  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — dinner');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('1 meal logged today: dinner');
   await expect(page.getByTestId('week-eaten-yuvan')).toContainText('780');
   await expect(page.getByTestId('module-nutrition')).not.toContainText(/kcal|protein/i);
 

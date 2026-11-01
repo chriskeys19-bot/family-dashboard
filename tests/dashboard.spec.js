@@ -155,6 +155,80 @@ test('a kid password opens that kid’s page and sign out returns to the gate', 
   expect(parent.person_id).toBeNull();
 });
 
+test('kid passwords stay on that kid, and a parent password still opens the family', async ({ page }) => {
+  await page.route('**/js/config.js', (route) => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: LIVE_CONFIG,
+  }));
+  await page.route('**/functions/v1/auth-gate', async (route) => {
+    const body = route.request().postDataJSON();
+    const passwords = {
+      'varun-secret': { access_token: 'varun-token', role: 'kid', person_id: 'varun', expires_at: 2_000_000_000 },
+      'family-secret': { access_token: 'parent-token', role: 'parent', person_id: null, expires_at: 2_000_000_000 },
+      'legacy-secret': { access_token: 'legacy-token', expires_at: 2_000_000_000 },
+    };
+    const payload = passwords[body.password];
+    if (!payload) {
+      await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'wrong_password' }) });
+      return;
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(payload) });
+  });
+  await page.route('**/rest/v1/**', async (route) => {
+    const url = route.request().url();
+    const body = url.includes('/rest/v1/people') ? JSON.stringify(LIVE_PEOPLE) : '[]';
+    await route.fulfill({ status: 200, contentType: 'application/json', body });
+  });
+  await page.route('**/storage/v1/**', (route) => route.fulfill({
+    status: 404,
+    contentType: 'application/json',
+    body: '{}',
+  }));
+
+  await page.clock.install({ time: FIXED });
+  await page.goto('/');
+  await page.getByLabel('Password').fill('nope');
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await expect(page.getByTestId('gate-error')).toBeVisible();
+  await expect(page.getByTestId('dashboard')).toHaveCount(0);
+
+  await page.getByLabel('Password').fill('varun-secret');
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await expect(page.getByTestId('dashboard')).toBeVisible();
+  await expect(page.getByTestId('profile-picker')).toHaveCount(0);
+  await expect(page.getByTestId('switch-profile')).toHaveCount(0);
+  await expect(page.getByTestId('person-tabs')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Varun' })).toBeVisible();
+  await expect(page.getByTestId('scope-note')).toHaveText('Only Varun');
+  await expect(page.getByTestId('sign-out')).toBeVisible();
+  const kid = await page.evaluate(() => JSON.parse(localStorage.getItem('homeboard.session')));
+  expect(kid.role).toBe('kid');
+  expect(kid.person_id).toBe('varun');
+
+  await page.getByTestId('sign-out').click();
+  await page.getByLabel('Password').fill('legacy-secret');
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await expect(page.getByTestId('profile-picker')).toBeVisible();
+  const legacy = await page.evaluate(() => JSON.parse(localStorage.getItem('homeboard.session')));
+  expect(legacy.role).toBe('parent');
+  expect(legacy.person_id).toBeNull();
+  expect(legacy.access_token).toBe('legacy-token');
+
+  await page.getByTestId('lock').click();
+  await page.getByLabel('Password').fill('family-secret');
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await page.getByTestId('profile-ben').click();
+  await expect(page.getByTestId('person-tabs')).toBeVisible();
+  await expect(page.getByTestId('tab-all')).toBeVisible();
+  await expect(page.getByTestId('tab-yuvan')).toBeVisible();
+  await expect(page.getByTestId('tab-varun')).toBeVisible();
+  await expect(page.getByTestId('switch-profile')).toBeVisible();
+  await expect(page.getByTestId('scope-note')).toHaveText('Whole family');
+  await page.getByTestId('tab-yuvan').click();
+  await expect(page.getByTestId('scope-note')).toHaveText('Yuvan');
+});
+
 test('roles, ranges, categories, overlaps, and the banner', async ({ page }) => {
   const storage = [];
   page.on('request', (req) => {
@@ -377,7 +451,7 @@ test('nutrition card names today only and leaves calorie history on this week', 
   await page.setViewportSize({ width: 390, height: 844 });
   await openBoard(page, 'yuvan');
   const card = page.getByTestId('module-nutrition');
-  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — lunch');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('1 meal logged today: lunch');
   await expect(card.locator('[data-testid^=nutrition-day-]')).toHaveCount(0);
   await expect(card).not.toContainText(/kcal|protein|2200|1400|900|pasta|yesterday dal/i);
   await expect(page.getByText('rice plate')).toBeVisible();
@@ -386,7 +460,7 @@ test('nutrition card names today only and leaves calorie history on this week', 
   await expect(page.getByTestId('week-calories-yuvan')).toBeVisible();
   await page.getByTestId('range-1w').click();
   await page.getByTestId('range-1m').click();
-  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — lunch');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('1 meal logged today: lunch');
   await expect(card).not.toContainText(/kcal|2200|900/);
   if (test.info().project.name === 'iphone-14') {
     mkdirSync('artifacts/screenshots', { recursive: true });
@@ -414,7 +488,7 @@ test('nutrition lookup disambiguates, remembers, and can fall back to a note', a
   await expect(page.getByTestId('estimate-banner')).toContainText(/estimate/i);
   await expect(page.getByTestId('macro-calories')).toContainText(/\d+/);
   await page.getByTestId('save-meal').click();
-  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — breakfast');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('1 meal logged today: breakfast');
   await expect(page.getByTestId('module-nutrition')).not.toContainText(/kcal|protein/i);
 
   await page.getByTestId('add-nutrition').click();
@@ -429,7 +503,7 @@ test('nutrition lookup disambiguates, remembers, and can fall back to a note', a
   await page.getByTestId('food-query').fill('orange slices');
   await page.getByRole('button', { name: 'Snack' }).click();
   await page.getByTestId('save-note').click();
-  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 2 meals logged — breakfast, snack');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('2 meals logged today: breakfast, snack');
   await expect(page.getByText('orange slices')).toBeVisible();
   await expect(page.getByText('No macro estimate')).toHaveCount(0);
   if (test.info().project.name === 'iphone-14') {
@@ -456,12 +530,12 @@ test('a vague McDonald’s dinner is one approximate meal', async ({ page }) => 
   await expect(page.getByTestId('macro-calories')).toHaveText('780 kcal');
   await expect(page.getByText('20 g protein').first()).toBeVisible();
   await page.getByTestId('save-meal').click();
-  await expect(page.getByTestId('nutrition-today-varun')).toHaveText('Today: 1 meal logged — dinner');
+  await expect(page.getByTestId('nutrition-today-varun')).toHaveText('1 meal logged today: dinner');
   await expect(page.getByTestId('module-nutrition')).not.toContainText(/kcal|protein/i);
 
   await page.getByTestId('switch-profile').click();
   await page.getByTestId('profile-ben').click();
-  await expect(page.getByTestId('nutrition-today-varun')).toHaveText('Today: 1 meal logged — dinner');
+  await expect(page.getByTestId('nutrition-today-varun')).toHaveText('1 meal logged today: dinner');
   await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Nothing logged yet today');
   await page.getByTestId('tab-yuvan').click();
   await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Nothing logged yet today');
@@ -491,7 +565,7 @@ test('snap meal stubs an estimate, lets the kid edit, and parents see the thumbn
   await expect(page.getByTestId('photo-totals')).toContainText('470');
   await shot(page, '11-photo-review');
   await page.getByTestId('save-photo-meal').click();
-  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — breakfast');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('1 meal logged today: breakfast');
   await expect(page.getByText('Rice, dal, and vegetables')).toBeVisible();
   await expect(page.locator('[data-testid^=meal-photo-]')).toHaveCount(0);
   await expect(page.locator('[data-testid^=photo-breakdown-]')).toHaveCount(0);
@@ -507,12 +581,12 @@ test('snap meal stubs an estimate, lets the kid edit, and parents see the thumbn
   await expect(page.getByTestId('photo-note')).toHaveValue('Photo estimate extra');
   await page.getByTestId('save-photo-meal').click();
   await expect(page.locator('[data-testid^=meal-row-]')).toHaveCount(1);
-  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — lunch');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('1 meal logged today: lunch');
   await shot(page, '12-photo-saved');
 
   await page.getByTestId('switch-profile').click();
   await page.getByTestId('profile-ben').click();
-  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — lunch');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('1 meal logged today: lunch');
   await expect(page.locator('[data-testid^=meal-photo-]')).toHaveCount(0);
   await expect(page.locator('[data-testid^=photo-breakdown-]')).toHaveCount(0);
   await page.getByTestId('tab-varun').click();
@@ -567,7 +641,7 @@ test('editing a meal keeps one row and delete clears it', async ({ page }) => {
   await sheet.getByTestId('confirm-estimates').click();
   await sheet.getByTestId('save-meal').click();
   await expect(page.locator('[data-testid^=meal-row-]')).toHaveCount(1);
-  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('Today: 1 meal logged — dinner');
+  await expect(page.getByTestId('nutrition-today-yuvan')).toHaveText('1 meal logged today: dinner');
   await expect(row).toContainText("McDonald's");
   await expect(page.getByTestId('week-eaten-yuvan')).toContainText('780');
   await expect(page.getByTestId('module-nutrition')).not.toContainText(/kcal|protein/i);

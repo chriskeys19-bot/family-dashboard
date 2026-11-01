@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
-import { dashboardAuthorized } from '../_shared/auth.ts';
+import { canActFor, dashboardClaims } from '../_shared/auth.ts';
 import { json, preflight } from '../_shared/http.ts';
 
 const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
@@ -9,7 +9,8 @@ Deno.serve(async (req) => {
   const early = preflight(req);
   if (early) return early;
   if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
-  if (!await dashboardAuthorized(req)) return json({ error: 'unauthorized' }, 401);
+  const claims = await dashboardClaims(req);
+  if (!claims) return json({ error: 'unauthorized' }, 401);
 
   const apiKey = Deno.env.get('GEMINI_API_KEY') || '';
   if (!apiKey) return json({ error: 'missing_gemini_key', message: 'Photo estimates are not configured yet.' }, 500);
@@ -28,6 +29,7 @@ Deno.serve(async (req) => {
   if (!/^[a-z0-9_-]{1,64}$/.test(personId) || !isSafePath(personId, path)) {
     return json({ error: 'bad_request' }, 400);
   }
+  if (!canActFor(claims, personId)) return json({ error: 'forbidden' }, 403);
 
   const admin = adminClient();
   if (!admin) return json({ error: 'missing_service_role' }, 500);

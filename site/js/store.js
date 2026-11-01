@@ -105,9 +105,13 @@ export function getAccessToken() {
   return session?.access_token || null;
 }
 
+/**
+ * Who signed in. A response from the older auth-gate has no role: that login
+ * used the shared parent password, so it stays a parent session.
+ */
 export function sessionIdentity() {
-  if (session?.role === 'kid') {
-    return { role: 'kid', personId: session.person_id || null };
+  if (session?.role === 'kid' && session.person_id) {
+    return { role: 'kid', personId: session.person_id };
   }
   return { role: 'parent', personId: null };
 }
@@ -168,11 +172,12 @@ export async function unlock(password) {
     error.code = 'auth_failed';
     throw error;
   }
+  const role = payload.role === 'kid' && payload.person_id ? 'kid' : 'parent';
   session = {
     demo: false,
     access_token: token,
-    role: payload.role || null,
-    person_id: payload.person_id ?? null,
+    role,
+    person_id: role === 'kid' ? payload.person_id : null,
     exp: sessionExpiry(payload, token),
   };
   localStorage.setItem(SESSION_KEY, JSON.stringify(session));

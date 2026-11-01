@@ -115,6 +115,8 @@ Monthly height and weight uses `supabase/migrations/20261031150000_body_measurem
 ```bash
 supabase secrets set \
   DASHBOARD_PASSWORD='a long passphrase Ben can change later' \
+  YUVAN_PASSWORD='Yuvan’s own password' \
+  VARUN_PASSWORD='Varun’s own password' \
   JWT_SECRET='the legacy JWT secret from Project Settings → API' \
   FDC_API_KEY='your FoodData Central key' \
   GEMINI_API_KEY='a paid-tier Gemini API key' \
@@ -123,7 +125,9 @@ supabase secrets set \
   ASSISTANT_TOKEN='optional token for the calendar assistant'
 ```
 
-`DASHBOARD_PASSWORD` is the real gate. Change it with another `secrets set`. Existing sessions last 7 days; locking the phone clears the token on that device.
+`DASHBOARD_PASSWORD` is the parent gate (Ben and Sangeetha). `YUVAN_PASSWORD` and `VARUN_PASSWORD` each open only that kid’s page. Leave a kid secret empty to skip it. Existing sessions last 7 days; locking the phone clears the token on that device.
+
+Per-person row rules are in `supabase/migrations/20261101160000_per_person_sessions.sql`. Paste that file in the SQL editor. Do not use `db push` here; this project has no `schema_migrations` table.
 
 `JWT_SECRET` must be the project’s **legacy JWT secret** (Settings → API). The auth-gate function signs an HS256 session with it (`role: authenticated`, `dashboard_access: true`). PostgREST and Storage accept that token. If the project has legacy JWT signing turned off, turn the legacy secret back on. Asymmetric signing keys cannot be used as this HMAC secret.
 

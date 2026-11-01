@@ -26,8 +26,21 @@ Deno.serve(async (req) => {
   }
   if (password.length > 200) password = password.slice(0, 200);
 
-  const ok = password.length > 0 && safeEqual(password, passwordSecret);
-  if (!ok) {
+  // Password decides identity. Every configured secret is compared.
+  // An empty kid secret is skipped so a missing VARUN_PASSWORD or YUVAN_PASSWORD
+  // does not reject the family password.
+  const kids: Array<[string, string]> = [
+    ['yuvan', Deno.env.get('YUVAN_PASSWORD') || ''],
+    ['varun', Deno.env.get('VARUN_PASSWORD') || ''],
+  ];
+  let identity: { role: 'parent' | 'kid'; personId: string | null } | null = null;
+  if (password.length > 0) {
+    if (safeEqual(password, passwordSecret)) identity = { role: 'parent', personId: null };
+    for (const [personId, secret] of kids) {
+      if (secret && safeEqual(password, secret) && !identity) identity = { role: 'kid', personId };
+    }
+  }
+  if (!identity) {
     const next = fails.get(ip) || { count: 0, until: 0 };
     next.count += 1;
     if (next.count >= 8) {
@@ -56,7 +69,16 @@ Deno.serve(async (req) => {
     app_metadata: { provider: 'dashboard', providers: ['dashboard'] },
     user_metadata: { dashboard: true },
     dashboard_access: true,
+    dashboard_role: identity.role,
+    ...(identity.personId ? { person_id: identity.personId } : {}),
   }, jwtSecret);
 
-  return json({ access_token: token, token_type: 'bearer', expires_at: exp, expires_in: exp - now });
+  return json({
+    access_token: token,
+    token_type: 'bearer',
+    expires_at: exp,
+    expires_in: exp - now,
+    role: identity.role,
+    person_id: identity.personId,
+  });
 });
